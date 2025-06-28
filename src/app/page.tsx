@@ -1,6 +1,7 @@
 import WallpaperGenerator from '@/components/WallpaperGenerator';
 import WallpaperGallery from '@/components/WallpaperGallery';
 import Header from '@/components/Header';
+import CompressionPanel from '@/components/CompressionPanel';
 
 export default function Home() {
   return (
@@ -21,6 +22,14 @@ export default function Home() {
         {/* Generator Section */}
         <div className="mb-16">
           <WallpaperGenerator />
+        </div>
+
+        {/* Compression Section */}
+        <div className="mb-16">
+          <h2 className="text-3xl font-bold text-gray-800 dark:text-white mb-8 text-center">
+            图片压缩工具
+          </h2>
+          <CompressionPanel />
         </div>
 
         {/* Gallery Section */}

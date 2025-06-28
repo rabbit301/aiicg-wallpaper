@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
     }
 
     // 获取生成的图片URL
-    const imageUrl = result.data.images[0].url;
+    const imageUrl = (result.data as any)?.images?.[0]?.url;
     
     // 处理图片
     const imageProcessor = new ImageProcessor();

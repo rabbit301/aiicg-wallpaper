@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import { Wand2, Loader2, Monitor } from 'lucide-react';
 import { SCREEN_PRESETS, ScreenPreset } from '@/lib/fal-client';
+import { generateWallpaperEvaluation, generateStarRating, getScoreColorClass } from '@/lib/emotion-evaluator';
+import type { EmotionEvaluation } from '@/lib/emotion-evaluator';
 
 export default function WallpaperGenerator() {
   const [prompt, setPrompt] = useState('');
@@ -10,6 +12,7 @@ export default function WallpaperGenerator() {
   const [preset, setPreset] = useState<ScreenPreset>('360_square_640p');
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
+  const [wallpaperEvaluation, setWallpaperEvaluation] = useState<EmotionEvaluation | null>(null);
 
   const handleGenerate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -21,6 +24,9 @@ export default function WallpaperGenerator() {
 
     setIsGenerating(true);
     setGeneratedImage(null);
+    setWallpaperEvaluation(null);
+
+    const startTime = Date.now();
 
     try {
       const response = await fetch('/api/generate', {
@@ -38,7 +44,17 @@ export default function WallpaperGenerator() {
       const result = await response.json();
 
       if (result.success) {
+        const processingTime = Date.now() - startTime;
         setGeneratedImage(result.wallpaper.imageUrl);
+
+        // 生成情绪评价
+        const evaluation = generateWallpaperEvaluation(
+          prompt,
+          processingTime,
+          { width: result.wallpaper.width, height: result.wallpaper.height }
+        );
+        setWallpaperEvaluation(evaluation);
+
         // 清空表单
         setPrompt('');
         setTitle('');
@@ -137,19 +153,47 @@ export default function WallpaperGenerator() {
       {/* 生成结果 */}
       {generatedImage && (
         <div className="mt-8 text-center">
-          <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-4">
-            生成成功！
-          </h3>
+          <div className="mb-6">
+            <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-4">
+              生成成功！
+            </h3>
+            {wallpaperEvaluation && (
+              <div className="bg-purple-50 dark:bg-purple-900/20 rounded-lg p-4 border border-purple-200 dark:border-purple-700 mb-4 max-w-md mx-auto">
+                <div className="flex items-center justify-center space-x-2 mb-2">
+                  <span className="text-2xl">{wallpaperEvaluation.emoji}</span>
+                  <span className="text-xl font-bold text-purple-600 dark:text-purple-400">
+                    {wallpaperEvaluation.emotion}
+                  </span>
+                </div>
+                <div className="flex items-center justify-center space-x-2 mb-2">
+                  <span className={`text-lg font-semibold ${getScoreColorClass(wallpaperEvaluation.score)}`}>
+                    {wallpaperEvaluation.score}/10
+                  </span>
+                  <span className="text-lg">
+                    {generateStarRating(wallpaperEvaluation.score)}
+                  </span>
+                </div>
+                <p className="text-sm text-gray-600 dark:text-gray-300 italic">
+                  "{wallpaperEvaluation.comment}"
+                </p>
+              </div>
+            )}
+          </div>
+
           <div className="inline-block bg-gray-100 dark:bg-gray-700 p-4 rounded-lg">
             <img
               src={generatedImage}
               alt="生成的壁纸"
-              className="max-w-full h-auto rounded-lg shadow-md"
-              style={{ maxHeight: '300px' }}
+              className="max-w-full h-auto rounded-lg shadow-md cursor-pointer hover:shadow-lg transition-shadow"
+              style={{ maxHeight: '500px', maxWidth: '100%' }}
+              onClick={() => window.open(generatedImage, '_blank')}
             />
           </div>
           <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
             壁纸已保存到图库，您可以在下方查看和下载
+          </p>
+          <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">
+            点击图片可放大查看
           </p>
         </div>
       )}
