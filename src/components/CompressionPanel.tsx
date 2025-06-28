@@ -1,3 +1,12 @@
+/**
+ * 图片压缩面板组件
+ *
+ * TODO: 修复预览图片显示问题
+ * - 图片文件可以通过URL直接访问
+ * - 但在React组件中无法正常显示
+ * - 可能是CSS样式或React渲染问题
+ * - 临时解决方案：点击放大查看功能正常
+ */
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
@@ -565,7 +574,6 @@ export default function CompressionPanel() {
                     setPreviewImage('compressed');
                     setShowFullPreview(true);
                   }}
-                  style={{ minHeight: largePreview ? '400px' : '200px' }}
                 >
                   {previewLoading && result.outputUrl.startsWith('http') && (
                     <div className="absolute inset-0 flex items-center justify-center bg-gray-100 dark:bg-gray-600 rounded z-10">
@@ -573,29 +581,31 @@ export default function CompressionPanel() {
                       <span className="ml-2 text-sm text-gray-600 dark:text-gray-300">加载中...</span>
                     </div>
                   )}
-                  <img
-                    src={result.outputUrl}
-                    alt="压缩后图片"
-                    className={`w-full h-auto mx-auto rounded ${largePreview ? 'max-h-96' : 'max-h-48'}`}
-                    style={{
-                      objectFit: 'contain',
-                      display: 'block',
-                      backgroundColor: 'transparent'
-                    }}
-                    onLoad={() => {
-                      console.log('压缩图片加载成功:', result.outputUrl);
-                      setPreviewLoading(false);
-                    }}
-                    onError={(e) => {
-                      console.error('压缩图片加载失败:', result.outputUrl);
-                      setPreviewLoading(false);
-                      // 显示错误占位图
-                      const img = e.target as HTMLImageElement;
-                      img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjNmNGY2Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzY2NzM4ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPuWbvueJh+WKoOi9veWksei0pTwvdGV4dD48L3N2Zz4=';
-                    }}
-                  />
-                  <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all rounded-lg flex items-center justify-center">
-                    <Eye className="h-6 w-6 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <div className="relative">
+                    <img
+                      src={result.outputUrl}
+                      alt="压缩后图片"
+                      className="w-full h-auto"
+                      style={{
+                        display: 'block',
+                        minHeight: '100px',
+                        border: '2px solid red' // 调试用边框
+                      }}
+                      onLoad={() => {
+                        console.log('压缩图片加载成功:', result.outputUrl);
+                        setPreviewLoading(false);
+                      }}
+                      onError={(e) => {
+                        console.error('压缩图片加载失败:', result.outputUrl);
+                        setPreviewLoading(false);
+                        // 显示错误占位图
+                        const img = e.target as HTMLImageElement;
+                        img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjNmNGY2Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzY2NzM4ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPuWbvueJh+WKoOi9veWksei0pTwvdGV4dD48L3N2Zz4=';
+                      }}
+                    />
+                    <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all rounded-lg flex items-center justify-center pointer-events-none">
+                      <Eye className="h-6 w-6 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
+                    </div>
                   </div>
                 </div>
                 <div className="mt-2">

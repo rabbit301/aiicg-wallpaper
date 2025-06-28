@@ -1,0 +1,145 @@
+{
+  "avatar": [
+    {
+      "id": "sample-avatar-1",
+      "title": "Cute Anime Avatar",
+      "url": "https://media.giphy.com/media/3o7TKTDn976rzVgky4/giphy.gif",
+      "thumbnail": "https://media.giphy.com/media/3o7TKTDn976rzVgky4/giphy_s.gif",
+      "width": 480,
+      "height": 480,
+      "category": "avatar",
+      "tags": ["cute", "anime", "avatar"],
+      "source": "giphy",
+      "license": "Giphy License",
+      "downloadUrl": "https://media.giphy.com/media/3o7TKTDn976rzVgky4/giphy.gif",
+      "type": "gif"
+    },
+    {
+      "id": "sample-avatar-2",
+      "title": "Kawaii Character",
+      "url": "https://media.giphy.com/media/l0MYt5jPR6QX5pnqM/giphy.gif",
+      "webp_url": "https://media.giphy.com/media/l0MYt5jPR6QX5pnqM/giphy.webp",
+      "width": 480,
+      "height": 480,
+      "category": "avatar",
+      "tags": ["kawaii", "character", "cute"],
+      "rating": "g"
+    },
+    {
+      "id": "sample-avatar-3",
+      "title": "Profile Picture",
+      "url": "https://media.giphy.com/media/26tn33aiTi1jkl6H6/giphy.gif",
+      "webp_url": "https://media.giphy.com/media/26tn33aiTi1jkl6H6/giphy.webp",
+      "width": 480,
+      "height": 480,
+      "category": "avatar",
+      "tags": ["profile", "picture", "avatar"],
+      "rating": "g"
+    }
+  ],
+  "wallpaper": [
+    {
+      "id": "sample-wallpaper-1",
+      "title": "Abstract Gradient",
+      "url": "https://media.giphy.com/media/3o6Zt481isNVuQI1l6/giphy.gif",
+      "webp_url": "https://media.giphy.com/media/3o6Zt481isNVuQI1l6/giphy.webp",
+      "width": 1920,
+      "height": 1080,
+      "category": "wallpaper",
+      "tags": ["abstract", "gradient", "wallpaper"],
+      "rating": "g"
+    },
+    {
+      "id": "sample-wallpaper-2",
+      "title": "Space Galaxy",
+      "url": "https://media.giphy.com/media/l0HlBO7eyXzSZkJri/giphy.gif",
+      "webp_url": "https://media.giphy.com/media/l0HlBO7eyXzSZkJri/giphy.webp",
+      "width": 1920,
+      "height": 1080,
+      "category": "wallpaper",
+      "tags": ["space", "galaxy", "stars"],
+      "rating": "g"
+    },
+    {
+      "id": "sample-wallpaper-3",
+      "title": "Neon Lights",
+      "url": "https://media.giphy.com/media/26tn8zKqZNYtBbdCw/giphy.gif",
+      "webp_url": "https://media.giphy.com/media/26tn8zKqZNYtBbdCw/giphy.webp",
+      "width": 1920,
+      "height": 1080,
+      "category": "wallpaper",
+      "tags": ["neon", "lights", "cyberpunk"],
+      "rating": "g"
+    }
+  ],
+  "animation": [
+    {
+      "id": "sample-animation-1",
+      "title": "Particle Effect",
+      "url": "https://media.giphy.com/media/3o7TKSjRrfIPjeiVyM/giphy.gif",
+      "webp_url": "https://media.giphy.com/media/3o7TKSjRrfIPjeiVyM/giphy.webp",
+      "width": 800,
+      "height": 600,
+      "category": "animation",
+      "tags": ["particle", "effect", "animation"],
+      "rating": "g"
+    },
+    {
+      "id": "sample-animation-2",
+      "title": "Geometric Motion",
+      "url": "https://media.giphy.com/media/l0MYGb8Q5QNhNBuDu/giphy.gif",
+      "webp_url": "https://media.giphy.com/media/l0MYGb8Q5QNhNBuDu/giphy.webp",
+      "width": 800,
+      "height": 600,
+      "category": "animation",
+      "tags": ["geometric", "motion", "abstract"],
+      "rating": "g"
+    },
+    {
+      "id": "sample-animation-3",
+      "title": "Fluid Animation",
+      "url": "https://media.giphy.com/media/26tn4E4DdQn5Wl6WQ/giphy.gif",
+      "webp_url": "https://media.giphy.com/media/26tn4E4DdQn5Wl6WQ/giphy.webp",
+      "width": 800,
+      "height": 600,
+      "category": "animation",
+      "tags": ["fluid", "animation", "smooth"],
+      "rating": "g"
+    }
+  ],
+  "live": [
+    {
+      "id": "sample-live-1",
+      "title": "Live Indicator",
+      "url": "https://media.giphy.com/media/3o7TKF1fSIs1R19B8k/giphy.gif",
+      "webp_url": "https://media.giphy.com/media/3o7TKF1fSIs1R19B8k/giphy.webp",
+      "width": 400,
+      "height": 200,
+      "category": "live",
+      "tags": ["live", "indicator", "streaming"],
+      "rating": "g"
+    },
+    {
+      "id": "sample-live-2",
+      "title": "Stream Alert",
+      "url": "https://media.giphy.com/media/l0MYEqEzwMWFCg8rm/giphy.gif",
+      "webp_url": "https://media.giphy.com/media/l0MYEqEzwMWFCg8rm/giphy.webp",
+      "width": 400,
+      "height": 200,
+      "category": "live",
+      "tags": ["stream", "alert", "notification"],
+      "rating": "g"
+    },
+    {
+      "id": "sample-live-3",
+      "title": "Broadcast Graphics",
+      "url": "https://media.giphy.com/media/26tn4E4DdQn5Wl6WQ/giphy.gif",
+      "webp_url": "https://media.giphy.com/media/26tn4E4DdQn5Wl6WQ/giphy.webp",
+      "width": 400,
+      "height": 200,
+      "category": "live",
+      "tags": ["broadcast", "graphics", "overlay"],
+      "rating": "g"
+    }
+  ]
+}
