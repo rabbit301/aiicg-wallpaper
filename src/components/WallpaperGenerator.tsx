@@ -1,83 +1,135 @@
 'use client';
 
 import { useState } from 'react';
-import { Wand2, Loader2, Monitor, Smartphone, Monitor as Desktop, Tablet, Plus, Sparkles, Eye } from 'lucide-react';
+import { Wand2, Loader2, Monitor, Smartphone, Monitor as Desktop, Tablet, Plus, Sparkles, Eye, Palette } from 'lucide-react';
 import { SCREEN_PRESETS, ScreenPreset } from '@/lib/fal-client';
 import { generateWallpaperEvaluation, generateStarRating, getScoreColorClass } from '@/lib/emotion-evaluator';
 import type { EmotionEvaluation } from '@/lib/emotion-evaluator';
 
-// 预设提示词分类
+// 预设提示词数据库
 const PROMPT_PRESETS = {
   nature: {
     name: '自然风光',
     icon: '🌿',
     prompts: [
-      '夕阳下的紫色薰衣草田，温暖的光线，浪漫唯美',
-      '雪山倒映在平静的湖面上，蓝色调，冷色系',
-      '樱花飞舞的春日，粉色花瓣，温柔梦幻',
-      '深秋森林小径，金黄色叶子，暖色调',
-      '星空下的草原，银河清晰可见，深蓝夜色',
-      '海边日落，橙红色天空，波浪轻柔'
+      '金色黄昏时分的壮丽山景，薄雾缭绕的山谷，戏剧性光影，超现实8K分辨率',
+      '樱花花瓣飘落的宁静日式庭院，柔和粉色光线，空灵氛围，超细节8K画质',
+      '雄伟瀑布从茂密雨林中倾泻而下，翡翠绿植被，戏剧性自然光线',
+      '北极光在雪峰上空舞动，绚烂极光色彩，8K超高清摄影质量',
+      '薰衣草田在夕阳下的紫色海洋，温暖金色光线，浪漫唯美画面',
+      '古老红木森林中的神秘小径，阳光透过树冠，奇幻森林氛围'
     ]
   },
   abstract: {
     name: '抽象艺术',
     icon: '🎨',
     prompts: [
-      '流体艺术，蓝色和紫色渐变，抽象几何',
-      '赛博朋克霓虹线条，粉色和蓝色，未来感',
-      '水彩晕染效果，彩虹色彩，柔和渐变',
-      '几何图形拼接，撞色搭配，现代简约',
-      '粒子效果背景，发光点点，科技感',
-      '大理石纹理，金色线条，奢华质感'
+      '流动的液体金属纹理，彩虹色反射，抽象3D艺术，8K超清质量',
+      '几何形状的梦幻组合，渐变色彩，现代抽象设计，完美对称',
+      '粒子爆炸的能量波纹，霓虹色彩，动态抽象艺术，科幻风格',
+      '水彩颜料在水中扩散，有机流动形态，艺术家级水彩画',
+      '镜面反射的无限空间，光线折射，超现实主义艺术风格',
+      '电子音乐可视化效果，频谱波形，数字艺术，赛博朋克美学'
     ]
   },
   anime: {
     name: '二次元',
-    icon: '🎭',
+    icon: '🎌',
     prompts: [
-      '动漫风格城市夜景，霓虹灯闪烁，日系美学',
-      '可爱的猫咪女孩，粉色头发，清新可爱',
-      '魔法少女变身场景，星光闪闪，梦幻色彩',
-      '日本神社樱花季，和风元素，粉白色调',
-      '赛博朋克机甲少女，未来科技，冷色调',
-      '校园青春场景，蓝天白云，清新明亮'
+      '银发飘逸的美丽动漫少女，详细眼睛和长睫毛，传统和服，樱花背景',
+      '神秘而美丽的女剑士，手持传世宝剑，英雄姿态，日式浮世绘风格',
+      '赛博朋克风格的未来少女，霓虹灯街道，全息显示屏，科幻动漫',
+      '魔法少女变身场景，魔法光效环绕，星空背景，梦幻动漫风格',
+      '温柔可爱的猫耳少女，粉色双马尾，清新可爱，萌系动漫风格',
+      '古风仙女在云端飞舞，飘逸长发，仙气缭绕，中国古典美学'
     ]
   },
   gaming: {
     name: '游戏风格',
     icon: '🎮',
     prompts: [
-      '像素艺术风格，8bit游戏画面，复古怀旧',
-      '魔幻王国城堡，史诗奇幻，金色光芒',
-      '太空战舰驾驶舱，科幻未来，蓝色科技',
-      '中世纪骑士决斗，暗黑风格，红色基调',
-      '赛车竞速场景，速度感，动感模糊',
-      '机甲战斗画面，爆炸效果，动作场面'
+      '闪闪发光的史诗级幻想骑士，传奇宝剑，英雄战斗姿态，魔兽风格',
+      '霓虹小巷中的赛博朋克黑客，未来科技界面，全息显示，雨夜街道',
+      '强化盔甲的太空陆战队，外星战场，等离子武器，光环游戏风格',
+      '蒸汽朋克飞艇船长，黄铜机械装置，维多利亚时代美学，云层背景',
+      '末日废土幸存者，破旧装备，荒凉废土，戏剧性日落，辐射风格',
+      '中世纪城堡攻城战，史诗战斗场面，投石机和战士，戏剧性天空'
     ]
   },
   minimal: {
     name: '极简风格',
     icon: '⚪',
     prompts: [
-      '纯色渐变背景，简约现代，干净清爽',
-      '单一几何图形，黑白配色，极简主义',
-      '柔和色彩渐变，马卡龙色系，温柔清新',
-      '线条艺术，简洁构图，现代设计',
-      '单色调风景，简化元素，意境深远',
-      '几何拼接背景，冷淡色调，现代简约'
+      '极简几何构图，干净线条和形状，柔和渐变背景，完美对称',
+      '单一浮动球体在渐变背景上，完美照明，微妙阴影，陶瓷材质',
+      '抽象山峰轮廓，单色调色板，渐变天空，极简风景设计',
+      '禅意花园中的单块石头，完美沙纹，极简元素，冥想氛围',
+      '悬浮几何水晶，干净工作室照明，单色配色，当代雕塑',
+      '地平线上的孤独大树，极简风景，柔和色彩渐变，艺术摄影'
     ]
   },
   urban: {
     name: '都市生活',
     icon: '🏙️',
     prompts: [
-      '现代城市天际线，夜晚灯火通明，蓝色调',
-      '雨后的街道倒影，霓虹灯光，电影感',
-      '咖啡厅窗边，温暖黄光，生活气息',
-      '地铁站台夜景，现代都市，冷色调',
-      '屋顶花园俯视，城市景观，绿色植物',
-      '繁华商业街，人来人往，生活百态'
+      '银翼杀手风格的城市景观，霓虹灯在湿润街道上反射，赛博朋克',
+      '现代城市黄昏时分的屋顶视角，玻璃摩天大楼，温暖夕阳光线',
+      '温馨咖啡店内景，温暖环境光线，杯中蒸汽，窗外散焦灯光',
+      '夜晚空旷的地铁站台，戏剧性人工照明，都市孤独感，电影风格',
+      '色彩斑斓壁画的街头艺术小巷，都市文化，戏剧性照明效果',
+      '从上往下俯视的繁忙十字路口，车流光轨，都市活力，航拍视角'
+    ]
+  }
+};
+
+// 独立提示词选项
+const INDIVIDUAL_PROMPTS = {
+  lighting: {
+    name: '光影效果',
+    icon: '💡',
+    prompts: [
+      '电影级戏剧性照明',
+      '柔和自然光线',
+      '霓虹灯光效果',
+      '黄金时刻光线',
+      '体积光雾效果',
+      '背光轮廓光'
+    ]
+  },
+  mood: {
+    name: '氛围情绪',
+    icon: '🎭',
+    prompts: [
+      '神秘梦幻氛围',
+      '温馨舒适感觉',
+      '史诗磅礴气势',
+      '宁静禅意境界',
+      '活力动感节奏',
+      '忧郁诗意情调'
+    ]
+  },
+  style: {
+    name: '艺术风格',
+    icon: '🖼️',
+    prompts: [
+      '超现实主义',
+      '印象派画风',
+      '赛博朋克风格',
+      '蒸汽朋克美学',
+      '日式浮世绘',
+      '现代简约风'
+    ]
+  },
+  quality: {
+    name: '画质增强',
+    icon: '⭐',
+    prompts: [
+      '8K超高清画质',
+      '电影级渲染质量',
+      '超细节纹理',
+      '专业摄影水准',
+      '艺术大师级作品',
+      '博物馆展览品质'
     ]
   }
 };
@@ -309,6 +361,42 @@ export default function WallpaperGenerator() {
                     <Plus className="h-4 w-4 text-gray-400 group-hover:text-purple-500 ml-2 mt-0.5 opacity-0 group-hover:opacity-100 transition-all duration-200" />
                   </div>
                 </button>
+              ))}
+            </div>
+          </div>
+
+          {/* 独立提示词选项 */}
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mt-6">
+            <h3 className="text-lg font-bold text-gray-800 dark:text-white mb-4 flex items-center">
+              <Palette className="h-5 w-5 mr-2 text-orange-500" />
+              独立提示词
+            </h3>
+            
+            <div className="space-y-4">
+              {Object.entries(INDIVIDUAL_PROMPTS).map(([key, category]) => (
+                <div key={key} className="border border-gray-200 dark:border-gray-600 rounded-lg p-3">
+                  <div className="flex items-center mb-2">
+                    <span className="text-lg mr-2">{category.icon}</span>
+                    <h4 className="font-medium text-gray-700 dark:text-gray-300 text-sm">
+                      {category.name}
+                    </h4>
+                  </div>
+                  
+                  <div className="flex flex-wrap gap-1">
+                    {category.prompts.map((promptText, index) => (
+                      <button
+                        key={index}
+                        onClick={() => addPromptToInput(promptText)}
+                        className="px-2 py-1 text-xs bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded hover:bg-orange-100 dark:hover:bg-orange-900/30 hover:text-orange-600 dark:hover:text-orange-400 transition-all duration-200 group"
+                      >
+                        <span className="flex items-center">
+                          {promptText}
+                          <Plus className="h-3 w-3 ml-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
               ))}
             </div>
           </div>
