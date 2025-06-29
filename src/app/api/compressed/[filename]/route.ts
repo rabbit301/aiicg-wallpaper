@@ -4,10 +4,10 @@ import fs from 'fs/promises';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { filename: string } }
+  { params }: { params: Promise<{ filename: string }> }
 ) {
   try {
-    const filename = params.filename;
+    const { filename } = await params;
     
     // 验证文件名安全性
     if (!filename || filename.includes('..') || filename.includes('/')) {
@@ -57,7 +57,7 @@ export async function GET(
     }
     
     // 返回图片
-    return new NextResponse(fileBuffer, {
+    return new NextResponse(new Uint8Array(fileBuffer), {
       headers: {
         'Content-Type': contentType,
         'Cache-Control': 'public, max-age=31536000', // 缓存1年

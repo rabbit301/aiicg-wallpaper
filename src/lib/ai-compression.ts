@@ -238,8 +238,17 @@ export class AICompressionService extends CompressionService {
     try {
       console.log('开始下载Cloudinary图片:', cloudinaryUrl);
 
+      // 设置超时控制器
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 45000); // 45秒超时
+
       // 下载图片
-      const response = await fetch(cloudinaryUrl);
+      const response = await fetch(cloudinaryUrl, {
+        signal: controller.signal,
+      });
+      
+      clearTimeout(timeoutId);
+      
       if (!response.ok) {
         throw new Error(`下载失败: ${response.status} ${response.statusText}`);
       }

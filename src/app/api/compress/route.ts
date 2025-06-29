@@ -2,129 +2,47 @@ import { NextRequest, NextResponse } from 'next/server';
 import { CompressionServiceFactory } from '@/lib/compression-service';
 import { validateImageFile, getPresetOptions, mergeCompressionOptions } from '@/lib/compression-utils';
 import type { CompressionPreset } from '@/lib/compression-utils';
+import { AICompressionService } from '@/lib/ai-compression';
+import { FreeCompressionService } from '@/lib/free-compression';
 
-export async function POST(request: NextRequest) {
+export async function POST(request: Request) {
   try {
     const formData = await request.formData();
     const file = formData.get('file') as File;
-    const version = formData.get('version') as 'free' | 'ai' || 'free';
     const preset = formData.get('preset') as CompressionPreset || 'balanced';
-    const customOptions = formData.get('options');
-    
-    // 验证文件
+
     if (!file) {
-      return NextResponse.json(
-        { success: false, error: '请选择要压缩的图片文件' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: '未选择文件' }, { status: 400 });
     }
-    
-    // 检查AI版本权限
-    if (version === 'ai') {
-      const hasAIAccess = await checkAIAccess(request);
-      if (!hasAIAccess) {
-        return NextResponse.json(
-          { success: false, error: 'AI压缩功能需要付费订阅' },
-          { status: 403 }
-        );
-      }
-    }
-    
+
     // 转换文件为Buffer
     const buffer = Buffer.from(await file.arrayBuffer());
-    
-    // 验证图片文件
-    const validation = validateImageFile(buffer);
-    if (!validation.isValid) {
-      return NextResponse.json(
-        { success: false, error: validation.error },
-        { status: 400 }
-      );
-    }
-    
-    // 获取压缩选项
-    let options = getPresetOptions(preset);
-    
-    // 合并自定义选项
-    if (customOptions) {
-      try {
-        const parsed = JSON.parse(customOptions as string);
-        options = mergeCompressionOptions(options, parsed);
 
-        // 圆形屏幕特殊处理
-        if (parsed.cropToCircle) {
-          options.smartCrop = true; // AI版启用智能裁剪
-          options.cropToCircle = true; // 标记为圆形裁剪
-          options.waterCoolingOptimization = true; // 启用水冷优化
-        }
-      } catch (error) {
-        console.warn('解析自定义选项失败:', error);
-      }
-    }
-
-    // 水冷屏幕优化
-    if (preset === 'water_cooling_360' || preset === 'water_cooling_round') {
-      options.waterCoolingOptimization = true;
-    }
-
-    // 创建压缩服务
-    const compressionService = await CompressionServiceFactory.createService(version);
-
-    // 检查AI版本是否可用
-    if (version === 'ai') {
-      const aiService = compressionService as any;
-      if (aiService.isAvailable && !aiService.isAvailable()) {
-        return NextResponse.json(
-          {
-            success: false,
-            error: 'AI压缩服务暂时不可用，请检查Cloudinary API配置或使用免费版压缩'
-          },
-          { status: 503 }
-        );
-      }
-    }
-
-    // 执行压缩
-    const result = await compressionService.compressImage(
-      buffer,
-      file.name,
-      options
-    );
+    // 直接使用普通压缩算法（暂时屏蔽AI压缩）
+    const freeService = new FreeCompressionService();
+    const compressionOptions = {
+      quality: parseInt(formData.get('quality') as string) || undefined,
+      width: parseInt(formData.get('width') as string) || undefined,
+      height: parseInt(formData.get('height') as string) || undefined,
+      format: formData.get('format') as 'webp' | 'jpeg' | 'png' || undefined,
+      cropToCircle: formData.get('cropToCircle') === 'true',
+      preserveAspectRatio: false, // 水冷屏幕需要精确尺寸
+    };
     
-    if (!result.success) {
-      return NextResponse.json(
-        { success: false, error: result.error },
-        { status: 500 }
-      );
+    console.log('使用普通压缩算法，参数:', compressionOptions);
+    
+    const result = await freeService.compressImage(buffer, file.name, compressionOptions);
+    
+    if (result.success) {
+      return NextResponse.json(result);
+    } else {
+      throw new Error(result.error || '压缩失败');
     }
-    
-    // 记录使用统计（AI版本）
-    if (version === 'ai') {
-      await recordAIUsage(request, result);
-    }
-    
-    return NextResponse.json({
-      success: true,
-      result: {
-        originalSize: result.originalSize,
-        compressedSize: result.compressedSize,
-        compressionRatio: result.compressionRatio,
-        outputUrl: result.outputUrl,
-        format: result.format,
-        width: result.width,
-        height: result.height,
-        processingTime: result.processingTime,
-        version,
-        preset,
-      },
-    });
-    
   } catch (error) {
     console.error('压缩失败:', error);
-    return NextResponse.json(
-      { success: false, error: '服务器内部错误' },
-      { status: 500 }
-    );
+    return NextResponse.json({ 
+      error: error instanceof Error ? error.message : '压缩失败' 
+    }, { status: 500 });
   }
 }
 

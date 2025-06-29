@@ -8,7 +8,7 @@ export interface CompressionOptions {
   width?: number;
   height?: number;
   quality?: number;
-  format?: 'png' | 'jpg' | 'webp' | 'avif' | 'gif';
+  format?: 'png' | 'jpg' | 'jpeg' | 'webp' | 'avif' | 'gif';
   
   // 高级选项
   preserveAspectRatio?: boolean;

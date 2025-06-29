@@ -18,7 +18,17 @@ export async function GET(request: NextRequest) {
       'media.giphy.com',
       'images.pexels.com',
       'picsum.photos',
-      'source.unsplash.com'
+      'source.unsplash.com',
+      // 压缩服务域名
+      'res.cloudinary.com',
+      'cloudinary.com',
+      // 本地开发
+      'localhost',
+      '127.0.0.1',
+      // 其他常见图片CDN
+      'cdn.jsdelivr.net',
+      'unpkg.com',
+      'i.imgur.com'
     ];
 
     const urlObject = new URL(imageUrl);
