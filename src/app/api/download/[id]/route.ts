@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { DataStore } from '@/lib/data-store';
+import { userStore } from '@/lib/user-store';
 
 export async function POST(
   request: NextRequest,
@@ -20,6 +21,17 @@ export async function POST(
 
     // 更新下载次数
     await dataStore.updateWallpaperDownloads(id);
+
+    // 记录用户活动
+    await userStore.addUserActivity({
+      type: 'download',
+      title: wallpaper.title,
+      details: {
+        wallpaperId: id,
+        imageSize: `${wallpaper.width}x${wallpaper.height}`,
+        format: wallpaper.format
+      }
+    });
 
     return NextResponse.json({
       success: true,

@@ -1,0 +1,14 @@
+[
+  {
+    "type": "generate",
+    "title": "未命名壁纸",
+    "details": {
+      "preset": "desktop_fhd",
+      "originalPrompt": "电子音乐可视化效果，频谱波形，数字艺术，赛博朋克美学, 日式浮世绘",
+      "enhancedPrompt": "electronic music visualization, spectrum waveform, digital art, cyberpunk aesthetic, 日式浮世绘",
+      "imageSize": "1024x576"
+    },
+    "id": "1751218276580",
+    "timestamp": "2025-06-29T17:31:16.580Z"
+  }
+]

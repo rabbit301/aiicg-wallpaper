@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { generateImage, SCREEN_PRESETS, ScreenPreset } from '@/lib/fal-client';
 import { DataStore } from '@/lib/data-store';
+import { userStore } from '@/lib/user-store';
 import { Wallpaper } from '@/types';
 import { nanoid } from 'nanoid';
 import { translatePrompt, enhanceEnglishPrompt } from '@/lib/prompt-translator';
@@ -107,6 +108,18 @@ export async function POST(request: NextRequest) {
     };
 
     await dataStore.saveWallpaper(wallpaper);
+
+    // 记录用户活动
+    await userStore.addUserActivity({
+      type: 'generate',
+      title: wallpaper.title,
+      details: {
+        preset,
+        originalPrompt: prompt,
+        enhancedPrompt,
+        imageSize: `${wallpaper.width}x${wallpaper.height}`
+      }
+    });
 
     // 在返回结果中包含详细时间信息和翻译信息
     const response = {

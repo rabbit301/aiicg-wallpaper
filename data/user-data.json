@@ -1,0 +1,18 @@
+{
+  "id": "demo-user",
+  "username": "rabbitc",
+  "email": "demo@aiicg.com",
+  "avatar": "https://v3.fal.media/files/penguin/HlLFXofFHsTlMvFYjHwmo.png",
+  "bio": "欢迎来到AIICG壁纸站！",
+  "joinedAt": "2024-01-01",
+  "isVip": true,
+  "language": "en",
+  "timezone": "Asia/Shanghai",
+  "privacySettings": {
+    "saveGeneratedImages": false,
+    "saveCompressedImages": false,
+    "showInHomepage": false,
+    "maxHomepageImages": 6,
+    "allowPublicView": true
+  }
+}

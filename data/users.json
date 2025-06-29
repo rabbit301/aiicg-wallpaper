@@ -1,0 +1,26 @@
+[
+  {
+    "id": "_6WUFhHPKelJ1QDTYJtAZ",
+    "username": "rabbitc",
+    "email": "ranerhash@gmail.com",
+    "password": "Wxh736533?",
+    "avatar": "/avatars/presets/avatar-2.svg",
+    "joinedAt": "2025-06-29T17:44:47.639Z",
+    "isVip": false,
+    "language": "zh-CN",
+    "timezone": "Asia/Shanghai",
+    "privacySettings": {
+      "saveGeneratedImages": true,
+      "saveCompressedImages": false,
+      "showInHomepage": true,
+      "maxHomepageImages": 6,
+      "allowPublicView": true
+    },
+    "favorites": [],
+    "usageStats": {
+      "generateCount": 0,
+      "compressCount": 0,
+      "downloadCount": 0
+    }
+  }
+]

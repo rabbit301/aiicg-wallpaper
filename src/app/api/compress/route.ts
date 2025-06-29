@@ -4,6 +4,7 @@ import { validateImageFile, getPresetOptions, mergeCompressionOptions } from '@/
 import type { CompressionPreset } from '@/lib/compression-utils';
 import { AICompressionService } from '@/lib/ai-compression';
 import { FreeCompressionService } from '@/lib/free-compression';
+import { userStore } from '@/lib/user-store';
 
 export async function POST(request: Request) {
   try {
@@ -34,6 +35,19 @@ export async function POST(request: Request) {
     const result = await freeService.compressImage(buffer, file.name, compressionOptions);
     
     if (result.success) {
+      // 记录用户活动
+      await userStore.addUserActivity({
+        type: 'compress',
+        title: `压缩图片: ${file.name}`,
+        details: {
+          originalSize: result.originalSize,
+          compressedSize: result.compressedSize,
+          compressionRatio: result.compressionRatio,
+          format: result.format,
+          processingTime: result.processingTime
+        }
+      });
+      
       return NextResponse.json(result);
     } else {
       throw new Error(result.error || '压缩失败');
