@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { User, Image, Play, Radio, Download, Heart, Share2, Grid3X3, List, Filter, Eye, Tag, Clock, Star, TrendingUp } from 'lucide-react';
+import { User, Image, Play, Radio, Download, Heart, Share2, Grid3X3, List, Filter, Eye, Tag, Clock, Star, TrendingUp, X } from 'lucide-react';
 import Link from 'next/link';
 
 interface UnifiedWallpaperImage {
@@ -121,6 +121,7 @@ export default function CategoryDetailView({ category }: CategoryDetailViewProps
   const [sortBy, setSortBy] = useState('latest');
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(20);
+  const [selectedImage, setSelectedImage] = useState<UnifiedWallpaperImage | null>(null);
 
   const config = categoryConfig[category as keyof typeof categoryConfig];
 
@@ -235,9 +236,9 @@ export default function CategoryDetailView({ category }: CategoryDetailViewProps
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="flex gap-8">
+        <div className="flex gap-6">
           {/* 侧边栏 */}
-          <div className="w-80 flex-shrink-0">
+          <div className="w-48 flex-shrink-0">
             <div className="bg-white dark:bg-neutral-800 rounded-xl shadow-sm p-6 space-y-6">
               {/* 子分类 */}
               <div>
@@ -379,14 +380,10 @@ export default function CategoryDetailView({ category }: CategoryDetailViewProps
 
             {/* 内容区域 */}
             {loading ? (
-              <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                {Array.from({ length: 12 }).map((_, index) => (
-                  <div key={index} className="bg-white dark:bg-neutral-800 rounded-xl overflow-hidden animate-pulse">
-                    <div className="aspect-square bg-neutral-200 dark:bg-neutral-700"></div>
-                    <div className="p-4 space-y-2">
-                      <div className="h-4 bg-neutral-200 dark:bg-neutral-700 rounded"></div>
-                      <div className="h-3 bg-neutral-200 dark:bg-neutral-700 rounded w-2/3"></div>
-                    </div>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                {Array.from({ length: 6 }).map((_, index) => (
+                  <div key={index} className="bg-white dark:bg-neutral-800 rounded-2xl overflow-hidden animate-pulse">
+                    <div className="aspect-[4/3] bg-neutral-200 dark:bg-neutral-700"></div>
                   </div>
                 ))}
               </div>
@@ -414,59 +411,78 @@ export default function CategoryDetailView({ category }: CategoryDetailViewProps
             ) : (
               <div className={
                 viewMode === 'grid'
-                  ? "grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6"
-                  : "space-y-4"
+                  ? "grid grid-cols-1 lg:grid-cols-2 gap-8"
+                  : "space-y-6"
               }>
                 {images.map((image) => (
                   <div key={image.id} className={
                     viewMode === 'grid'
-                      ? "group bg-white dark:bg-neutral-800 rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-200"
-                      : "flex bg-white dark:bg-neutral-800 rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-200"
-                  }>
-                    <div className={viewMode === 'grid' ? "relative aspect-square overflow-hidden" : "relative w-48 h-32 overflow-hidden flex-shrink-0"}>
+                      ? "group bg-white dark:bg-neutral-800 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 cursor-pointer"
+                      : "flex bg-white dark:bg-neutral-800 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer"
+                  }
+                  onClick={() => setSelectedImage(image)}
+                  >
+                    <div className={viewMode === 'grid' ? "relative aspect-[4/3] overflow-hidden" : "relative w-64 h-40 overflow-hidden flex-shrink-0"}>
                       <img
-                        src={image.thumbnail || image.url}
+                        src={
+                          // 优先显示gif动图，确保动画效果
+                          image.type === 'gif' || image.url.includes('.gif') 
+                            ? image.url 
+                            : image.thumbnail || image.url
+                        }
                         alt={image.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
-                        onError={handleImageError}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          // gif加载失败时的智能fallback
+                          if (target.src === image.url && image.thumbnail && image.thumbnail !== image.url) {
+                            target.src = image.thumbnail;
+                          } else {
+                            handleImageError(e);
+                          }
+                        }}
                         loading="lazy"
                       />
-                      <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all duration-200 flex items-center justify-center opacity-0 group-hover:opacity-100">
-                        <div className="flex space-x-2">
+                      <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-60 transition-all duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
+                        <div className="flex space-x-3">
                           <button
-                            onClick={() => handleDownload(image)}
-                            className="p-2 bg-white rounded-lg text-neutral-900 hover:bg-neutral-100 transition-colors duration-200"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setSelectedImage(image);
+                            }}
+                            className="p-3 bg-white bg-opacity-90 rounded-full text-neutral-900 hover:bg-opacity-100 transform hover:scale-110 transition-all duration-200 shadow-lg"
+                            title="预览"
+                          >
+                            <Eye className="h-5 w-5" />
+                          </button>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDownload(image);
+                            }}
+                            className="p-3 bg-white bg-opacity-90 rounded-full text-neutral-900 hover:bg-opacity-100 transform hover:scale-110 transition-all duration-200 shadow-lg"
                             title="下载"
                           >
-                            <Download className="h-4 w-4" />
+                            <Download className="h-5 w-5" />
                           </button>
-                          <button className="p-2 bg-white rounded-lg text-neutral-900 hover:bg-neutral-100 transition-colors duration-200">
-                            <Heart className="h-4 w-4" />
-                          </button>
-                          <button className="p-2 bg-white rounded-lg text-neutral-900 hover:bg-neutral-100 transition-colors duration-200">
-                            <Share2 className="h-4 w-4" />
+                          <button 
+                            onClick={(e) => e.stopPropagation()}
+                            className="p-3 bg-white bg-opacity-90 rounded-full text-neutral-900 hover:bg-opacity-100 transform hover:scale-110 transition-all duration-200 shadow-lg"
+                          >
+                            <Heart className="h-5 w-5" />
                           </button>
                         </div>
                       </div>
-                    </div>
-                    
-                    <div className={viewMode === 'grid' ? "p-4" : "flex-1 p-4"}>
-                      <h3 className="font-medium text-neutral-900 dark:text-white mb-1 truncate">
-                        {image.title || '无标题'}
-                      </h3>
-                      <div className="flex flex-wrap gap-1 mb-2">
-                        {image.tags.slice(0, 3).map((tag, index) => (
-                          <span
-                            key={index}
-                            className="inline-flex items-center px-2 py-1 text-xs bg-neutral-100 dark:bg-neutral-700 text-neutral-600 dark:text-neutral-400 rounded"
-                          >
-                            <Tag className="h-3 w-3 mr-1" />
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
-                      <div className="text-xs text-neutral-500 dark:text-neutral-400">
-                        {image.width} × {image.height}
+                      
+                      {/* 悬停信息展示 */}
+                      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/70 to-transparent p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <h3 className="font-semibold text-white mb-1 truncate">
+                          {image.title || '精美壁纸'}
+                        </h3>
+                        <div className="flex items-center justify-between text-sm text-white/80">
+                          <span>{image.width} × {image.height}</span>
+                          <span className="capitalize">{image.type}</span>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -501,6 +517,60 @@ export default function CategoryDetailView({ category }: CategoryDetailViewProps
           </div>
         </div>
       </div>
+
+      {/* 预览模态框 */}
+      {selectedImage && (
+        <div className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center p-4" onClick={() => setSelectedImage(null)}>
+          <div className="relative max-w-7xl max-h-full" onClick={(e) => e.stopPropagation()}>
+            <img
+              src={selectedImage.url}
+              alt={selectedImage.title}
+              className="max-w-full max-h-full object-contain rounded-lg"
+              onError={handleImageError}
+            />
+            
+            {/* 关闭按钮 */}
+            <button
+              onClick={() => setSelectedImage(null)}
+              className="absolute top-4 right-4 p-2 bg-black bg-opacity-50 text-white rounded-full hover:bg-opacity-70 transition-all duration-200"
+            >
+              <X className="h-6 w-6" />
+            </button>
+            
+            {/* 下载按钮 */}
+            <button
+              onClick={() => handleDownload(selectedImage)}
+              className="absolute bottom-4 right-4 p-3 bg-white bg-opacity-90 text-neutral-900 rounded-full hover:bg-opacity-100 transition-all duration-200 shadow-lg"
+              title="下载"
+            >
+              <Download className="h-6 w-6" />
+            </button>
+            
+            {/* 图片信息 */}
+            <div className="absolute bottom-4 left-4 bg-black bg-opacity-70 text-white p-4 rounded-lg max-w-md">
+              <h3 className="font-semibold mb-2">{selectedImage.title || '精美壁纸'}</h3>
+              <div className="grid grid-cols-2 gap-4 text-sm">
+                <div>
+                  <span className="text-white/70">尺寸：</span>
+                  <span>{selectedImage.width} × {selectedImage.height}</span>
+                </div>
+                <div>
+                  <span className="text-white/70">格式：</span>
+                  <span className="capitalize">{selectedImage.type}</span>
+                </div>
+                <div>
+                  <span className="text-white/70">来源：</span>
+                  <span>{selectedImage.source}</span>
+                </div>
+                <div>
+                  <span className="text-white/70">作者：</span>
+                  <span>{selectedImage.author || '未知'}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
