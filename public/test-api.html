@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API测试页面</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; }
+        .result { background: #f5f5f5; padding: 10px; margin: 10px 0; }
+        .error { background: #ffe6e6; color: #d00; }
+        .success { background: #e6ffe6; color: #060; }
+        img { max-width: 200px; margin: 5px; }
+    </style>
+</head>
+<body>
+    <h1>AIICG壁纸站 API 测试</h1>
+    
+    <div class="test-section">
+        <h2>测试壁纸API</h2>
+        <button onclick="testWallpaperAPI()">测试壁纸数据</button>
+        <div id="wallpaper-result" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>测试图片显示</h2>
+        <button onclick="testImageDisplay()">显示壁纸图片</button>
+        <div id="image-result" class="result"></div>
+    </div>
+
+    <script>
+        async function testWallpaperAPI() {
+            const resultDiv = document.getElementById('wallpaper-result');
+            try {
+                resultDiv.innerHTML = '正在测试API...';
+                
+                const response = await fetch('/api/giphy-content?category=wallpaper&limit=5');
+                const data = await response.json();
+                
+                if (data.success) {
+                    resultDiv.className = 'result success';
+                    resultDiv.innerHTML = `
+                        <h3>API测试成功！</h3>
+                        <p>分类: ${data.category}</p>
+                        <p>总数: ${data.total}</p>
+                        <p>返回: ${data.data.length} 张图片</p>
+                        <h4>图片列表:</h4>
+                        <ul>
+                            ${data.data.map(img => `<li>${img.title} (${img.width}x${img.height})</li>`).join('')}
+                        </ul>
+                    `;
+                } else {
+                    resultDiv.className = 'result error';
+                    resultDiv.innerHTML = `API返回错误: ${data.error}`;
+                }
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.innerHTML = `测试失败: ${error.message}`;
+            }
+        }
+
+        async function testImageDisplay() {
+            const resultDiv = document.getElementById('image-result');
+            try {
+                resultDiv.innerHTML = '正在加载图片...';
+                
+                const response = await fetch('/api/giphy-content?category=wallpaper&limit=3');
+                const data = await response.json();
+                
+                if (data.success && data.data.length > 0) {
+                    resultDiv.className = 'result success';
+                    resultDiv.innerHTML = `
+                        <h3>图片显示测试:</h3>
+                        ${data.data.map(img => `
+                            <div style="margin: 10px 0; border: 1px solid #ccc; padding: 10px;">
+                                <h4>${img.title}</h4>
+                                <p>尺寸: ${img.width}x${img.height} | 来源: ${img.source}</p>
+                                <img src="${img.thumbnail}" alt="${img.title}" 
+                                     style="max-width: 200px; display: block; margin: 5px 0;"
+                                     onerror="this.style.border='2px solid red'; this.alt='图片加载失败';">
+                                <small>缩略图URL: ${img.thumbnail}</small>
+                            </div>
+                        `).join('')}
+                    `;
+                } else {
+                    resultDiv.className = 'result error';
+                    resultDiv.innerHTML = '没有找到图片数据';
+                }
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.innerHTML = `图片加载失败: ${error.message}`;
+            }
+        }
+    </script>
+</body>
+</html> 

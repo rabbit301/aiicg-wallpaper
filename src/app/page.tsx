@@ -1,5 +1,6 @@
 import Layout from '@/components/Layout';
 import CategoryGallery from '@/components/CategoryGallery';
+import WallpaperGallery from '@/components/WallpaperGallery';
 import { Sparkles, Wand2, Image, TrendingUp } from 'lucide-react';
 import Link from 'next/link';
 
@@ -113,6 +114,35 @@ export default function Home() {
                 针对不同设备和用途进行专业优化，包括水冷屏幕、手机、桌面等多种场景。
               </p>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Latest Generated Wallpapers Section */}
+      <section className="py-20 bg-neutral-50 dark:bg-neutral-900">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-neutral-900 dark:text-white mb-4">
+              最新AI生成作品
+            </h2>
+            <p className="text-xl text-neutral-600 dark:text-neutral-400 max-w-2xl mx-auto">
+              发现其他用户创作的精彩壁纸，获取灵感或直接下载使用
+            </p>
+          </div>
+          
+          {/* 显示最新的6张壁纸 */}
+          <div className="max-w-6xl mx-auto">
+            <WallpaperGallery />
+          </div>
+
+          <div className="text-center mt-8">
+            <Link
+              href="/generate"
+              className="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white font-medium rounded-lg hover:from-purple-700 hover:to-blue-700 transition-all duration-200"
+            >
+              <Wand2 className="h-5 w-5 mr-2" />
+              立即创作您的专属壁纸
+            </Link>
           </div>
         </div>
       </section>

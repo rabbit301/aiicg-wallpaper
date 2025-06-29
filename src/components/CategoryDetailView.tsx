@@ -1,20 +1,23 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { User, Image, Play, Radio, Download, Heart, Share2, Grid3X3, List, Filter } from 'lucide-react';
+import { User, Image, Play, Radio, Download, Heart, Share2, Grid3X3, List, Filter, Eye, Tag, Clock, Star, TrendingUp } from 'lucide-react';
 import Link from 'next/link';
 
-interface GiphyImage {
+interface UnifiedWallpaperImage {
   id: string;
   title: string;
   url: string;
-  webp_url: string;
-  mp4_url?: string;
+  thumbnail: string;
   width: number;
   height: number;
   category: 'avatar' | 'wallpaper' | 'animation' | 'live';
   tags: string[];
-  rating: string;
+  source: string;
+  license: string;
+  author?: string;
+  downloadUrl: string;
+  type: 'gif' | 'photo' | 'video';
 }
 
 interface CategoryDetailViewProps {
@@ -28,89 +31,171 @@ const categoryConfig = {
     description: '个性头像和角色形象，展现独特的个人风格',
     color: 'from-primary-500 to-primary-600',
     bgColor: 'from-primary-50 to-primary-100 dark:from-primary-900/20 dark:to-primary-800/20',
+    subcategories: [
+      { id: 'anime', name: '动漫头像', icon: '🎭', count: 156 },
+      { id: 'cute', name: '可爱头像', icon: '🥰', count: 89 },
+      { id: 'kawaii', name: 'Kawaii风格', icon: '💖', count: 67 },
+      { id: 'chibi', name: 'Q版头像', icon: '😊', count: 45 },
+      { id: 'cartoon', name: '卡通头像', icon: '🎨', count: 78 }
+    ],
+    filters: [
+      { id: 'style', name: '风格', options: ['可爱', '酷炫', '简约', '复古'] },
+      { id: 'color', name: '色彩', options: ['彩色', '黑白', '渐变', '单色'] },
+      { id: 'emotion', name: '情感', options: ['开心', '酷炫', '温暖', '神秘'] }
+    ]
   },
   wallpaper: {
     name: '壁纸',
     icon: Image,
-    description: '精美背景和壁纸，为您的设备增添美感',
+    description: '高质量壁纸，适配各种设备屏幕',
     color: 'from-secondary-500 to-secondary-600',
     bgColor: 'from-secondary-50 to-secondary-100 dark:from-secondary-900/20 dark:to-secondary-800/20',
+    subcategories: [
+      { id: 'landscape', name: '风景壁纸', icon: '🏔️', count: 234 },
+      { id: 'abstract', name: '抽象艺术', icon: '🎨', count: 178 },
+      { id: 'space', name: '太空宇宙', icon: '🌌', count: 145 },
+      { id: 'urban', name: '城市风光', icon: '🏙️', count: 167 },
+      { id: 'nature', name: '自然风光', icon: '🌿', count: 203 },
+      { id: 'minimal', name: '简约风格', icon: '⚪', count: 124 }
+    ],
+    filters: [
+      { id: 'resolution', name: '分辨率', options: ['4K', '2K', '1080p', '720p'] },
+      { id: 'orientation', name: '方向', options: ['横向', '竖向', '正方形'] },
+      { id: 'color_scheme', name: '色调', options: ['暖色调', '冷色调', '中性色', '高对比'] }
+    ]
   },
   animation: {
     name: '动画',
     icon: Play,
-    description: '创意动画和特效，带来生动的视觉体验',
+    description: '动态效果和动画资源，为内容增添活力',
     color: 'from-accent-500 to-accent-600',
     bgColor: 'from-accent-50 to-accent-100 dark:from-accent-900/20 dark:to-accent-800/20',
+    subcategories: [
+      { id: 'particle', name: '粒子动画', icon: '✨', count: 67 },
+      { id: 'geometric', name: '几何动画', icon: '🔷', count: 54 },
+      { id: 'fluid', name: '流体动画', icon: '🌊', count: 43 },
+      { id: 'abstract', name: '抽象动画', icon: '🎭', count: 38 },
+      { id: 'motion', name: '运动图形', icon: '🔄', count: 52 }
+    ],
+    filters: [
+      { id: 'duration', name: '时长', options: ['短循环', '中等', '长循环'] },
+      { id: 'speed', name: '速度', options: ['慢速', '正常', '快速'] },
+      { id: 'complexity', name: '复杂度', options: ['简单', '中等', '复杂'] }
+    ]
   },
   live: {
     name: '直播',
     icon: Radio,
-    description: '直播元素和装饰，提升直播间的视觉效果',
-    color: 'from-success-500 to-success-600',
-    bgColor: 'from-success-50 to-success-100 dark:from-success-900/20 dark:to-success-800/20',
+    description: '直播相关的素材和动画效果',
+    color: 'from-error-500 to-error-600',
+    bgColor: 'from-error-50 to-error-100 dark:from-error-900/20 dark:to-error-800/20',
+    subcategories: [
+      { id: 'streaming', name: '直播指示器', icon: '🔴', count: 23 },
+      { id: 'alert', name: '提醒动画', icon: '🚨', count: 19 },
+      { id: 'overlay', name: '叠加层', icon: '📺', count: 31 },
+      { id: 'graphics', name: '直播图形', icon: '🎬', count: 27 },
+      { id: 'transition', name: '转场效果', icon: '🔄', count: 15 }
+    ],
+    filters: [
+      { id: 'platform', name: '平台', options: ['Twitch', 'YouTube', '抖音', '通用'] },
+      { id: 'style', name: '风格', options: ['专业', '趣味', '简约', '华丽'] },
+      { id: 'color', name: '颜色', options: ['红色', '蓝色', '绿色', '彩虹'] }
+    ]
   }
 };
 
+const sortOptions = [
+  { id: 'latest', name: '最新上传', icon: Clock },
+  { id: 'popular', name: '最受欢迎', icon: TrendingUp },
+  { id: 'downloads', name: '下载最多', icon: Download },
+  { id: 'rating', name: '评分最高', icon: Star }
+];
+
 export default function CategoryDetailView({ category }: CategoryDetailViewProps) {
-  const [images, setImages] = useState<GiphyImage[]>([]);
+  const [images, setImages] = useState<UnifiedWallpaperImage[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-  const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
+  const [selectedSubcategory, setSelectedSubcategory] = useState<string>('all');
+  const [selectedFilters, setSelectedFilters] = useState<Record<string, string>>({});
+  const [sortBy, setSortBy] = useState('latest');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(20);
 
   const config = categoryConfig[category as keyof typeof categoryConfig];
 
   useEffect(() => {
     fetchImages();
-  }, [category]);
+  }, [category, selectedSubcategory, selectedFilters, sortBy, currentPage]);
 
-  const fetchImages = async (pageNum: number = 1) => {
+  const fetchImages = async () => {
     try {
-      setLoading(pageNum === 1);
-      const limit = 20;
-      const offset = (pageNum - 1) * limit;
+      setLoading(true);
+      setError(null);
       
-      const response = await fetch(`/api/giphy-content?category=${category}&limit=${limit}&offset=${offset}`);
+      const params = new URLSearchParams({
+        category,
+        limit: itemsPerPage.toString(),
+        offset: ((currentPage - 1) * itemsPerPage).toString()
+      });
+
+      if (selectedSubcategory !== 'all') {
+        params.append('subcategory', selectedSubcategory);
+      }
+
+      Object.entries(selectedFilters).forEach(([key, value]) => {
+        if (value) params.append(key, value);
+      });
+
+      if (sortBy !== 'latest') {
+        params.append('sort', sortBy);
+      }
+
+      const response = await fetch(`/api/giphy-content?${params}`);
+      if (!response.ok) {
+        throw new Error('获取图片失败');
+      }
+
       const data = await response.json();
-      
       if (data.success) {
-        if (pageNum === 1) {
-          setImages(data.data);
-        } else {
-          setImages(prev => [...prev, ...data.data]);
-        }
-        setHasMore(data.hasMore);
+        setImages(data.data || []);
       } else {
-        setError(data.error || '获取数据失败');
+        throw new Error(data.error || '获取数据失败');
       }
     } catch (err) {
-      setError('网络错误');
-      console.error('获取图片数据失败:', err);
+      setError(err instanceof Error ? err.message : '加载失败');
     } finally {
       setLoading(false);
     }
   };
 
-  const loadMore = () => {
-    const nextPage = page + 1;
-    setPage(nextPage);
-    fetchImages(nextPage);
+  const handleFilterChange = (filterId: string, value: string) => {
+    setSelectedFilters(prev => ({
+      ...prev,
+      [filterId]: prev[filterId] === value ? '' : value
+    }));
+    setCurrentPage(1); // 重置到第一页
   };
 
-  const downloadImage = async (image: GiphyImage) => {
+  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
+    const target = e.target as HTMLImageElement;
+    target.style.display = 'none';
+  };
+
+  const handleDownload = async (image: UnifiedWallpaperImage) => {
     try {
-      const response = await fetch(image.webp_url);
+      const response = await fetch(`/api/download-proxy?url=${encodeURIComponent(image.url)}`);
+      if (!response.ok) throw new Error('下载失败');
+      
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `${image.title || 'image'}-${image.id}.webp`;
+      a.download = `${image.title || 'image'}.${image.type === 'gif' ? 'gif' : 'jpg'}`;
       document.body.appendChild(a);
       a.click();
-      window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
     } catch (error) {
       console.error('下载失败:', error);
     }
@@ -118,191 +203,240 @@ export default function CategoryDetailView({ category }: CategoryDetailViewProps
 
   if (!config) {
     return (
-      <div className="py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-2xl font-bold text-neutral-900 dark:text-white">
-            分类不存在
-          </h1>
-          <Link href="/" className="text-primary-600 hover:text-primary-700 mt-4 inline-block">
-            返回首页
-          </Link>
-        </div>
+      <div className="text-center py-12">
+        <h1 className="text-2xl font-bold text-neutral-900 dark:text-white">
+          分类未找到
+        </h1>
       </div>
     );
   }
 
-  const Icon = config.icon;
+  const IconComponent = config.icon;
 
   return (
-    <div className="min-h-screen flex">
-      {/* Left Sidebar */}
-      <div className="w-64 bg-white dark:bg-neutral-900 border-r border-neutral-200 dark:border-neutral-800 flex-shrink-0">
-        <div className="p-6">
-          {/* Category Icon and Title */}
-          <div className="text-center mb-8">
-            <div className={`w-16 h-16 bg-gradient-to-br ${config.color} rounded-2xl flex items-center justify-center mx-auto mb-4`}>
-              <Icon className="h-8 w-8 text-white" />
+    <div className="min-h-screen bg-neutral-50 dark:bg-neutral-900">
+      {/* 页面头部 */}
+      <div className={`bg-gradient-to-r ${config.bgColor} border-b dark:border-neutral-800`}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="flex items-center space-x-4 mb-4">
+            <div className={`p-3 rounded-xl bg-gradient-to-r ${config.color} text-white`}>
+              <IconComponent className="h-8 w-8" />
             </div>
-            <h1 className="text-2xl font-bold text-neutral-900 dark:text-white mb-2">
-              {config.name}
-            </h1>
-            <p className="text-sm text-neutral-600 dark:text-neutral-400">
-              {config.description}
-            </p>
-          </div>
-
-          {/* Stats */}
-          <div className="space-y-4 mb-8">
-            <div className="bg-neutral-50 dark:bg-neutral-800 rounded-lg p-4 text-center">
-              <div className="text-2xl font-bold text-neutral-900 dark:text-white">
-                {images.length}+
-              </div>
-              <div className="text-neutral-600 dark:text-neutral-400 text-sm">
-                内容数量
-              </div>
+            <div>
+              <h1 className="text-3xl font-bold text-neutral-900 dark:text-white">
+                {config.name}
+              </h1>
+              <p className="text-neutral-600 dark:text-neutral-400 mt-1">
+                {config.description}
+              </p>
             </div>
-            <div className="bg-neutral-50 dark:bg-neutral-800 rounded-lg p-4 text-center">
-              <div className="text-lg font-bold text-success-600">
-                高清
-              </div>
-              <div className="text-neutral-600 dark:text-neutral-400 text-sm">
-                画质保证
-              </div>
-            </div>
-            <div className="bg-neutral-50 dark:bg-neutral-800 rounded-lg p-4 text-center">
-              <div className="text-lg font-bold text-primary-600">
-                免费
-              </div>
-              <div className="text-neutral-600 dark:text-neutral-400 text-sm">
-                下载使用
-              </div>
-            </div>
-          </div>
-
-          {/* View Mode Toggle */}
-          <div className="mb-6">
-            <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-3">
-              显示模式
-            </label>
-            <div className="flex space-x-2">
-              <button
-                onClick={() => setViewMode('grid')}
-                className={`flex-1 p-2 rounded-lg transition-colors duration-200 ${
-                  viewMode === 'grid'
-                    ? 'bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300'
-                    : 'text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800'
-                }`}
-              >
-                <Grid3X3 className="h-5 w-5 mx-auto" />
-              </button>
-              <button
-                onClick={() => setViewMode('list')}
-                className={`flex-1 p-2 rounded-lg transition-colors duration-200 ${
-                  viewMode === 'list'
-                    ? 'bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300'
-                    : 'text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800'
-                }`}
-              >
-                <List className="h-5 w-5 mx-auto" />
-              </button>
-            </div>
-          </div>
-
-          {/* Filter Options */}
-          <div>
-            <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-3">
-              筛选选项
-            </label>
-            <button className="w-full flex items-center justify-center space-x-2 px-4 py-2 text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-lg transition-colors duration-200">
-              <Filter className="h-4 w-4" />
-              <span>高级筛选</span>
-            </button>
           </div>
         </div>
       </div>
 
-      {/* Main Content */}
-      <div className="flex-1 overflow-hidden">
-        {/* Header */}
-        <div className="bg-white dark:bg-neutral-900 border-b border-neutral-200 dark:border-neutral-800 px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-xl font-semibold text-neutral-900 dark:text-white">
-                {config.name}内容
-              </h2>
-              <p className="text-sm text-neutral-600 dark:text-neutral-400">
-                共 {images.length} 个内容
-              </p>
-            </div>
-            <Link
-              href="/"
-              className="text-primary-600 hover:text-primary-700 text-sm font-medium"
-            >
-              返回首页
-            </Link>
-          </div>
-        </div>
-
-        {/* Content */}
-        <div className="flex-1 overflow-y-auto p-6">
-          {loading && images.length === 0 ? (
-            <div className={`grid gap-4 ${
-              viewMode === 'grid'
-                ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'
-                : 'grid-cols-1'
-            }`}>
-              {Array.from({ length: 12 }).map((_, index) => (
-                <div key={index} className="animate-pulse">
-                  <div className="bg-neutral-200 dark:bg-neutral-700 rounded-xl aspect-square mb-4"></div>
-                  <div className="h-4 bg-neutral-200 dark:bg-neutral-700 rounded mb-2"></div>
-                  <div className="h-3 bg-neutral-200 dark:bg-neutral-700 rounded w-3/4"></div>
-                </div>
-              ))}
-            </div>
-          ) : error ? (
-            <div className="text-center py-12">
-              <div className="bg-error-50 dark:bg-error-900/20 border border-error-200 dark:border-error-800 rounded-2xl p-8 max-w-md mx-auto">
-                <h3 className="text-xl font-semibold text-error-700 dark:text-error-300 mb-2">
-                  加载失败
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="flex gap-8">
+          {/* 侧边栏 */}
+          <div className="w-80 flex-shrink-0">
+            <div className="bg-white dark:bg-neutral-800 rounded-xl shadow-sm p-6 space-y-6">
+              {/* 子分类 */}
+              <div>
+                <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-4">
+                  子分类
                 </h3>
-                <p className="text-error-600 dark:text-error-400 mb-4">
-                  {error}
-                </p>
+                <div className="space-y-2">
+                  <button
+                    onClick={() => setSelectedSubcategory('all')}
+                    className={`w-full flex items-center justify-between p-3 rounded-lg transition-colors ${
+                      selectedSubcategory === 'all'
+                        ? 'bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300'
+                        : 'hover:bg-neutral-100 dark:hover:bg-neutral-700 text-neutral-700 dark:text-neutral-300'
+                    }`}
+                  >
+                    <span className="flex items-center">
+                      <span className="mr-3">📂</span>
+                      全部
+                    </span>
+                    <span className="text-sm text-neutral-500 dark:text-neutral-400">
+                      {images.length}
+                    </span>
+                  </button>
+                  
+                  {config.subcategories.map((sub) => (
+                    <button
+                      key={sub.id}
+                      onClick={() => setSelectedSubcategory(sub.id)}
+                      className={`w-full flex items-center justify-between p-3 rounded-lg transition-colors ${
+                        selectedSubcategory === sub.id
+                          ? 'bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300'
+                          : 'hover:bg-neutral-100 dark:hover:bg-neutral-700 text-neutral-700 dark:text-neutral-300'
+                      }`}
+                    >
+                      <span className="flex items-center">
+                        <span className="mr-3">{sub.icon}</span>
+                        {sub.name}
+                      </span>
+                      <span className="text-sm text-neutral-500 dark:text-neutral-400">
+                        {sub.count}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* 筛选器 */}
+              <div>
+                <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-4">
+                  筛选
+                </h3>
+                <div className="space-y-4">
+                  {config.filters.map((filter) => (
+                    <div key={filter.id}>
+                      <h4 className="text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
+                        {filter.name}
+                      </h4>
+                      <div className="flex flex-wrap gap-2">
+                        {filter.options.map((option) => (
+                          <button
+                            key={option}
+                            onClick={() => handleFilterChange(filter.id, option)}
+                            className={`px-3 py-1.5 text-sm rounded-full transition-colors ${
+                              selectedFilters[filter.id] === option
+                                ? 'bg-primary-600 text-white'
+                                : 'bg-neutral-100 dark:bg-neutral-700 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-600'
+                            }`}
+                          >
+                            {option}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* 排序 */}
+              <div>
+                <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-4">
+                  排序方式
+                </h3>
+                <div className="space-y-2">
+                  {sortOptions.map((option) => {
+                    const IconComponent = option.icon;
+                    return (
+                      <button
+                        key={option.id}
+                        onClick={() => setSortBy(option.id)}
+                        className={`w-full flex items-center p-3 rounded-lg transition-colors ${
+                          sortBy === option.id
+                            ? 'bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300'
+                            : 'hover:bg-neutral-100 dark:hover:bg-neutral-700 text-neutral-700 dark:text-neutral-300'
+                        }`}
+                      >
+                        <IconComponent className="w-4 h-4 mr-3" />
+                        {option.name}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* 主内容区域 */}
+          <div className="flex-1">
+            {/* 工具栏 */}
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center space-x-4">
+                <div className="flex items-center bg-white dark:bg-neutral-800 rounded-lg p-1">
+                  <button
+                    onClick={() => setViewMode('grid')}
+                    className={`p-2 rounded-md transition-colors ${
+                      viewMode === 'grid'
+                        ? 'bg-primary-600 text-white'
+                        : 'text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white'
+                    }`}
+                  >
+                    <Grid3X3 className="h-4 w-4" />
+                  </button>
+                  <button
+                    onClick={() => setViewMode('list')}
+                    className={`p-2 rounded-md transition-colors ${
+                      viewMode === 'list'
+                        ? 'bg-primary-600 text-white'
+                        : 'text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white'
+                    }`}
+                  >
+                    <List className="h-4 w-4" />
+                  </button>
+                </div>
+                
+                <span className="text-sm text-neutral-600 dark:text-neutral-400">
+                  共 {images.length} 项结果
+                </span>
+              </div>
+            </div>
+
+            {/* 内容区域 */}
+            {loading ? (
+              <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                {Array.from({ length: 12 }).map((_, index) => (
+                  <div key={index} className="bg-white dark:bg-neutral-800 rounded-xl overflow-hidden animate-pulse">
+                    <div className="aspect-square bg-neutral-200 dark:bg-neutral-700"></div>
+                    <div className="p-4 space-y-2">
+                      <div className="h-4 bg-neutral-200 dark:bg-neutral-700 rounded"></div>
+                      <div className="h-3 bg-neutral-200 dark:bg-neutral-700 rounded w-2/3"></div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : error ? (
+              <div className="text-center py-12">
+                <div className="text-error-600 dark:text-error-400 mb-4">
+                  <Filter className="h-12 w-12 mx-auto mb-4" />
+                  <p className="text-lg font-medium">{error}</p>
+                </div>
                 <button
-                  onClick={() => fetchImages()}
-                  className="px-6 py-3 bg-error-600 text-white font-medium rounded-lg hover:bg-error-700 transition-colors duration-200"
+                  onClick={fetchImages}
+                  className="px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
                 >
                   重试
                 </button>
               </div>
-            </div>
-          ) : (
-            <>
-              {/* Images Grid */}
-              <div className={`grid gap-4 ${
+            ) : images.length === 0 ? (
+              <div className="text-center py-12">
+                <div className="text-neutral-400 dark:text-neutral-600 mb-4">
+                  <Eye className="h-12 w-12 mx-auto mb-4" />
+                  <p className="text-lg font-medium">暂无内容</p>
+                  <p className="text-sm">尝试调整筛选条件</p>
+                </div>
+              </div>
+            ) : (
+              <div className={
                 viewMode === 'grid'
-                  ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'
-                  : 'grid-cols-1'
-              }`}>
+                  ? "grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6"
+                  : "space-y-4"
+              }>
                 {images.map((image) => (
-                  <div
-                    key={image.id}
-                    className={`group bg-white dark:bg-neutral-800 rounded-xl shadow-lg border border-neutral-200 dark:border-neutral-700 overflow-hidden hover:shadow-xl transition-all duration-200 ${
-                      viewMode === 'list' ? 'flex' : ''
-                    }`}
-                  >
-                    <div className={`relative ${viewMode === 'list' ? 'w-32 flex-shrink-0' : 'aspect-square'}`}>
+                  <div key={image.id} className={
+                    viewMode === 'grid'
+                      ? "group bg-white dark:bg-neutral-800 rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-200"
+                      : "flex bg-white dark:bg-neutral-800 rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-200"
+                  }>
+                    <div className={viewMode === 'grid' ? "relative aspect-square overflow-hidden" : "relative w-48 h-32 overflow-hidden flex-shrink-0"}>
                       <img
-                        src={image.webp_url}
+                        src={image.thumbnail || image.url}
                         alt={image.title}
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
+                        onError={handleImageError}
                         loading="lazy"
                       />
                       <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all duration-200 flex items-center justify-center opacity-0 group-hover:opacity-100">
                         <div className="flex space-x-2">
                           <button
-                            onClick={() => downloadImage(image)}
+                            onClick={() => handleDownload(image)}
                             className="p-2 bg-white rounded-lg text-neutral-900 hover:bg-neutral-100 transition-colors duration-200"
+                            title="下载"
                           >
                             <Download className="h-4 w-4" />
                           </button>
@@ -315,17 +449,18 @@ export default function CategoryDetailView({ category }: CategoryDetailViewProps
                         </div>
                       </div>
                     </div>
-
-                    <div className="p-3 flex-1">
-                      <h3 className="font-semibold text-neutral-900 dark:text-white mb-2 line-clamp-2 text-sm">
-                        {image.title}
+                    
+                    <div className={viewMode === 'grid' ? "p-4" : "flex-1 p-4"}>
+                      <h3 className="font-medium text-neutral-900 dark:text-white mb-1 truncate">
+                        {image.title || '无标题'}
                       </h3>
                       <div className="flex flex-wrap gap-1 mb-2">
-                        {image.tags.slice(0, 3).map((tag) => (
+                        {image.tags.slice(0, 3).map((tag, index) => (
                           <span
-                            key={tag}
-                            className="px-2 py-1 bg-neutral-100 dark:bg-neutral-700 text-neutral-600 dark:text-neutral-400 text-xs rounded-full"
+                            key={index}
+                            className="inline-flex items-center px-2 py-1 text-xs bg-neutral-100 dark:bg-neutral-700 text-neutral-600 dark:text-neutral-400 rounded"
                           >
+                            <Tag className="h-3 w-3 mr-1" />
                             {tag}
                           </span>
                         ))}
@@ -337,20 +472,33 @@ export default function CategoryDetailView({ category }: CategoryDetailViewProps
                   </div>
                 ))}
               </div>
+            )}
 
-              {/* Load More */}
-              {hasMore && (
-                <div className="text-center mt-8">
+            {/* 分页 */}
+            {images.length > 0 && (
+              <div className="flex justify-center mt-8">
+                <div className="flex items-center space-x-2">
                   <button
-                    onClick={loadMore}
-                    className="px-6 py-3 bg-primary-600 text-white font-semibold rounded-lg hover:bg-primary-700 transition-colors duration-200"
+                    onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                    disabled={currentPage === 1}
+                    className="px-4 py-2 text-sm border border-neutral-300 dark:border-neutral-600 rounded-lg hover:bg-neutral-50 dark:hover:bg-neutral-800 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    加载更多
+                    上一页
+                  </button>
+                  <span className="px-4 py-2 text-sm text-neutral-600 dark:text-neutral-400">
+                    第 {currentPage} 页
+                  </span>
+                  <button
+                    onClick={() => setCurrentPage(prev => prev + 1)}
+                    disabled={images.length < itemsPerPage}
+                    className="px-4 py-2 text-sm border border-neutral-300 dark:border-neutral-600 rounded-lg hover:bg-neutral-50 dark:hover:bg-neutral-800 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    下一页
                   </button>
                 </div>
-              )}
-            </>
-          )}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>

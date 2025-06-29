@@ -1,20 +1,22 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { User, Image, Play, Radio, ChevronRight, Grid3X3 } from 'lucide-react';
+import { User, Image, Play, Radio, ChevronRight, Grid3X3, Wand2 } from 'lucide-react';
 import Link from 'next/link';
 
 interface GiphyImage {
   id: string;
   title: string;
   url: string;
-  webp_url: string;
+  webp_url?: string;
+  thumbnail?: string;
   mp4_url?: string;
   width: number;
   height: number;
-  category: 'avatar' | 'wallpaper' | 'animation' | 'live';
+  category: 'avatar' | 'wallpaper' | 'animation' | 'live' | 'ai-generated';
   tags: string[];
-  rating: string;
+  rating?: string;
+  source?: string;
 }
 
 interface CategoryData {
@@ -23,7 +25,26 @@ interface CategoryData {
   preview: GiphyImage[];
 }
 
+interface LocalWallpaper {
+  id: string;
+  title: string;
+  imageUrl: string;
+  thumbnailUrl: string;
+  width: number;
+  height: number;
+  tags: string[];
+  prompt?: string;
+}
+
 const categoryConfig = {
+  'ai-generated': {
+    name: 'AI生成',
+    icon: Wand2,
+    description: 'AI创作的独特壁纸',
+    color: 'from-purple-500 to-purple-600',
+    bgColor: 'from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20',
+    borderColor: 'border-purple-200 dark:border-purple-800'
+  },
   avatar: {
     name: '头像',
     icon: User,
@@ -70,16 +91,91 @@ export default function CategoryGallery() {
   const fetchCategories = async () => {
     try {
       setLoading(true);
-      const response = await fetch('/api/giphy-content');
-      const data = await response.json();
-      
-      if (data.success) {
-        setCategories(data.overview);
-      } else {
-        setError(data.error || '获取数据失败');
+      setError(null);
+
+      // 获取本地 AI 生成的壁纸
+      const [wallpapersResponse, giphyResponse] = await Promise.allSettled([
+        fetch('/api/wallpapers'),
+        fetch('/api/giphy-content')
+      ]);
+
+      const categoriesData: CategoryData[] = [];
+
+      // 处理本地 AI 生成壁纸
+      if (wallpapersResponse.status === 'fulfilled') {
+        const wallpapersResult = await wallpapersResponse.value.json();
+        if (wallpapersResult.success && wallpapersResult.wallpapers.length > 0) {
+          const aiWallpapers: GiphyImage[] = wallpapersResult.wallpapers.slice(0, 6).map((w: LocalWallpaper) => ({
+            id: w.id,
+            title: w.title,
+            url: w.imageUrl,
+            webp_url: w.thumbnailUrl,
+            thumbnail: w.thumbnailUrl,
+            width: w.width,
+            height: w.height,
+            category: 'ai-generated' as const,
+            tags: w.tags,
+            source: 'local'
+          }));
+
+          categoriesData.push({
+            category: 'ai-generated',
+            count: wallpapersResult.wallpapers.length,
+            preview: aiWallpapers
+          });
+        }
       }
+
+      // 处理外部资源
+      if (giphyResponse.status === 'fulfilled') {
+        const giphyResult = await giphyResponse.value.json();
+        if (giphyResult.success && giphyResult.overview) {
+          categoriesData.push(...giphyResult.overview);
+        }
+      }
+
+      // 如果没有任何数据，添加示例数据
+      if (categoriesData.length === 0) {
+        categoriesData.push(
+          {
+            category: 'ai-generated',
+            count: 0,
+            preview: []
+          },
+          {
+            category: 'wallpaper',
+            count: 4,
+            preview: [
+              {
+                id: 'sample-1',
+                title: '示例壁纸 1',
+                url: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400',
+                webp_url: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400',
+                width: 400,
+                height: 300,
+                category: 'wallpaper',
+                tags: ['landscape', 'nature'],
+                source: 'unsplash'
+              },
+              {
+                id: 'sample-2',
+                title: '示例壁纸 2',
+                url: 'https://images.unsplash.com/photo-1557683316-973673baf926?w=400',
+                webp_url: 'https://images.unsplash.com/photo-1557683316-973673baf926?w=400',
+                width: 400,
+                height: 300,
+                category: 'wallpaper',
+                tags: ['abstract', 'geometric'],
+                source: 'unsplash'
+              }
+            ]
+          }
+        );
+      }
+
+      setCategories(categoriesData);
     } catch (err) {
-      setError('网络错误');
+      setError('加载内容失败');
       console.error('获取分类数据失败:', err);
     } finally {
       setLoading(false);
@@ -153,7 +249,7 @@ export default function CategoryGallery() {
             精彩内容分类
           </h2>
           <p className="text-xl text-neutral-600 dark:text-neutral-400 max-w-2xl mx-auto">
-            探索丰富多样的视觉内容，从个性头像到精美壁纸，应有尽有
+            探索丰富多样的视觉内容，从AI生成壁纸到精美背景，应有尽有
           </p>
         </div>
 
@@ -168,7 +264,7 @@ export default function CategoryGallery() {
             return (
               <Link
                 key={categoryData.category}
-                href={`/category/${categoryData.category}`}
+                href={categoryData.category === 'ai-generated' ? '/generate' : `/category/${categoryData.category}`}
                 className="group"
               >
                 <div className={`bg-gradient-to-br ${config.bgColor} border ${config.borderColor} rounded-2xl p-6 hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1`}>
@@ -197,18 +293,34 @@ export default function CategoryGallery() {
                         style={{ animationDelay: `${index * 100}ms` }}
                       >
                         <img
-                          src={image.webp_url}
+                          src={image.webp_url || image.thumbnail || image.url}
                           alt={image.title}
                           className="w-full h-full object-cover"
                           loading="lazy"
+                          onError={(e) => {
+                            // 图片加载失败时显示占位符
+                            const target = e.target as HTMLImageElement;
+                            target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik04MCA4MEgxMjBWMTIwSDgwVjgwWiIgZmlsbD0iIzlDQTNBRiIvPgo8L3N2Zz4=';
+                          }}
                         />
+                      </div>
+                    ))}
+                    {/* 如果预览图片不足6张，填充占位符 */}
+                    {Array.from({ length: Math.max(0, 6 - categoryData.preview.length) }).map((_, index) => (
+                      <div
+                        key={`placeholder-${index}`}
+                        className="aspect-square bg-neutral-200 dark:bg-neutral-700 rounded-lg flex items-center justify-center"
+                      >
+                        <Image className="h-6 w-6 text-neutral-400" />
                       </div>
                     ))}
                   </div>
 
                   {/* View More */}
                   <div className="flex items-center justify-center text-neutral-600 dark:text-neutral-400 group-hover:text-neutral-900 dark:group-hover:text-neutral-100 transition-colors duration-200">
-                    <span className="text-sm font-medium mr-1">查看更多</span>
+                    <span className="text-sm font-medium mr-1">
+                      {categoryData.category === 'ai-generated' ? '开始创作' : '查看更多'}
+                    </span>
                     <ChevronRight className="h-4 w-4 group-hover:translate-x-1 transition-transform duration-200" />
                   </div>
                 </div>
