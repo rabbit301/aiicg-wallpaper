@@ -2,7 +2,7 @@
 
 import { useState, useRef } from 'react';
 import { Upload, Check, Loader2, Sparkles, Palette, Edit3, X } from 'lucide-react';
-import { AVATAR_PRESETS, avatarGenerator } from '@/lib/avatar-generator';
+import { AVATAR_PRESETS } from '@/lib/avatar-generator';
 
 interface AvatarSelectorProps {
   currentAvatar?: string;

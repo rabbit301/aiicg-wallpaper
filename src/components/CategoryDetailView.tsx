@@ -1,8 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { User, Image, Play, Radio, Download, Heart, Share2, Grid3X3, List, Filter, Eye, Tag, Clock, Star, TrendingUp, X } from 'lucide-react';
-import Link from 'next/link';
+import { User, Image, Play, Radio, Download, Heart, Grid3X3, List, Filter, Eye, Clock, Star, TrendingUp, X } from 'lucide-react';
 
 interface UnifiedWallpaperImage {
   id: string;

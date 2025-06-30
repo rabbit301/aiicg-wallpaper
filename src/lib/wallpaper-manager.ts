@@ -3,8 +3,8 @@
  * 整合多个来源的壁纸数据
  */
 
-import { UnsplashScraper, type UnsplashImage } from './unsplash-scraper';
-import { PexelsScraper, type PexelsImage } from './pexels-scraper';
+import { UnsplashScraper } from './unsplash-scraper';
+import { PexelsScraper } from './pexels-scraper';
 import { mergeAvatarData } from './local-avatar-processor';
 
 // 统一的壁纸接口

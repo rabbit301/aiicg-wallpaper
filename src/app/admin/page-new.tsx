@@ -4,14 +4,63 @@ import { useState, useEffect } from 'react';
 import Layout from '@/components/Layout';
 import { Download, Play, CheckCircle, XCircle, Loader2, Key, AlertCircle } from 'lucide-react';
 
+interface ApiItem {
+  configured: boolean;
+  name: string;
+  description: string;
+  priority: number;
+  url: string;
+}
+
+interface ApiStatusResponse {
+  success: boolean;
+  apis: Record<string, ApiItem>;
+  summary: {
+    configured: number;
+    total: number;
+    ready: boolean;
+    recommendations: string[];
+  };
+}
+
+interface TestResult {
+  api: string;
+  status: 'success' | 'error' | 'not_configured';
+  statusCode?: number;
+  message: string;
+}
+
+interface TestResultsResponse {
+  success: boolean;
+  results: TestResult[];
+  summary: {
+    total: number;
+    success: number;
+    error: number;
+    not_configured: number;
+  };
+  message: string;
+}
+
+interface ScrapingStats {
+  category: string;
+  count: number;
+}
+
+interface ScrapingResult {
+  success: boolean;
+  totalImages: number;
+  stats: ScrapingStats[];
+}
+
 export default function AdminPage() {
   const [scraping, setScraping] = useState(false);
-  const [result, setResult] = useState<any>(null);
+  const [result, setResult] = useState<ScrapingResult | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [apiStatus, setApiStatus] = useState<any>(null);
+  const [apiStatus, setApiStatus] = useState<ApiStatusResponse | null>(null);
   const [loadingStatus, setLoadingStatus] = useState(true);
   const [testingApis, setTestingApis] = useState(false);
-  const [testResults, setTestResults] = useState<any>(null);
+  const [testResults, setTestResults] = useState<TestResultsResponse | null>(null);
 
   useEffect(() => {
     fetchApiStatus();
@@ -134,7 +183,7 @@ export default function AdminPage() {
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {Object.entries(apiStatus.apis).map(([key, api]: [string, any]) => (
+                {Object.entries(apiStatus.apis).map(([key, api]: [string, ApiItem]) => (
                   <div
                     key={key}
                     className={`border rounded-lg p-4 ${
@@ -203,31 +252,31 @@ export default function AdminPage() {
               {testResults.message}
             </p>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {testResults.results.map((result: any, index: number) => (
+              {testResults.results.map((testResult: TestResult, index: number) => (
                 <div
                   key={index}
                   className={`border rounded-lg p-4 ${
-                    result.status === 'success'
+                    testResult.status === 'success'
                       ? 'border-success-200 dark:border-success-800 bg-success-50 dark:bg-success-900/20'
-                      : result.status === 'error'
+                      : testResult.status === 'error'
                       ? 'border-error-200 dark:border-error-800 bg-error-50 dark:bg-error-900/20'
                       : 'border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-700'
                   }`}
                 >
                   <div className="flex items-center justify-between mb-2">
                     <h3 className="font-semibold text-neutral-900 dark:text-white">
-                      {result.api}
+                      {testResult.api}
                     </h3>
-                    {result.status === 'success' ? (
+                    {testResult.status === 'success' ? (
                       <CheckCircle className="h-5 w-5 text-success-600" />
-                    ) : result.status === 'error' ? (
+                    ) : testResult.status === 'error' ? (
                       <XCircle className="h-5 w-5 text-error-600" />
                     ) : (
                       <AlertCircle className="h-5 w-5 text-neutral-400" />
                     )}
                   </div>
                   <p className="text-sm text-neutral-600 dark:text-neutral-400">
-                    {result.message}
+                    {testResult.message}
                   </p>
                 </div>
               ))}
@@ -267,19 +316,19 @@ export default function AdminPage() {
 
             <button
               onClick={startScraping}
-              disabled={scraping || (apiStatus && !apiStatus.summary.ready)}
-              className={`w-full flex items-center justify-center px-6 py-4 font-semibold rounded-xl transition-colors duration-200 ${
-                apiStatus && !apiStatus.summary.ready
-                  ? 'bg-neutral-400 text-neutral-600 cursor-not-allowed'
-                  : 'bg-primary-600 text-white hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed'
-              }`}
+              disabled={scraping || !apiStatus?.summary?.ready}
+                              className={`w-full flex items-center justify-center px-6 py-4 font-semibold rounded-xl transition-colors duration-200 ${
+                  !apiStatus?.summary?.ready
+                    ? 'bg-neutral-400 text-neutral-600 cursor-not-allowed'
+                    : 'bg-primary-600 text-white hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed'
+                }`}
             >
               {scraping ? (
                 <>
                   <Loader2 className="h-5 w-5 mr-2 animate-spin" />
                   正在爬取中...
                 </>
-              ) : apiStatus && !apiStatus.summary.ready ? (
+                              ) : !apiStatus?.summary?.ready ? (
                 <>
                   <XCircle className="h-5 w-5 mr-2" />
                   请先配置API密钥
@@ -328,7 +377,7 @@ export default function AdminPage() {
                 <h4 className="font-semibold text-success-800 dark:text-success-200">
                   分类统计：
                 </h4>
-                {result.stats.map((stat: any) => (
+                {result.stats.map((stat: ScrapingStats) => (
                   <div key={stat.category} className="flex justify-between items-center bg-success-100 dark:bg-success-900/30 rounded-lg px-4 py-2">
                     <span className="text-success-700 dark:text-success-300 capitalize">
                       {stat.category === 'avatar' ? '头像' : 

@@ -162,7 +162,7 @@ class UnsplashScraper {
         license: 'Unsplash License (Free to use)',
         author: item.user.name,
         downloadUrl: item.urls.raw,
-        description: item.description,
+        description: item.description || undefined,
         color: item.color,
         likes: item.likes,
       }));

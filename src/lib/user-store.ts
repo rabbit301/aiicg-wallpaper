@@ -79,7 +79,7 @@ export class UserStore {
       await this.ensureDataDirectory();
       const data = await fs.readFile(USER_DATA_FILE, 'utf-8');
       return JSON.parse(data);
-    } catch (error) {
+    } catch {
       // 文件不存在时返回默认用户
       return this.getDefaultUser();
     }
@@ -114,7 +114,7 @@ export class UserStore {
         const wallpapers: Wallpaper[] = JSON.parse(wallpapersData);
         generatedWallpapers = wallpapers.length;
         totalDownloads = wallpapers.reduce((total, w) => total + w.downloads, 0);
-      } catch (error) {
+      } catch {
         // 文件不存在时保持默认值
       }
       
@@ -123,7 +123,7 @@ export class UserStore {
         const activitiesData = await fs.readFile(activitiesFile, 'utf-8');
         const activities: UserActivity[] = JSON.parse(activitiesData);
         compressedImages = activities.filter(a => a.type === 'compress').length;
-      } catch (error) {
+      } catch {
         // 文件不存在时保持默认值
       }
       
@@ -168,8 +168,8 @@ export class UserStore {
       
       await this.ensureDataDirectory();
       await fs.writeFile(USER_ACTIVITIES_FILE, JSON.stringify(activities, null, 2));
-    } catch (error) {
-      console.error('添加用户活动失败:', error);
+    } catch {
+      console.error('添加用户活动失败');
     }
   }
 
@@ -179,7 +179,7 @@ export class UserStore {
       const data = await fs.readFile(USER_ACTIVITIES_FILE, 'utf-8');
       const activities: UserActivity[] = JSON.parse(data);
       return activities.slice(0, limit);
-    } catch (error) {
+    } catch {
       // 文件不存在时返回空数组
       return [];
     }

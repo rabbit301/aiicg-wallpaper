@@ -137,7 +137,7 @@ export async function POST(request: NextRequest) {
     console.log(`开始爬取 ${category} 类别的真实图片，数量: ${count}`);
     
     // 加载现有数据
-    let existingData = await loadUnifiedWallpaperData() || {
+    const existingData = await loadUnifiedWallpaperData() || {
       avatar: [],
       wallpaper: [],
       animation: [],

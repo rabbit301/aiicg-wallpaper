@@ -1,5 +1,17 @@
 import { NextResponse } from 'next/server';
 
+interface ApiStatusItem {
+  configured: boolean;
+  name: string;
+  description: string;
+  priority: number;
+  url: string;
+}
+
+interface ApiStatus {
+  [key: string]: ApiStatusItem;
+}
+
 export async function GET() {
   try {
     // 检查各个API密钥的配置状态
@@ -51,7 +63,7 @@ export async function GET() {
   }
 }
 
-function generateRecommendations(apiStatus: any): string[] {
+function generateRecommendations(apiStatus: ApiStatus): string[] {
   const recommendations: string[] = [];
   
   if (!apiStatus.unsplash.configured) {
@@ -66,7 +78,7 @@ function generateRecommendations(apiStatus: any): string[] {
     recommendations.push('建议配置Giphy API密钥以获取头像和动画内容');
   }
   
-  const configuredCount = Object.values(apiStatus).filter((api: any) => api.configured).length;
+  const configuredCount = Object.values(apiStatus).filter((api: ApiStatusItem) => api.configured).length;
   
   if (configuredCount === 0) {
     recommendations.push('至少需要配置一个API密钥才能开始爬取');

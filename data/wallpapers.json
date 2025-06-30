@@ -1,5 +1,73 @@
 [
   {
+    "id": "WAZwmvL68SIUae2IqQfir",
+    "title": "未命名壁纸",
+    "prompt": "雄伟瀑布从茂密雨林中倾泻而下，翡翠绿植被，戏剧性自然光线",
+    "imageUrl": "https://v3.fal.media/files/lion/1ZoDK44KfT2H_K21WO1nP.png",
+    "thumbnailUrl": "https://v3.fal.media/files/lion/1ZoDK44KfT2H_K21WO1nP.png",
+    "width": 512,
+    "height": 512,
+    "format": "webp",
+    "createdAt": "2025-06-30T07:41:06.215Z",
+    "downloads": 0,
+    "tags": [
+      "AI生成",
+      "360_square_480p"
+    ],
+    "optimizedFor360": true
+  },
+  {
+    "id": "DetSq8-62G4XQMpMvaWqY",
+    "title": "未命名壁纸",
+    "prompt": "温馨咖啡店内景，温暖环境光线，杯中蒸汽，窗外散焦灯光",
+    "imageUrl": "https://v3.fal.media/files/elephant/hWJuzo4zLIA1t9Ha8DnZt.png",
+    "thumbnailUrl": "https://v3.fal.media/files/elephant/hWJuzo4zLIA1t9Ha8DnZt.png",
+    "width": 1024,
+    "height": 576,
+    "format": "webp",
+    "createdAt": "2025-06-30T06:48:05.519Z",
+    "downloads": 0,
+    "tags": [
+      "AI生成",
+      "desktop_fhd"
+    ],
+    "optimizedFor360": false
+  },
+  {
+    "id": "6xE2vaCTdVoRApeJ1DuBp",
+    "title": "未命名壁纸",
+    "prompt": "樱花花瓣飘落的宁静日式庭院，柔和粉色光线，空灵氛围，超细节8K画质, 日式浮世绘",
+    "imageUrl": "https://v3.fal.media/files/rabbit/SR98Lnwj_K6hxfrd_Sq5v.png",
+    "thumbnailUrl": "https://v3.fal.media/files/rabbit/SR98Lnwj_K6hxfrd_Sq5v.png",
+    "width": 1024,
+    "height": 576,
+    "format": "webp",
+    "createdAt": "2025-06-30T03:31:14.318Z",
+    "downloads": 0,
+    "tags": [
+      "AI生成",
+      "desktop_fhd"
+    ],
+    "optimizedFor360": false
+  },
+  {
+    "id": "t53eMgbrzsbGyOLBfl9cE",
+    "title": "未命名壁纸",
+    "prompt": "樱花花瓣飘落的宁静日式庭院，柔和粉色光线，空灵氛围，超细节8K画质",
+    "imageUrl": "https://v3.fal.media/files/lion/bV8ViIwvrEWXwSXtvVVWs.png",
+    "thumbnailUrl": "https://v3.fal.media/files/lion/bV8ViIwvrEWXwSXtvVVWs.png",
+    "width": 1024,
+    "height": 576,
+    "format": "webp",
+    "createdAt": "2025-06-30T03:30:45.962Z",
+    "downloads": 0,
+    "tags": [
+      "AI生成",
+      "desktop_fhd"
+    ],
+    "optimizedFor360": false
+  },
+  {
     "id": "VZiJc1Se4T24mrgW-DI7D",
     "title": "未命名壁纸",
     "prompt": "电子音乐可视化效果，频谱波形，数字艺术，赛博朋克美学, 日式浮世绘",

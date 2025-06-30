@@ -7,6 +7,7 @@ export async function GET(request: NextRequest) {
     const query = searchParams.get('q');
     const tag = searchParams.get('tag');
     const popular = searchParams.get('popular');
+    const limit = searchParams.get('limit') ? parseInt(searchParams.get('limit')!) : undefined;
 
     const dataStore = new DataStore();
     let wallpapers;
@@ -16,9 +17,14 @@ export async function GET(request: NextRequest) {
     } else if (tag) {
       wallpapers = await dataStore.getWallpapersByTag(tag);
     } else if (popular) {
-      wallpapers = await dataStore.getPopularWallpapers(20);
+      wallpapers = await dataStore.getPopularWallpapers(limit || 20);
     } else {
       wallpapers = await dataStore.getAllWallpapers();
+    }
+
+    // 应用limit限制（如果设置了）
+    if (limit && !popular) {
+      wallpapers = wallpapers.slice(0, limit);
     }
 
     return NextResponse.json({

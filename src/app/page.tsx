@@ -132,7 +132,7 @@ export default function Home() {
           
           {/* 显示最新的6张壁纸 */}
           <div className="max-w-6xl mx-auto">
-            <WallpaperGallery />
+            <WallpaperGallery showPopular={false} limit={6} />
           </div>
 
           <div className="text-center mt-8">

@@ -3,7 +3,7 @@
  */
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import { Upload, Zap, Settings, Download, FileImage, Loader2, Monitor, Eye, X } from 'lucide-react';
 import { formatFileSize, formatCompressionRatio, formatProcessingTime } from '@/lib/compression-utils';
 import type { CompressionPreset } from '@/lib/compression-utils';
@@ -451,7 +451,7 @@ export default function CompressionPanel() {
             {result.fallbackUsed && (
               <div className="mb-4 p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
                 <p className="text-sm text-yellow-800 dark:text-yellow-200">
-                  <span className="font-medium">提示：</span> {result.fallbackReason}
+                  <span className="font-medium">提示&colon;</span> {result.fallbackReason}
                 </p>
               </div>
             )}
@@ -473,7 +473,7 @@ export default function CompressionPanel() {
                   </span>
                 </div>
                 <p className="text-sm text-gray-600 dark:text-gray-300 italic">
-                  "{evaluation.comment}"
+                  &ldquo;{evaluation.comment}&rdquo;
                 </p>
               </div>
             )}

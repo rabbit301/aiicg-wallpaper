@@ -1,19 +1,23 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Download, Eye, Heart, Clock, Tag } from 'lucide-react';
+import { Download, Eye, Clock, Tag } from 'lucide-react';
 import { Wallpaper } from '@/types';
+import Image from 'next/image';
+// 移除复杂的图片优化导入，专注于 Next.js 原生优化
 
 interface WallpaperGalleryProps {
   searchQuery?: string;
   tag?: string;
   showPopular?: boolean;
+  limit?: number; // 限制显示数量
 }
 
 export default function WallpaperGallery({ 
   searchQuery, 
   tag, 
-  showPopular = false 
+  showPopular = false,
+  limit 
 }: WallpaperGalleryProps) {
   const [wallpapers, setWallpapers] = useState<Wallpaper[]>([]);
   const [loading, setLoading] = useState(true);
@@ -32,12 +36,17 @@ export default function WallpaperGallery({
       if (searchQuery) params.append('q', searchQuery);
       if (tag) params.append('tag', tag);
       if (showPopular) params.append('popular', 'true');
+      if (limit) params.append('limit', limit.toString());
 
       const response = await fetch(`/api/wallpapers?${params}`);
       const data = await response.json();
 
       if (data.success) {
-        setWallpapers(data.wallpapers);
+        // 如果设置了 limit，在客户端也进行限制
+        const wallpapers = limit ? data.wallpapers.slice(0, limit) : data.wallpapers;
+        setWallpapers(wallpapers);
+        
+        // Next.js Image 组件将自动处理图片优化和预加载
       } else {
         setError(data.error || '获取壁纸失败');
       }
@@ -79,13 +88,7 @@ export default function WallpaperGallery({
     window.open(wallpaper.imageUrl, '_blank');
   };
 
-  const getImageSrc = (imageUrl: string) => {
-    // 如果是本地路径，使用原路径；如果是外部URL，保持不变
-    if (imageUrl.startsWith('/')) {
-      return imageUrl;
-    }
-    return imageUrl;
-  };
+  // 移除复杂的图片处理逻辑，直接使用原始URL
 
   if (loading) {
     return (
@@ -147,17 +150,20 @@ export default function WallpaperGallery({
           >
             {/* 图片容器 */}
             <div className="relative aspect-square bg-gray-100 dark:bg-gray-700">
-              <img
-                src={getImageSrc(wallpaper.thumbnailUrl || wallpaper.imageUrl)}
+              <Image
+                src={wallpaper.thumbnailUrl || wallpaper.imageUrl}
                 alt={wallpaper.title}
-                className="w-full h-full object-cover cursor-pointer"
-                loading="lazy"
+                fill
+                className="object-cover cursor-pointer"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+                priority={wallpapers.indexOf(wallpaper) < 3} // 前3张优先加载
+                loading={wallpapers.indexOf(wallpaper) < 6 ? "eager" : "lazy"} // 前6张即时加载，其余懒加载
                 onClick={() => handlePreview(wallpaper)}
                 onError={(e) => {
                   const target = e.target as HTMLImageElement;
                   // 如果缩略图加载失败，尝试加载原图
-                  if (target.src === getImageSrc(wallpaper.thumbnailUrl) && wallpaper.thumbnailUrl !== wallpaper.imageUrl) {
-                    target.src = getImageSrc(wallpaper.imageUrl);
+                  if (target.src === wallpaper.thumbnailUrl && wallpaper.thumbnailUrl !== wallpaper.imageUrl) {
+                    target.src = wallpaper.imageUrl;
                   } else {
                     // 如果都失败，显示占位符
                     target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0xMDAgNzBWMTMwTTcwIDEwMEgxMzAiIHN0cm9rZT0iIzlDQTNBRiIgc3Ryb2tlLXdpZHRoPSI0IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KPC9zdmc+';

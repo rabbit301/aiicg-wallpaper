@@ -6,6 +6,16 @@ import { Wallpaper } from '@/types';
 import { nanoid } from 'nanoid';
 import { translatePrompt, enhanceEnglishPrompt } from '@/lib/prompt-translator';
 
+interface FalAIImageResult {
+  url: string;
+  width: number;
+  height: number;
+}
+
+interface FalAIResponse {
+  images: FalAIImageResult[];
+}
+
 export async function POST(request: NextRequest) {
   try {
     const { prompt, title, preset } = await request.json();
@@ -76,7 +86,7 @@ export async function POST(request: NextRequest) {
     console.log('✅ AI生成成功:', result.data);
 
     // 处理生成结果
-    const imageData = result.data as any;
+    const imageData = result.data as FalAIResponse;
     const imageUrl = imageData.images?.[0]?.url;
     
     if (!imageUrl) {

@@ -66,7 +66,7 @@ export default function GeneratePage() {
                 描述要具体
               </h3>
               <p className="text-neutral-600 dark:text-neutral-400 text-sm">
-                使用具体的形容词和细节描述，如"夕阳下的紫色薰衣草田"比"美丽的风景"更有效。
+                使用具体的形容词和细节描述，如&ldquo;夕阳下的紫色薰衣草田&rdquo;比&ldquo;美丽的风景&rdquo;更有效。
               </p>
             </div>
 
@@ -84,7 +84,7 @@ export default function GeneratePage() {
                 风格关键词
               </h3>
               <p className="text-neutral-600 dark:text-neutral-400 text-sm">
-                添加风格关键词如"赛博朋克"、"水彩画"、"极简主义"来获得特定的艺术效果。
+                添加风格关键词如&ldquo;赛博朋克&rdquo;、&ldquo;水彩画&rdquo;、&ldquo;极简主义&rdquo;来获得特定的艺术效果。
               </p>
             </div>
 
@@ -93,7 +93,7 @@ export default function GeneratePage() {
                 色彩搭配
               </h3>
               <p className="text-neutral-600 dark:text-neutral-400 text-sm">
-                指定主色调如"蓝色调"、"暖色系"，或具体颜色如"深蓝色和金色"。
+                指定主色调如&ldquo;蓝色调&rdquo;、&ldquo;暖色系&rdquo;，或具体颜色如&ldquo;深蓝色和金色&rdquo;。
               </p>
             </div>
 

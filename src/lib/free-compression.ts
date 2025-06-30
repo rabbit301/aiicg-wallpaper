@@ -38,9 +38,8 @@ export class FreeCompressionService extends CompressionService {
       
       this.validateOptions(options);
       
-      // 获取输入buffer
+      // 获取输入buffer和大小
       let inputBuffer: Buffer;
-      let originalSize: number;
       
       if (typeof input === 'string') {
         console.log('📥 从URL下载:', input);
@@ -54,7 +53,7 @@ export class FreeCompressionService extends CompressionService {
         inputBuffer = input;
       }
       
-      originalSize = inputBuffer.length;
+      const originalSize = inputBuffer.length;
       console.log('📊 原始文件大小:', originalSize, 'bytes');
       
       // 确保输出目录存在

@@ -70,7 +70,7 @@ export class AuthStore {
       await this.ensureDataDirectory();
       const data = await fs.readFile(USERS_FILE, 'utf-8');
       return JSON.parse(data);
-    } catch (error) {
+    } catch {
       return [];
     }
   }
@@ -87,7 +87,7 @@ export class AuthStore {
       await this.ensureDataDirectory();
       const data = await fs.readFile(GUEST_SESSIONS_FILE, 'utf-8');
       return JSON.parse(data);
-    } catch (error) {
+    } catch {
       return [];
     }
   }

@@ -8,6 +8,16 @@ import { CompressionService, CompressionOptions, CompressionResult } from './com
 import path from 'path';
 import fs from 'fs/promises';
 
+interface CloudinaryUploadResult {
+  public_id: string;
+  bytes: number;
+  url: string;
+  secure_url: string;
+  width: number;
+  height: number;
+  format: string;
+}
+
 export class AICompressionService extends CompressionService {
   private isConfigured: boolean = false;
 
@@ -56,7 +66,7 @@ export class AICompressionService extends CompressionService {
       const publicId = `compressed/${timestamp}_${baseName}`;
       
       let originalSize: number;
-      let uploadResult: any;
+      let uploadResult: CloudinaryUploadResult;
       
       // 上传到Cloudinary
       if (typeof input === 'string') {
@@ -65,12 +75,12 @@ export class AICompressionService extends CompressionService {
           public_id: publicId,
           resource_type: 'auto',
           overwrite: true,
-        });
+        }) as CloudinaryUploadResult;
         originalSize = uploadResult.bytes;
       } else {
         // 从Buffer上传
         originalSize = input.length;
-        uploadResult = await new Promise((resolve, reject) => {
+        uploadResult = await new Promise<CloudinaryUploadResult>((resolve, reject) => {
           cloudinary.uploader.upload_stream(
             {
               public_id: publicId,
@@ -79,7 +89,7 @@ export class AICompressionService extends CompressionService {
             },
             (error, result) => {
               if (error) reject(error);
-              else resolve(result);
+              else resolve(result as CloudinaryUploadResult);
             }
           ).end(input);
         });

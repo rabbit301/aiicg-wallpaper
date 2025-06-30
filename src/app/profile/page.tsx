@@ -13,7 +13,6 @@ import {
   Activity,
   Loader2,
   Eye,
-  Trash2,
   X
 } from 'lucide-react';
 import Link from 'next/link';

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Wand2, Loader2, Monitor, Smartphone, Monitor as Desktop, Tablet, Plus, Sparkles, Eye, Palette } from 'lucide-react';
+import { Wand2, Loader2, Monitor, Smartphone, Monitor as Desktop, Tablet, Plus, Sparkles, Palette } from 'lucide-react';
 import { SCREEN_PRESETS, ScreenPreset } from '@/lib/fal-client';
 import { generateWallpaperEvaluation, generateStarRating, getScoreColorClass } from '@/lib/emotion-evaluator';
 import type { EmotionEvaluation } from '@/lib/emotion-evaluator';

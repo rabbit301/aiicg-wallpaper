@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { User, Image, Play, Radio, ChevronRight, Grid3X3, Wand2 } from 'lucide-react';
+import { User, Image as ImageIcon, Play, Radio, ChevronRight, Grid3X3, Wand2 } from 'lucide-react';
 import Link from 'next/link';
 
 interface GiphyImage {
@@ -55,7 +55,7 @@ const categoryConfig = {
   },
   wallpaper: {
     name: '壁纸',
-    icon: Image,
+    icon: ImageIcon,
     description: '精美背景和壁纸',
     color: 'from-secondary-500 to-secondary-600',
     bgColor: 'from-secondary-50 to-secondary-100 dark:from-secondary-900/20 dark:to-secondary-800/20',
@@ -311,7 +311,7 @@ export default function CategoryGallery() {
                         key={`placeholder-${index}`}
                         className="aspect-square bg-neutral-200 dark:bg-neutral-700 rounded-lg flex items-center justify-center"
                       >
-                        <Image className="h-6 w-6 text-neutral-400" />
+                        <ImageIcon className="h-6 w-6 text-neutral-400" />
                       </div>
                     ))}
                   </div>

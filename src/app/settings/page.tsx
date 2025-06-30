@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Layout from '@/components/Layout';
-import { Settings, User, Bell, Shield, Palette, Globe, Download, Loader2, Check, Eye, EyeOff } from 'lucide-react';
+import { Settings, User, Bell, Shield, Palette, Download, Loader2, Check } from 'lucide-react';
 import AvatarSelector from '@/components/AvatarSelector';
 
 interface UserProfile {
@@ -40,7 +40,7 @@ export default function SettingsPage() {
   const [privacySettings, setPrivacySettings] = useState<PrivacySettings | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [uploadingAvatar, setUploadingAvatar] = useState(false);
+
   const [savedMessage, setSavedMessage] = useState('');
   const [formData, setFormData] = useState({
     username: '',
@@ -287,7 +287,7 @@ export default function SettingsPage() {
                             onUpload={handleAvatarUploadFile}
                           />
                           <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-1">
-                            点击"更改头像"可选择AI生成头像或上传自定义图片
+                            点击&ldquo;更改头像&rdquo;可选择AI生成头像或上传自定义图片
                           </p>
                         </div>
                       </div>

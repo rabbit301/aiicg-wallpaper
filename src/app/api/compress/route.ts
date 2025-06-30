@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { CompressionServiceFactory } from '@/lib/compression-service';
-import { validateImageFile, getPresetOptions, mergeCompressionOptions } from '@/lib/compression-utils';
-import type { CompressionPreset } from '@/lib/compression-utils';
-import { AICompressionService } from '@/lib/ai-compression';
+
 import { FreeCompressionService } from '@/lib/free-compression';
 import { userStore } from '@/lib/user-store';
 
@@ -10,7 +8,6 @@ export async function POST(request: Request) {
   try {
     const formData = await request.formData();
     const file = formData.get('file') as File;
-    const preset = formData.get('preset') as CompressionPreset || 'balanced';
 
     if (!file) {
       return NextResponse.json({ error: '未选择文件' }, { status: 400 });
@@ -81,7 +78,7 @@ export async function GET(request: NextRequest) {
             cloudinaryUsage: usageStats,
             isAIAvailable: true,
           };
-        } catch (error) {
+        } catch {
           additionalInfo = {
             isAIAvailable: false,
             error: 'AI服务暂时不可用',
@@ -111,51 +108,4 @@ export async function GET(request: NextRequest) {
   }
 }
 
-/**
- * 检查AI访问权限（简化版本，实际应该连接用户系统）
- */
-async function checkAIAccess(request: NextRequest): Promise<boolean> {
-  // 这里应该检查用户的订阅状态
-  // 目前简化为检查特定header或cookie
-  
-  const authHeader = request.headers.get('authorization');
-  const aiAccessToken = request.cookies.get('ai_access_token');
-  
-  // 简化的权限检查
-  if (authHeader?.includes('Bearer ai_premium_') || aiAccessToken?.value) {
-    return true;
-  }
-  
-  // 开发环境允许测试
-  if (process.env.NODE_ENV === 'development') {
-    return true;
-  }
-  
-  return false;
-}
 
-/**
- * 记录AI使用统计
- */
-async function recordAIUsage(request: NextRequest, result: any): Promise<void> {
-  try {
-    // 这里应该记录到数据库或分析服务
-    const usage = {
-      timestamp: new Date().toISOString(),
-      userAgent: request.headers.get('user-agent'),
-      ip: request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown',
-      originalSize: result.originalSize,
-      compressedSize: result.compressedSize,
-      compressionRatio: result.compressionRatio,
-      processingTime: result.processingTime,
-      format: result.format,
-    };
-    
-    console.log('AI压缩使用记录:', usage);
-    
-    // TODO: 保存到数据库
-    
-  } catch (error) {
-    console.error('记录AI使用统计失败:', error);
-  }
-}

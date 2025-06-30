@@ -1,8 +1,15 @@
 import { NextResponse } from 'next/server';
 
+interface TestResult {
+  api: string;
+  status: 'success' | 'error' | 'not_configured';
+  statusCode?: number;
+  message: string;
+}
+
 export async function POST() {
   try {
-    const results: any[] = [];
+    const results: TestResult[] = [];
 
     // 测试Unsplash API
     if (process.env.UNSPLASH_API_KEY) {

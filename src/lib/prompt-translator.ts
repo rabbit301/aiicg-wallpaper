@@ -350,7 +350,7 @@ export async function translatePrompt(prompt: string): Promise<{
       ]);
       translated = apiResult;
       console.log('🌐 API翻译结果:', translated);
-    } catch (error) {
+    } catch {
       console.log('⚠️ API翻译失败，保持词典翻译结果');
     }
   }

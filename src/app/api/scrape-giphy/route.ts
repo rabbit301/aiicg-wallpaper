@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { WallpaperManager, saveUnifiedWallpaperData } from '@/lib/wallpaper-manager';
 
-export async function POST(request: NextRequest) {
+export async function POST() {
   try {
     // 从环境变量获取API密钥
     const apiKeys = {
@@ -11,7 +11,7 @@ export async function POST(request: NextRequest) {
     };
 
     console.log('开始爬取壁纸内容...');
-    console.log('可用的API密钥:', Object.entries(apiKeys).filter(([_, key]) => !!key).map(([name]) => name));
+    console.log('可用的API密钥:', Object.entries(apiKeys).filter(([, key]) => !!key).map(([name]) => name));
 
     // 创建壁纸管理器
     const manager = new WallpaperManager({
@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
       detailedStats: stats,
       filePath,
       totalImages,
-      sources: Object.entries(apiKeys).filter(([_, key]) => !!key).map(([name]) => name)
+      sources: Object.entries(apiKeys).filter(([, key]) => !!key).map(([name]) => name)
     });
 
   } catch (error) {

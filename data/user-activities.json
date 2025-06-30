@@ -3,6 +3,54 @@
     "type": "generate",
     "title": "未命名壁纸",
     "details": {
+      "preset": "360_square_480p",
+      "originalPrompt": "雄伟瀑布从茂密雨林中倾泻而下，翡翠绿植被，戏剧性自然光线",
+      "enhancedPrompt": "majestic waterfall cascading through dense rainforest, emerald green vegetation, dramatic natural lighting",
+      "imageSize": "512x512"
+    },
+    "id": "1751269266218",
+    "timestamp": "2025-06-30T07:41:06.218Z"
+  },
+  {
+    "type": "generate",
+    "title": "未命名壁纸",
+    "details": {
+      "preset": "desktop_fhd",
+      "originalPrompt": "温馨咖啡店内景，温暖环境光线，杯中蒸汽，窗外散焦灯光",
+      "enhancedPrompt": "cozy coffee shop interior, warm ambient lighting, steam from cup, bokeh lights outside window",
+      "imageSize": "1024x576"
+    },
+    "id": "1751266085524",
+    "timestamp": "2025-06-30T06:48:05.524Z"
+  },
+  {
+    "type": "generate",
+    "title": "未命名壁纸",
+    "details": {
+      "preset": "desktop_fhd",
+      "originalPrompt": "樱花花瓣飘落的宁静日式庭院，柔和粉色光线，空灵氛围，超细节8K画质, 日式浮世绘",
+      "enhancedPrompt": "serene Japanese garden with falling cherry blossom petals, soft pink lighting, ethereal atmosphere, ultra-detailed 8K quality, 日式浮世绘",
+      "imageSize": "1024x576"
+    },
+    "id": "1751254274321",
+    "timestamp": "2025-06-30T03:31:14.321Z"
+  },
+  {
+    "type": "generate",
+    "title": "未命名壁纸",
+    "details": {
+      "preset": "desktop_fhd",
+      "originalPrompt": "樱花花瓣飘落的宁静日式庭院，柔和粉色光线，空灵氛围，超细节8K画质",
+      "enhancedPrompt": "serene Japanese garden with falling cherry blossom petals, soft pink lighting, ethereal atmosphere, ultra-detailed 8K quality",
+      "imageSize": "1024x576"
+    },
+    "id": "1751254245965",
+    "timestamp": "2025-06-30T03:30:45.965Z"
+  },
+  {
+    "type": "generate",
+    "title": "未命名壁纸",
+    "details": {
       "preset": "desktop_fhd",
       "originalPrompt": "电子音乐可视化效果，频谱波形，数字艺术，赛博朋克美学, 日式浮世绘",
       "enhancedPrompt": "electronic music visualization, spectrum waveform, digital art, cyberpunk aesthetic, 日式浮世绘",

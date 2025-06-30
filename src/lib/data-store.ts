@@ -19,7 +19,7 @@ export class DataStore {
       await this.ensureDataDirectory();
       const data = await fs.readFile(DATA_FILE, 'utf-8');
       return JSON.parse(data);
-    } catch (error) {
+    } catch {
       // 文件不存在时返回空数组
       return [];
     }

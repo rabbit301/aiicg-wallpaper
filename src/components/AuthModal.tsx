@@ -3,10 +3,17 @@
 import { useState } from 'react';
 import { X, User, Mail, Lock, Loader2, Check } from 'lucide-react';
 
+interface UserData {
+  id: string;
+  username: string;
+  email?: string;
+  avatar?: string;
+}
+
 interface AuthModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSuccess: (user: any) => void;
+  onSuccess: (user: UserData) => void;
   initialMode?: 'login' | 'register';
 }
 
