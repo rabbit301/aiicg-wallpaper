@@ -9,9 +9,9 @@
   "language": "en",
   "timezone": "Asia/Shanghai",
   "privacySettings": {
-    "saveGeneratedImages": false,
-    "saveCompressedImages": false,
-    "showInHomepage": false,
+    "saveGeneratedImages": true,
+    "saveCompressedImages": true,
+    "showInHomepage": true,
     "maxHomepageImages": 6,
     "allowPublicView": true
   }

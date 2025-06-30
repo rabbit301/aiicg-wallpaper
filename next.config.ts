@@ -22,6 +22,29 @@ const nextConfig: NextConfig = {
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
   },
+  experimental: {
+    turbo: {
+      rules: {
+        '*.svg': {
+          loaders: ['@svgr/webpack'],
+          as: '*.js',
+        },
+      },
+    },
+  },
+  // 解决 LightningCSS 在 CF Pages 上的问题
+  webpack: (config, { isServer, dev }) => {
+    // 在 CF Pages 构建环境中，跳过原生模块的严格检查
+    if (process.env.CF_PAGES && !dev) {
+      config.externals = config.externals || []
+      config.externals.push({
+        'lightningcss/node': 'commonjs lightningcss/node',
+        '@parcel/watcher': 'commonjs @parcel/watcher',
+      })
+    }
+    
+    return config
+  },
 };
 
 export default nextConfig;
