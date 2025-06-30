@@ -42,6 +42,11 @@ const nextConfig: NextConfig = {
         'lightningcss/node': 'commonjs lightningcss/node',
         '@parcel/watcher': 'commonjs @parcel/watcher',
       })
+      
+      // 完全禁用文件系统缓存以避免大文件
+      if (config.cache && config.cache.type === 'filesystem') {
+        config.cache = false;
+      }
     }
     
     // 解决CF Pages构建环境中的模块解析问题
@@ -52,25 +57,45 @@ const nextConfig: NextConfig = {
         splitChunks: {
           ...config.optimization.splitChunks,
           chunks: 'all',
-          maxSize: 20 * 1024 * 1024, // 20MB限制
+          maxSize: 15 * 1024 * 1024, // 15MB限制，更保守
           cacheGroups: {
             ...config.optimization.splitChunks?.cacheGroups,
             default: {
               minChunks: 2,
               priority: -20,
               reuseExistingChunk: true,
-              maxSize: 15 * 1024 * 1024, // 15MB限制
+              maxSize: 10 * 1024 * 1024, // 10MB限制
             },
             vendor: {
               test: /[\\/]node_modules[\\/]/,
               name: 'vendors',
               priority: -10,
               chunks: 'all',
-              maxSize: 15 * 1024 * 1024, // 15MB限制
+              maxSize: 10 * 1024 * 1024, // 10MB限制
+            },
+            // 添加更细粒度的分割
+            react: {
+              test: /[\\/]node_modules[\\/](react|react-dom)[\\/]/,
+              name: 'react',
+              priority: 10,
+              chunks: 'all',
+              maxSize: 5 * 1024 * 1024, // 5MB限制
+            },
+            ui: {
+              test: /[\\/]node_modules[\\/](lucide-react|@tailwindcss)[\\/]/,
+              name: 'ui',
+              priority: 5,
+              chunks: 'all',
+              maxSize: 5 * 1024 * 1024, // 5MB限制
             },
           },
         },
       };
+      
+      // 在非开发环境且在CF Pages上完全禁用缓存
+      if (process.env.CF_PAGES) {
+        config.cache = false;
+      }
     }
 
     // 处理LightningCSS模块解析
