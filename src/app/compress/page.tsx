@@ -1,8 +1,12 @@
+'use client';
+
 import Layout from '@/components/Layout';
 import CompressionPanel from '@/components/CompressionPanel';
 import { Image, Zap, Shield, Download } from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function CompressPage() {
+  const { t } = useLanguage();
   return (
     <Layout>
       {/* Header Section */}
@@ -15,30 +19,29 @@ export default function CompressPage() {
               </div>
             </div>
             <h1 className="text-4xl md:text-5xl font-bold text-neutral-900 dark:text-white mb-4">
-              图片压缩与格式转换
+              {t('compressPage.title')}
             </h1>
             <p className="text-xl text-neutral-600 dark:text-neutral-400 max-w-3xl mx-auto mb-8">
-              专业的图片处理工具，支持智能压缩和多种格式转换。
-              保持高质量的同时大幅减少文件大小，提升加载速度。
+              {t('compressPage.description')}
             </p>
             
             {/* Features */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6 max-w-5xl mx-auto">
               <div className="flex items-center justify-center space-x-2 text-neutral-600 dark:text-neutral-400">
                 <Zap className="h-5 w-5 text-secondary-500" />
-                <span>快速压缩</span>
+                <span>{t('compressPage.features.fastCompress')}</span>
               </div>
               <div className="flex items-center justify-center space-x-2 text-neutral-600 dark:text-neutral-400">
                 <Shield className="h-5 w-5 text-accent-500" />
-                <span>质量保证</span>
+                <span>{t('compressPage.features.qualityGuarantee')}</span>
               </div>
               <div className="flex items-center justify-center space-x-2 text-neutral-600 dark:text-neutral-400">
                 <Image className="h-5 w-5 text-primary-500" />
-                <span>多种格式</span>
+                <span>{t('compressPage.features.multiFormat')}</span>
               </div>
               <div className="flex items-center justify-center space-x-2 text-neutral-600 dark:text-neutral-400">
                 <Download className="h-5 w-5 text-success-500" />
-                <span>批量处理</span>
+                <span>{t('compressPage.features.batchProcess')}</span>
               </div>
             </div>
           </div>
@@ -57,10 +60,10 @@ export default function CompressPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-neutral-900 dark:text-white mb-4">
-              版本对比
+              {t('compressPage.versionCompare')}
             </h2>
             <p className="text-lg text-neutral-600 dark:text-neutral-400">
-              选择适合您需求的压缩方案
+              {t('compressPage.versionDesc')}
             </p>
           </div>
 
@@ -72,38 +75,38 @@ export default function CompressPage() {
                   <Image className="h-6 w-6 text-white" />
                 </div>
                 <h3 className="text-2xl font-bold text-neutral-900 dark:text-white mb-2">
-                  免费版
+                  {t('compressPage.freeVersion')}
                 </h3>
                 <p className="text-neutral-600 dark:text-neutral-400">
-                  基础压缩功能
+                  {t('compressPage.freeVersionDesc')}
                 </p>
               </div>
 
               <ul className="space-y-3 mb-8">
                 <li className="flex items-center space-x-3">
                   <div className="w-2 h-2 bg-success-500 rounded-full"></div>
-                  <span className="text-neutral-700 dark:text-neutral-300">支持常见格式 (JPG, PNG, WebP)</span>
+                  <span className="text-neutral-700 dark:text-neutral-300">{t('compressPage.feature1')}</span>
                 </li>
                 <li className="flex items-center space-x-3">
                   <div className="w-2 h-2 bg-success-500 rounded-full"></div>
-                  <span className="text-neutral-700 dark:text-neutral-300">基础压缩算法</span>
+                  <span className="text-neutral-700 dark:text-neutral-300">{t('compressPage.feature2')}</span>
                 </li>
                 <li className="flex items-center space-x-3">
                   <div className="w-2 h-2 bg-success-500 rounded-full"></div>
-                  <span className="text-neutral-700 dark:text-neutral-300">多种质量预设</span>
+                  <span className="text-neutral-700 dark:text-neutral-300">{t('compressPage.feature3')}</span>
                 </li>
                 <li className="flex items-center space-x-3">
                   <div className="w-2 h-2 bg-success-500 rounded-full"></div>
-                  <span className="text-neutral-700 dark:text-neutral-300">无文件大小限制</span>
+                  <span className="text-neutral-700 dark:text-neutral-300">{t('compressPage.feature4')}</span>
                 </li>
               </ul>
 
               <div className="text-center">
                 <div className="text-3xl font-bold text-neutral-900 dark:text-white mb-2">
-                  免费
+                  {t('compressPage.free')}
                 </div>
                 <p className="text-neutral-600 dark:text-neutral-400 text-sm">
-                  永久免费使用
+                  {t('compressPage.freeForever')}
                 </p>
               </div>
             </div>
@@ -112,7 +115,7 @@ export default function CompressPage() {
             <div className="bg-gradient-to-br from-primary-50 to-secondary-100 dark:from-primary-900/20 dark:to-secondary-800/20 p-8 rounded-2xl border-2 border-primary-300 dark:border-primary-600 relative">
               <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
                 <span className="bg-gradient-to-r from-primary-600 to-secondary-600 text-white px-4 py-1 rounded-full text-sm font-medium">
-                  推荐
+                  {t('compressPage.recommended')}
                 </span>
               </div>
 
@@ -121,42 +124,42 @@ export default function CompressPage() {
                   <Zap className="h-6 w-6 text-white" />
                 </div>
                 <h3 className="text-2xl font-bold text-neutral-900 dark:text-white mb-2">
-                  AI智能版
+                  {t('compressPage.aiVersion')}
                 </h3>
                 <p className="text-neutral-600 dark:text-neutral-400">
-                  AI驱动的智能压缩
+                  {t('compressPage.aiVersionDesc')}
                 </p>
               </div>
 
               <ul className="space-y-3 mb-8">
                 <li className="flex items-center space-x-3">
                   <div className="w-2 h-2 bg-primary-500 rounded-full"></div>
-                  <span className="text-neutral-700 dark:text-neutral-300">AI智能压缩算法</span>
+                  <span className="text-neutral-700 dark:text-neutral-300">{t('compressPage.feature5')}</span>
                 </li>
                 <li className="flex items-center space-x-3">
                   <div className="w-2 h-2 bg-primary-500 rounded-full"></div>
-                  <span className="text-neutral-700 dark:text-neutral-300">更高压缩率</span>
+                  <span className="text-neutral-700 dark:text-neutral-300">{t('compressPage.feature6')}</span>
                 </li>
                 <li className="flex items-center space-x-3">
                   <div className="w-2 h-2 bg-primary-500 rounded-full"></div>
-                  <span className="text-neutral-700 dark:text-neutral-300">更好的质量保持</span>
+                  <span className="text-neutral-700 dark:text-neutral-300">{t('compressPage.feature7')}</span>
                 </li>
                 <li className="flex items-center space-x-3">
                   <div className="w-2 h-2 bg-primary-500 rounded-full"></div>
-                  <span className="text-neutral-700 dark:text-neutral-300">支持更多格式</span>
+                  <span className="text-neutral-700 dark:text-neutral-300">{t('compressPage.feature8')}</span>
                 </li>
                 <li className="flex items-center space-x-3">
                   <div className="w-2 h-2 bg-primary-500 rounded-full"></div>
-                  <span className="text-neutral-700 dark:text-neutral-300">批量处理</span>
+                  <span className="text-neutral-700 dark:text-neutral-300">{t('compressPage.feature9')}</span>
                 </li>
               </ul>
 
               <div className="text-center">
                 <div className="text-3xl font-bold text-neutral-900 dark:text-white mb-2">
-                  ¥9.9<span className="text-lg font-normal">/月</span>
+                  ¥9.9<span className="text-lg font-normal">{t('compressPage.monthlyPrice')}</span>
                 </div>
                 <p className="text-neutral-600 dark:text-neutral-400 text-sm">
-                  专业用户首选
+                  {t('compressPage.professional')}
                 </p>
               </div>
             </div>
@@ -169,10 +172,10 @@ export default function CompressPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-neutral-900 dark:text-white mb-4">
-              支持的格式
+              {t('compressPage.supportedFormats')}
             </h2>
             <p className="text-lg text-neutral-600 dark:text-neutral-400">
-              支持主流图片格式的压缩和转换
+              {t('compressPage.formatsDesc')}
             </p>
           </div>
 

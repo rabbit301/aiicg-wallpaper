@@ -3,9 +3,11 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
 import AuthModal from '@/components/AuthModal';
 import ThemeToggle from '@/components/ThemeToggle';
+import LanguageToggle from '@/components/LanguageToggle';
 import { 
   Home, 
   Wand2, 
@@ -15,22 +17,29 @@ import {
   X, 
   Sparkles,
   Settings,
-  LogOut,
-  LogIn
+  LogOut
 } from 'lucide-react';
 
-const navigation = [
-  { name: '首页', href: '/', icon: Home },
-  { name: 'AI生成', href: '/generate', icon: Wand2 },
-  { name: '格式转换', href: '/compress', icon: Image },
-];
-
-const userNavigation = [
-  { name: '个人中心', href: '/profile', icon: User },
-  { name: '设置', href: '/settings', icon: Settings },
-];
-
 export default function Navbar() {
+  const { t, locale } = useLanguage();
+  
+
+  
+  // 使用函数形式确保每次渲染都获取最新翻译
+  const getNavigation = () => [
+    { name: t('home_nav'), href: '/', icon: Home },
+    { name: t('generate'), href: '/generate', icon: Wand2 },
+    { name: t('compress'), href: '/compress', icon: Image },
+  ];
+  
+  const navigation = getNavigation();
+
+  const getUserNavigation = () => [
+    { name: t('profile'), href: '/profile', icon: User },
+    { name: t('settings'), href: '/settings', icon: Settings },
+  ];
+  
+  const userNavigation = getUserNavigation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const pathname = usePathname();
@@ -92,6 +101,9 @@ export default function Navbar() {
 
             {/* User Menu */}
             <div className="hidden md:flex items-center space-x-4">
+              {/* Language Toggle */}
+              <LanguageToggle />
+              
               {/* Theme Toggle */}
               <ThemeToggle />
               
@@ -135,7 +147,7 @@ export default function Navbar() {
                         className="w-full flex items-center space-x-2 text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors duration-200"
                       >
                         <LogOut className="h-4 w-4" />
-                        <span>退出登录</span>
+                        <span>{t('logout')}</span>
                       </button>
                     </div>
                   </div>
@@ -143,16 +155,18 @@ export default function Navbar() {
               ) : (
                 <button
                   onClick={() => setAuthModalOpen(true)}
-                  className="flex items-center space-x-2 px-4 py-2 bg-primary-600 text-white font-medium rounded-lg hover:bg-primary-700 transition-colors duration-200"
+                  className="px-6 py-2 bg-white dark:bg-neutral-800 text-primary-600 dark:text-primary-400 font-medium rounded-lg border border-primary-200 dark:border-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/20 hover:border-primary-400 dark:hover:border-primary-500 transition-all duration-200 shadow-sm hover:shadow-md"
                 >
-                  <LogIn className="h-4 w-4" />
-                  <span>登录</span>
+                  {t('login')}
                 </button>
               )}
             </div>
 
             {/* Mobile menu button */}
             <div className="md:hidden flex items-center space-x-2">
+              {/* Mobile Language Toggle */}
+              <LanguageToggle />
+              
               {/* Mobile Theme Toggle */}
               <ThemeToggle />
               
@@ -235,7 +249,7 @@ export default function Navbar() {
                     className="w-full text-left flex items-center space-x-3 px-3 py-3 rounded-lg text-base font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all duration-200"
                   >
                     <LogOut className="h-5 w-5" />
-                    <span>退出登录</span>
+                    <span>{t('logout')}</span>
                   </button>
                 </>
               ) : (
@@ -244,10 +258,9 @@ export default function Navbar() {
                     setAuthModalOpen(true);
                     setMobileMenuOpen(false);
                   }}
-                  className="w-full text-left flex items-center space-x-3 px-3 py-3 rounded-lg text-base font-medium bg-primary-600 text-white hover:bg-primary-700 transition-all duration-200"
+                  className="w-full text-center px-3 py-3 rounded-lg text-base font-medium bg-white dark:bg-neutral-800 text-primary-600 dark:text-primary-400 border border-primary-200 dark:border-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-all duration-200"
                 >
-                  <LogIn className="h-5 w-5" />
-                  <span>登录 / 注册</span>
+                  {t('loginRegister')}
                 </button>
               )}
             </div>

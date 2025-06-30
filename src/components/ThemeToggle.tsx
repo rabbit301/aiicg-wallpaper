@@ -1,17 +1,19 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { Sun, Moon, Monitor, Check } from 'lucide-react';
 import { useTheme } from '@/contexts/ThemeContext';
 
-const themes = [
-  { key: 'light' as const, label: '浅色模式', icon: Sun },
-  { key: 'dark' as const, label: '深色模式', icon: Moon },
-  { key: 'system' as const, label: '跟随系统', icon: Monitor },
-];
-
 export default function ThemeToggle() {
   const { theme, resolvedTheme, setTheme } = useTheme();
+  const { t } = useLanguage();
+  
+  const themes = [
+    { key: 'light' as const, label: t('theme.light'), icon: Sun },
+    { key: 'dark' as const, label: t('theme.dark'), icon: Moon },
+    { key: 'system' as const, label: t('theme.system'), icon: Monitor },
+  ];
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -81,7 +83,7 @@ export default function ThemeToggle() {
           {/* 分隔线和当前状态提示 */}
           <div className="border-t border-neutral-200 dark:border-neutral-700 mt-1 pt-2 px-4 pb-2">
             <div className="text-xs text-neutral-500 dark:text-neutral-400">
-              当前: {resolvedTheme === 'dark' ? '深色模式' : '浅色模式'}
+              当前: {resolvedTheme === 'dark' ? t('theme.dark') : t('theme.light')}
               {theme === 'system' && (
                 <span className="ml-1">(系统)</span>
               )}

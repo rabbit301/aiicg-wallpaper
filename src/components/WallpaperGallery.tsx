@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { Download, Eye, Clock, Tag } from 'lucide-react';
 import { Wallpaper } from '@/types';
 import Image from 'next/image';
+import { useLanguage } from '@/contexts/LanguageContext';
 // 移除复杂的图片优化导入，专注于 Next.js 原生优化
 
 interface WallpaperGalleryProps {
@@ -19,6 +20,7 @@ export default function WallpaperGallery({
   showPopular = false,
   limit 
 }: WallpaperGalleryProps) {
+  const { t } = useLanguage();
   const [wallpapers, setWallpapers] = useState<Wallpaper[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -111,14 +113,14 @@ export default function WallpaperGallery({
       <div className="py-12 text-center">
         <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-8">
           <h3 className="text-lg font-semibold text-red-700 dark:text-red-300 mb-2">
-            加载失败
+            {t('gallery.loadFailed')}
           </h3>
           <p className="text-red-600 dark:text-red-400 mb-4">{error}</p>
           <button
             onClick={fetchWallpapers}
             className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
           >
-            重试
+            {t('gallery.retry')}
           </button>
         </div>
       </div>
@@ -130,10 +132,10 @@ export default function WallpaperGallery({
       <div className="py-12 text-center">
         <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-8">
           <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-2">
-            暂无壁纸
+            {t('gallery.noWallpapers')}
           </h3>
           <p className="text-gray-600 dark:text-gray-400">
-            {searchQuery ? '没有找到匹配的壁纸' : '还没有生成任何壁纸'}
+            {searchQuery ? t('gallery.noMatches') : t('gallery.noGenerated')}
           </p>
         </div>
       </div>
@@ -177,14 +179,14 @@ export default function WallpaperGallery({
                   <button
                     onClick={() => handlePreview(wallpaper)}
                     className="p-2 bg-white bg-opacity-90 rounded-full hover:bg-opacity-100 transition-all duration-200"
-                    title="预览"
+                    title={t('gallery.preview')}
                   >
                     <Eye className="h-4 w-4 text-gray-700" />
                   </button>
                   <button
                     onClick={() => handleDownload(wallpaper)}
                     className="p-2 bg-white bg-opacity-90 rounded-full hover:bg-opacity-100 transition-all duration-200"
-                    title="下载"
+                    title={t('gallery.download')}
                   >
                     <Download className="h-4 w-4 text-gray-700" />
                   </button>
@@ -194,7 +196,7 @@ export default function WallpaperGallery({
               {/* 360优化标识 */}
               {wallpaper.optimizedFor360 && (
                 <div className="absolute top-2 right-2 bg-purple-600 text-white text-xs px-2 py-1 rounded-full">
-                  360优化
+                  {t('gallery.optimized360')}
                 </div>
               )}
             </div>

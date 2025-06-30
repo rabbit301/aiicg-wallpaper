@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { User, Image as ImageIcon, Play, Radio, ChevronRight, Grid3X3, Wand2 } from 'lucide-react';
 import Link from 'next/link';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface GiphyImage {
   id: string;
@@ -36,53 +37,57 @@ interface LocalWallpaper {
   prompt?: string;
 }
 
-const categoryConfig = {
-  'ai-generated': {
-    name: 'AI生成',
-    icon: Wand2,
-    description: 'AI创作的独特壁纸',
-    color: 'from-purple-500 to-purple-600',
-    bgColor: 'from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20',
-    borderColor: 'border-purple-200 dark:border-purple-800'
-  },
-  avatar: {
-    name: '头像',
-    icon: User,
-    description: '个性头像和角色形象',
-    color: 'from-primary-500 to-primary-600',
-    bgColor: 'from-primary-50 to-primary-100 dark:from-primary-900/20 dark:to-primary-800/20',
-    borderColor: 'border-primary-200 dark:border-primary-800'
-  },
-  wallpaper: {
-    name: '壁纸',
-    icon: ImageIcon,
-    description: '精美背景和壁纸',
-    color: 'from-secondary-500 to-secondary-600',
-    bgColor: 'from-secondary-50 to-secondary-100 dark:from-secondary-900/20 dark:to-secondary-800/20',
-    borderColor: 'border-secondary-200 dark:border-secondary-800'
-  },
-  animation: {
-    name: '动画',
-    icon: Play,
-    description: '创意动画和特效',
-    color: 'from-accent-500 to-accent-600',
-    bgColor: 'from-accent-50 to-accent-100 dark:from-accent-900/20 dark:to-accent-800/20',
-    borderColor: 'border-accent-200 dark:border-accent-800'
-  },
-  live: {
-    name: '直播',
-    icon: Radio,
-    description: '直播元素和装饰',
-    color: 'from-success-500 to-success-600',
-    bgColor: 'from-success-50 to-success-100 dark:from-success-900/20 dark:to-success-800/20',
-    borderColor: 'border-success-200 dark:border-success-800'
-  }
-};
+// 将移动到组件内部使用t翻译
 
 export default function CategoryGallery() {
+  const { t } = useLanguage();
   const [categories, setCategories] = useState<CategoryData[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // 动态创建配置，使用翻译
+  const categoryConfig = {
+    'ai-generated': {
+      name: t('category.aiGenerated'),
+      icon: Wand2,
+      description: t('category.aiGeneratedDesc'),
+      color: 'from-purple-500 to-purple-600',
+      bgColor: 'from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20',
+      borderColor: 'border-purple-200 dark:border-purple-800'
+    },
+    avatar: {
+      name: t('category.avatar'),
+      icon: User,
+      description: t('category.avatarDesc'),
+      color: 'from-primary-500 to-primary-600',
+      bgColor: 'from-primary-50 to-primary-100 dark:from-primary-900/20 dark:to-primary-800/20',
+      borderColor: 'border-primary-200 dark:border-primary-800'
+    },
+    wallpaper: {
+      name: t('category.wallpaper'),
+      icon: ImageIcon,
+      description: t('category.wallpaperDesc'),
+      color: 'from-secondary-500 to-secondary-600',
+      bgColor: 'from-secondary-50 to-secondary-100 dark:from-secondary-900/20 dark:to-secondary-800/20',
+      borderColor: 'border-secondary-200 dark:border-secondary-800'
+    },
+    animation: {
+      name: t('category.animation'),
+      icon: Play,
+      description: t('category.animationDesc'),
+      color: 'from-accent-500 to-accent-600',
+      bgColor: 'from-accent-50 to-accent-100 dark:from-accent-900/20 dark:to-accent-800/20',
+      borderColor: 'border-accent-200 dark:border-accent-800'
+    },
+    live: {
+      name: t('category.live'),
+      icon: Radio,
+      description: t('category.liveDesc'),
+      color: 'from-success-500 to-success-600',
+      bgColor: 'from-success-50 to-success-100 dark:from-success-900/20 dark:to-success-800/20',
+      borderColor: 'border-success-200 dark:border-success-800'
+    }
+  };
 
   useEffect(() => {
     fetchCategories();
@@ -175,7 +180,7 @@ export default function CategoryGallery() {
 
       setCategories(categoriesData);
     } catch (err) {
-      setError('加载内容失败');
+              setError(t('category.loadFailed'));
       console.error('获取分类数据失败:', err);
     } finally {
       setLoading(false);
@@ -218,7 +223,7 @@ export default function CategoryGallery() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="bg-error-50 dark:bg-error-900/20 border border-error-200 dark:border-error-800 rounded-2xl p-8">
             <h3 className="text-xl font-semibold text-error-700 dark:text-error-300 mb-2">
-              加载失败
+              {t('category.loadFailed')}
             </h3>
             <p className="text-error-600 dark:text-error-400 mb-4">
               {error}
@@ -227,7 +232,7 @@ export default function CategoryGallery() {
               onClick={fetchCategories}
               className="px-6 py-3 bg-error-600 text-white font-medium rounded-lg hover:bg-error-700 transition-colors duration-200"
             >
-              重试
+              {t('category.retry')}
             </button>
           </div>
         </div>
@@ -246,10 +251,10 @@ export default function CategoryGallery() {
             </div>
           </div>
           <h2 className="text-3xl md:text-4xl font-bold text-neutral-900 dark:text-white mb-4">
-            精彩内容分类
+            {t('category.featuredContent')}
           </h2>
           <p className="text-xl text-neutral-600 dark:text-neutral-400 max-w-2xl mx-auto">
-            探索丰富多样的视觉内容，从AI生成壁纸到精美背景，应有尽有
+            {t('category.contentDesc')}
           </p>
         </div>
 
@@ -319,7 +324,7 @@ export default function CategoryGallery() {
                   {/* View More */}
                   <div className="flex items-center justify-center text-neutral-600 dark:text-neutral-400 group-hover:text-neutral-900 dark:group-hover:text-neutral-100 transition-colors duration-200">
                     <span className="text-sm font-medium mr-1">
-                      {categoryData.category === 'ai-generated' ? '开始创作' : '查看更多'}
+                      {categoryData.category === 'ai-generated' ? t('category.startCreating') : t('category.viewMore')}
                     </span>
                     <ChevronRight className="h-4 w-4 group-hover:translate-x-1 transition-transform duration-200" />
                   </div>
@@ -337,7 +342,7 @@ export default function CategoryGallery() {
                 {categories.reduce((sum, cat) => sum + cat.count, 0)}+
               </div>
               <div className="text-neutral-600 dark:text-neutral-400">
-                总内容数量
+                {t('category.totalContent')}
               </div>
             </div>
             <div>
@@ -345,7 +350,7 @@ export default function CategoryGallery() {
                 {categories.length}
               </div>
               <div className="text-neutral-600 dark:text-neutral-400">
-                内容分类
+                {t('category.contentTypes')}
               </div>
             </div>
             <div>
@@ -353,7 +358,7 @@ export default function CategoryGallery() {
                 24/7
               </div>
               <div className="text-neutral-600 dark:text-neutral-400">
-                持续更新
+                {t('category.continuousUpdate')}
               </div>
             </div>
           </div>

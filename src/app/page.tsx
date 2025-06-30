@@ -1,10 +1,15 @@
+'use client';
+
 import Layout from '@/components/Layout';
 import CategoryGallery from '@/components/CategoryGallery';
 import WallpaperGallery from '@/components/WallpaperGallery';
 import { Sparkles, Wand2, Image, TrendingUp } from 'lucide-react';
 import Link from 'next/link';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function Home() {
+  const { t } = useLanguage();
+  
   return (
     <Layout>
       {/* Hero Section */}
@@ -13,14 +18,13 @@ export default function Home() {
           <div className="text-center">
             <h1 className="text-4xl md:text-6xl font-bold text-neutral-900 dark:text-white mb-6">
               <span className="bg-gradient-to-r from-primary-600 via-secondary-600 to-accent-600 bg-clip-text text-transparent">
-                AI驱动的壁纸
+                {t('page.aiPoweredWallpaper')}
               </span>
               <br />
-              创作与处理平台
+              {t('page.creationPlatform')}
             </h1>
             <p className="text-xl text-neutral-600 dark:text-neutral-400 mb-8 max-w-3xl mx-auto">
-              使用最先进的AI技术生成独特壁纸，提供专业的图片压缩和格式转换服务，
-              为您的设备打造完美的视觉体验。
+              {t('page.platformDesc')}
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
@@ -29,14 +33,14 @@ export default function Home() {
                 className="inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-primary-600 to-secondary-600 text-white font-semibold rounded-xl hover:from-primary-700 hover:to-secondary-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
               >
                 <Wand2 className="h-5 w-5 mr-2" />
-                开始创作
+                {t('home.startCreating')}
               </Link>
               <Link
                 href="/compress"
                 className="inline-flex items-center justify-center px-8 py-4 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white font-semibold rounded-xl border-2 border-neutral-200 dark:border-neutral-700 hover:border-primary-300 dark:hover:border-primary-600 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
               >
                 <Image className="h-5 w-5 mr-2" />
-                图片处理
+                {t('home.imageProcessing')}
               </Link>
             </div>
 
@@ -44,15 +48,15 @@ export default function Home() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
               <div className="text-center">
                 <div className="text-3xl font-bold text-primary-600 mb-2">10K+</div>
-                <div className="text-neutral-600 dark:text-neutral-400">生成壁纸</div>
+                <div className="text-neutral-600 dark:text-neutral-400">{t('home.stats.wallpapers')}</div>
               </div>
               <div className="text-center">
                 <div className="text-3xl font-bold text-secondary-600 mb-2">5K+</div>
-                <div className="text-neutral-600 dark:text-neutral-400">活跃用户</div>
+                <div className="text-neutral-600 dark:text-neutral-400">{t('home.stats.users')}</div>
               </div>
               <div className="text-center">
                 <div className="text-3xl font-bold text-accent-600 mb-2">99%</div>
-                <div className="text-neutral-600 dark:text-neutral-400">满意度</div>
+                <div className="text-neutral-600 dark:text-neutral-400">{t('home.stats.satisfaction')}</div>
               </div>
             </div>
           </div>
@@ -71,10 +75,10 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-neutral-900 dark:text-white mb-4">
-              强大的功能特性
+              {t('page.powerfulFeatures')}
             </h2>
             <p className="text-xl text-neutral-600 dark:text-neutral-400 max-w-2xl mx-auto">
-              集成最新AI技术，为您提供全方位的图片处理解决方案
+              {t('page.featuresDesc')}
             </p>
           </div>
 
@@ -84,10 +88,10 @@ export default function Home() {
                 <Wand2 className="h-8 w-8 text-white" />
               </div>
               <h3 className="text-xl font-semibold text-neutral-900 dark:text-white mb-4">
-                AI壁纸生成
+                {t('home.features.aiGeneration')}
               </h3>
               <p className="text-neutral-600 dark:text-neutral-400">
-                使用先进的AI模型，根据您的描述生成独特的高质量壁纸，支持多种尺寸和风格。
+                {t('home.features.aiGenerationDesc')}
               </p>
             </div>
 
@@ -96,10 +100,10 @@ export default function Home() {
                 <Image className="h-8 w-8 text-white" />
               </div>
               <h3 className="text-xl font-semibold text-neutral-900 dark:text-white mb-4">
-                智能压缩
+                {t('home.features.smartCompression')}
               </h3>
               <p className="text-neutral-600 dark:text-neutral-400">
-                提供免费版和AI版压缩，支持多种格式转换，保持高质量的同时大幅减少文件大小。
+                {t('home.features.smartCompressionDesc')}
               </p>
             </div>
 
@@ -108,10 +112,10 @@ export default function Home() {
                 <TrendingUp className="h-8 w-8 text-white" />
               </div>
               <h3 className="text-xl font-semibold text-neutral-900 dark:text-white mb-4">
-                专业优化
+                {t('home.features.professionalOptimization')}
               </h3>
               <p className="text-neutral-600 dark:text-neutral-400">
-                针对不同设备和用途进行专业优化，包括水冷屏幕、手机、桌面等多种场景。
+                {t('home.features.professionalOptimizationDesc')}
               </p>
             </div>
           </div>
@@ -123,10 +127,10 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-neutral-900 dark:text-white mb-4">
-              最新AI生成作品
+              {t('gallery.latestWorks')}
             </h2>
             <p className="text-xl text-neutral-600 dark:text-neutral-400 max-w-2xl mx-auto">
-              发现其他用户创作的精彩壁纸，获取灵感或直接下载使用
+              {t('gallery.discoverWorks')}
             </p>
           </div>
           
@@ -141,7 +145,7 @@ export default function Home() {
               className="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white font-medium rounded-lg hover:from-purple-700 hover:to-blue-700 transition-all duration-200"
             >
               <Wand2 className="h-5 w-5 mr-2" />
-              立即创作您的专属壁纸
+              {t('gallery.createNow')}
             </Link>
           </div>
         </div>
@@ -154,10 +158,10 @@ export default function Home() {
       <section className="py-20 bg-white dark:bg-neutral-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl md:text-4xl font-bold text-neutral-900 dark:text-white mb-4">
-            开始您的创作之旅
+            {t('home.cta.title')}
           </h2>
           <p className="text-xl text-neutral-600 dark:text-neutral-400 max-w-2xl mx-auto mb-8">
-            无论是生成独特的AI壁纸，还是处理现有图片，我们都为您提供专业的工具
+            {t('home.cta.description')}
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -166,14 +170,14 @@ export default function Home() {
               className="inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-primary-600 to-secondary-600 text-white font-semibold rounded-xl hover:from-primary-700 hover:to-secondary-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
             >
               <Sparkles className="h-5 w-5 mr-2" />
-              AI生成壁纸
+              {t('home.cta.generateWallpaper')}
             </Link>
             <Link
               href="/compress"
               className="inline-flex items-center justify-center px-8 py-4 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white font-semibold rounded-xl border-2 border-neutral-200 dark:border-neutral-700 hover:border-primary-300 dark:hover:border-primary-600 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
             >
               <Image className="h-5 w-5 mr-2" />
-              图片处理
+              {t('home.cta.processImage')}
             </Link>
           </div>
         </div>
