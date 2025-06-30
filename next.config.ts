@@ -30,6 +30,7 @@ const nextConfig: NextConfig = {
           as: '*.js',
         },
       },
+      resolveExtensions: ['.tsx', '.ts', '.jsx', '.js'],
     },
   },
   // 解决 LightningCSS 在 CF Pages 上的问题
@@ -43,8 +44,61 @@ const nextConfig: NextConfig = {
       })
     }
     
+    // 解决CF Pages构建环境中的模块解析问题
+    if (!isServer && !dev) {
+      // 限制chunk大小以避免超过CF Pages 25MB限制
+      config.optimization = {
+        ...config.optimization,
+        splitChunks: {
+          ...config.optimization.splitChunks,
+          chunks: 'all',
+          maxSize: 20 * 1024 * 1024, // 20MB限制
+          cacheGroups: {
+            ...config.optimization.splitChunks?.cacheGroups,
+            default: {
+              minChunks: 2,
+              priority: -20,
+              reuseExistingChunk: true,
+              maxSize: 15 * 1024 * 1024, // 15MB限制
+            },
+            vendor: {
+              test: /[\\/]node_modules[\\/]/,
+              name: 'vendors',
+              priority: -10,
+              chunks: 'all',
+              maxSize: 15 * 1024 * 1024, // 15MB限制
+            },
+          },
+        },
+      };
+    }
+
+    // 处理LightningCSS模块解析
+    if (!config.resolve) {
+      config.resolve = {};
+    }
+    if (!config.resolve.fallback) {
+      config.resolve.fallback = {};
+    }
+    
+    config.resolve.fallback = {
+      ...config.resolve.fallback,
+      fs: false,
+      path: false,
+      crypto: false,
+    };
+
     return config
   },
+  
+  // 禁用某些可能导致大文件的功能
+  ...(process.env.CF_PAGES && {
+    // CF Pages特定配置
+    output: 'standalone',
+    // 减少构建缓存大小
+    cacheHandler: undefined,
+    distDir: '.next',
+  }),
 };
 
 export default nextConfig;
