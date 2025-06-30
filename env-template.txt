@@ -1,0 +1,153 @@
+# =============================================================================
+# AIICG壁纸平台 - 环境变量配置文件示例
+# =============================================================================
+# 复制此文件为 .env.local 并填入真实的API密钥
+# cp env-template.txt .env.local
+
+# -----------------------------------------------------------------------------
+# 运行环境配置
+# -----------------------------------------------------------------------------
+NODE_ENV=production
+PORT=3000
+
+# -----------------------------------------------------------------------------
+# Fal.ai Configuration (AI图片生成服务)
+# 已预置可用密钥，如需更换请访问: https://fal.ai/
+# -----------------------------------------------------------------------------
+FAL_KEY=367bb9eb-56e0-470c-b709-9eb211e5b9d2:22a0824074f02ce799bde0124091085d
+
+# -----------------------------------------------------------------------------
+# Cloudinary Configuration (图片处理与存储)
+# 注册地址: https://cloudinary.com/
+# -----------------------------------------------------------------------------
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
+
+# -----------------------------------------------------------------------------
+# 图片内容API配置 (可选 - 用于内容聚合)
+# -----------------------------------------------------------------------------
+
+# Unsplash API
+# 注册地址: https://unsplash.com/developers
+UNSPLASH_ACCESS_KEY=your_unsplash_access_key
+
+# Pexels API  
+# 注册地址: https://www.pexels.com/api/
+PEXELS_API_KEY=your_pexels_api_key
+
+# Giphy API
+# 注册地址: https://developers.giphy.com/
+GIPHY_API_KEY=your_giphy_api_key
+
+# -----------------------------------------------------------------------------
+# 应用安全配置
+# -----------------------------------------------------------------------------
+
+# NextAuth.js 配置
+# 生成密钥: openssl rand -base64 32
+NEXTAUTH_SECRET=your_random_secret_key_here_32_characters_minimum
+
+# 应用访问地址
+NEXTAUTH_URL=http://localhost:3000
+# 生产环境示例: NEXTAUTH_URL=https://your-domain.com
+
+# -----------------------------------------------------------------------------
+# 数据库配置 (可选)
+# -----------------------------------------------------------------------------
+# 如使用外部数据库，请配置连接字符串
+# DATABASE_URL=postgresql://username:password@localhost:5432/aiicg_wallpaper
+# DATABASE_URL=mysql://username:password@localhost:3306/aiicg_wallpaper
+# DATABASE_URL=sqlite:./data/database.sqlite
+
+# -----------------------------------------------------------------------------
+# 缓存配置 (可选)
+# -----------------------------------------------------------------------------
+# Redis缓存配置
+# REDIS_URL=redis://localhost:6379
+# REDIS_PASSWORD=your_redis_password
+
+# -----------------------------------------------------------------------------
+# 文件存储配置 (可选)
+# -----------------------------------------------------------------------------
+# AWS S3配置
+# AWS_ACCESS_KEY_ID=your_aws_access_key
+# AWS_SECRET_ACCESS_KEY=your_aws_secret_key
+# AWS_REGION=us-east-1
+# AWS_S3_BUCKET=your-bucket-name
+
+# 阿里云OSS配置
+# ALIYUN_OSS_ACCESS_KEY_ID=your_access_key_id
+# ALIYUN_OSS_ACCESS_KEY_SECRET=your_access_key_secret
+# ALIYUN_OSS_BUCKET=your-bucket-name
+# ALIYUN_OSS_REGION=oss-cn-hangzhou
+
+# -----------------------------------------------------------------------------
+# 监控与分析 (可选)
+# -----------------------------------------------------------------------------
+# Google Analytics
+# NEXT_PUBLIC_GA_ID=G-XXXXXXXXXX
+
+# Sentry错误监控
+# SENTRY_DSN=https://xxx@xxx.ingest.sentry.io/xxx
+
+# -----------------------------------------------------------------------------
+# 邮件服务配置 (可选)
+# -----------------------------------------------------------------------------
+# SMTP邮件服务
+# SMTP_HOST=smtp.gmail.com
+# SMTP_PORT=587
+# SMTP_USER=your-email@gmail.com
+# SMTP_PASSWORD=your-app-password
+# FROM_EMAIL=noreply@your-domain.com
+
+# -----------------------------------------------------------------------------
+# API限制配置
+# -----------------------------------------------------------------------------
+# API调用频率限制 (每分钟请求数)
+API_RATE_LIMIT=60
+
+# 文件上传大小限制 (MB)
+MAX_FILE_SIZE=50
+
+# 图片生成限制 (每用户每天)
+DAILY_GENERATION_LIMIT=20
+
+# -----------------------------------------------------------------------------
+# 功能开关
+# -----------------------------------------------------------------------------
+# 启用用户注册
+ENABLE_REGISTRATION=true
+
+# 启用访客模式
+ENABLE_GUEST_MODE=true
+
+# 启用图片压缩功能
+ENABLE_COMPRESSION=true
+
+# 启用水印
+ENABLE_WATERMARK=false
+
+# 启用内容审核
+ENABLE_CONTENT_MODERATION=false
+
+# =============================================================================
+# 配置说明
+# =============================================================================
+#
+# 必需配置:
+# - FAL_KEY: AI图片生成 (已预置)
+# - NEXTAUTH_SECRET: 安全密钥
+# - NEXTAUTH_URL: 应用访问地址
+#
+# 推荐配置:
+# - CLOUDINARY_*: 图片处理服务
+# - UNSPLASH_ACCESS_KEY: 高质量图片素材
+#
+# 可选配置:
+# - 其他图片API (Pexels, Giphy)
+# - 数据库 (如需持久化存储)
+# - 缓存 (如需高性能)
+# - 监控和分析工具
+#
+# ============================================================================= 
