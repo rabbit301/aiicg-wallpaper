@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import AuthModal from '@/components/AuthModal';
+import ThemeToggle from '@/components/ThemeToggle';
 import { 
   Home, 
   Wand2, 
@@ -91,6 +92,9 @@ export default function Navbar() {
 
             {/* User Menu */}
             <div className="hidden md:flex items-center space-x-4">
+              {/* Theme Toggle */}
+              <ThemeToggle />
+              
               {isLoggedIn ? (
                 <div className="relative group">
                   <button className="flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-all duration-200">
@@ -148,7 +152,10 @@ export default function Navbar() {
             </div>
 
             {/* Mobile menu button */}
-            <div className="md:hidden flex items-center">
+            <div className="md:hidden flex items-center space-x-2">
+              {/* Mobile Theme Toggle */}
+              <ThemeToggle />
+              
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                 className="p-2 rounded-lg text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-all duration-200"

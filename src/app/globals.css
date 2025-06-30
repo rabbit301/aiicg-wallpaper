@@ -1,17 +1,16 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/* 配置Tailwind v4的dark变体支持基于类名 */
+@variant dark (&:where(.dark, .dark *));
 
-@theme inline {
+@theme {
+  /* 基础变量 */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 
-  /* Primary Colors */
+  /* Primary Colors - 保留原有的美观颜色系统 */
   --color-primary-50: #f0f9ff;
   --color-primary-100: #e0f2fe;
   --color-primary-200: #bae6fd;
@@ -102,17 +101,33 @@
   --animate-scale-in: scaleIn 0.2s ease-out;
 }
 
+:root {
+  --background: 255 255 255;
+  --foreground: 23 23 23;
+}
+
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: 10 10 10;
+    --foreground: 237 237 237;
   }
 }
 
+/* Dark mode class support for manual toggle */
+.dark {
+  --background: 10 10 10;
+  --foreground: 237 237 237;
+}
+
+.light {
+  --background: 255 255 255;
+  --foreground: 23 23 23;
+}
+
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: rgb(var(--background));
+  color: rgb(var(--foreground));
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* 自定义样式 */
