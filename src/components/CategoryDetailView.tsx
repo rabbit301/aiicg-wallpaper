@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { User, Image, Play, Radio, Download, Heart, Grid3X3, List, Filter, Eye, Clock, Star, TrendingUp, X } from 'lucide-react';
+import { User, Image, Play, Radio, Download, Grid3X3, List, Filter, Eye, Clock, Star, TrendingUp, X } from 'lucide-react';
 
 interface UnifiedWallpaperImage {
   id: string;
@@ -416,8 +416,8 @@ export default function CategoryDetailView({ category }: CategoryDetailViewProps
                 {images.map((image) => (
                   <div key={image.id} className={
                     viewMode === 'grid'
-                      ? "group bg-white dark:bg-neutral-800 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 cursor-pointer"
-                      : "flex bg-white dark:bg-neutral-800 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer"
+                      ? "group bg-white dark:bg-neutral-800 rounded-2xl overflow-hidden shadow-sm cursor-pointer"
+                      : "flex bg-white dark:bg-neutral-800 rounded-2xl overflow-hidden shadow-sm cursor-pointer"
                   }
                   onClick={() => setSelectedImage(image)}
                   >
@@ -430,7 +430,7 @@ export default function CategoryDetailView({ category }: CategoryDetailViewProps
                             : image.thumbnail || image.url
                         }
                         alt={image.title}
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                        className="w-full h-full object-cover"
                         onError={(e) => {
                           const target = e.target as HTMLImageElement;
                           // gif加载失败时的智能fallback
@@ -442,47 +442,9 @@ export default function CategoryDetailView({ category }: CategoryDetailViewProps
                         }}
                         loading="lazy"
                       />
-                      <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-60 transition-all duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
-                        <div className="flex space-x-3">
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setSelectedImage(image);
-                            }}
-                            className="p-3 bg-white bg-opacity-90 rounded-full text-neutral-900 hover:bg-opacity-100 transform hover:scale-110 transition-all duration-200 shadow-lg"
-                            title="预览"
-                          >
-                            <Eye className="h-5 w-5" />
-                          </button>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleDownload(image);
-                            }}
-                            className="p-3 bg-white bg-opacity-90 rounded-full text-neutral-900 hover:bg-opacity-100 transform hover:scale-110 transition-all duration-200 shadow-lg"
-                            title="下载"
-                          >
-                            <Download className="h-5 w-5" />
-                          </button>
-                          <button 
-                            onClick={(e) => e.stopPropagation()}
-                            className="p-3 bg-white bg-opacity-90 rounded-full text-neutral-900 hover:bg-opacity-100 transform hover:scale-110 transition-all duration-200 shadow-lg"
-                          >
-                            <Heart className="h-5 w-5" />
-                          </button>
-                        </div>
-                      </div>
+                      {/* 移除复杂的悬停按钮，直接点击预览 */}
                       
-                      {/* 悬停信息展示 */}
-                      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/70 to-transparent p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        <h3 className="font-semibold text-white mb-1 truncate">
-                          {image.title || '精美壁纸'}
-                        </h3>
-                        <div className="flex items-center justify-between text-sm text-white/80">
-                          <span>{image.width} × {image.height}</span>
-                          <span className="capitalize">{image.type}</span>
-                        </div>
-                      </div>
+                      {/* 简化 - 移除悬停信息，保持极简 */}
                     </div>
                   </div>
                 ))}
@@ -517,55 +479,42 @@ export default function CategoryDetailView({ category }: CategoryDetailViewProps
         </div>
       </div>
 
-      {/* 预览模态框 */}
+      {/* 预览模态框 - 极简版 */}
       {selectedImage && (
-        <div className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center p-4" onClick={() => setSelectedImage(null)}>
-          <div className="relative max-w-7xl max-h-full" onClick={(e) => e.stopPropagation()}>
+        <div 
+          className="fixed inset-0 bg-black z-50 flex items-center justify-center" 
+          onClick={() => setSelectedImage(null)}
+        >
+          <div className="relative w-full h-full flex items-center justify-center" onClick={(e) => e.stopPropagation()}>
             <img
               src={selectedImage.url}
               alt={selectedImage.title}
-              className="max-w-full max-h-full object-contain rounded-lg"
+              className="max-w-full max-h-full object-contain"
               onError={handleImageError}
             />
             
-            {/* 关闭按钮 */}
-            <button
-              onClick={() => setSelectedImage(null)}
-              className="absolute top-4 right-4 p-2 bg-black bg-opacity-50 text-white rounded-full hover:bg-opacity-70 transition-all duration-200"
-            >
-              <X className="h-6 w-6" />
-            </button>
+            {/* 顶部简洁工具栏 */}
+            <div className="absolute top-4 right-4 flex items-center space-x-2">
+              <button
+                onClick={() => handleDownload(selectedImage)}
+                className="p-2 bg-black/50 text-white rounded hover:bg-black/70 transition-colors"
+                title="下载"
+              >
+                <Download className="h-5 w-5" />
+              </button>
+              <button
+                onClick={() => setSelectedImage(null)}
+                className="p-2 bg-black/50 text-white rounded hover:bg-black/70 transition-colors"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
             
-            {/* 下载按钮 */}
-            <button
-              onClick={() => handleDownload(selectedImage)}
-              className="absolute bottom-4 right-4 p-3 bg-white bg-opacity-90 text-neutral-900 rounded-full hover:bg-opacity-100 transition-all duration-200 shadow-lg"
-              title="下载"
-            >
-              <Download className="h-6 w-6" />
-            </button>
-            
-            {/* 图片信息 */}
-            <div className="absolute bottom-4 left-4 bg-black bg-opacity-70 text-white p-4 rounded-lg max-w-md">
-              <h3 className="font-semibold mb-2">{selectedImage.title || '精美壁纸'}</h3>
-              <div className="grid grid-cols-2 gap-4 text-sm">
-                <div>
-                  <span className="text-white/70">尺寸：</span>
-                  <span>{selectedImage.width} × {selectedImage.height}</span>
-                </div>
-                <div>
-                  <span className="text-white/70">格式：</span>
-                  <span className="capitalize">{selectedImage.type}</span>
-                </div>
-                <div>
-                  <span className="text-white/70">来源：</span>
-                  <span>{selectedImage.source}</span>
-                </div>
-                <div>
-                  <span className="text-white/70">作者：</span>
-                  <span>{selectedImage.author || '未知'}</span>
-                </div>
-              </div>
+            {/* 底部迷你信息条 */}
+            <div className="absolute bottom-4 left-4 bg-black/60 text-white px-3 py-2 rounded text-sm backdrop-blur-sm">
+              <span className="font-medium">{selectedImage.title || '精美壁纸'}</span>
+              <span className="mx-2 text-white/60">•</span>
+              <span className="text-white/80">{selectedImage.width} × {selectedImage.height}</span>
             </div>
           </div>
         </div>

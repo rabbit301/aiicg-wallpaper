@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -23,7 +23,40 @@ import {
 export default function Navbar() {
   const { t, locale } = useLanguage();
   
+  // 滚动隐藏导航栏状态
+  const [isVisible, setIsVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
 
+  // 滚动监听逻辑
+  useEffect(() => {
+    const controlNavbar = () => {
+      const currentScrollY = window.scrollY;
+      
+      // 向下滚动超过100px时隐藏导航栏
+      if (currentScrollY > lastScrollY && currentScrollY > 100) {
+        setIsVisible(false);
+      } else {
+        setIsVisible(true);
+      }
+      
+      setLastScrollY(currentScrollY);
+    };
+
+    // 节流优化性能
+    let ticking = false;
+    const handleScroll = () => {
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          controlNavbar();
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [lastScrollY]);
   
   // 使用函数形式确保每次渲染都获取最新翻译
   const getNavigation = () => [
@@ -63,7 +96,9 @@ export default function Navbar() {
 
   return (
     <>
-      <nav className="bg-white dark:bg-neutral-900 border-b border-neutral-200 dark:border-neutral-800 sticky top-0 z-50 backdrop-blur-sm bg-white/95 dark:bg-neutral-900/95">
+      <nav className={`bg-white/95 dark:bg-neutral-900/95 sticky top-0 z-50 backdrop-blur-xl shadow-lg shadow-neutral-200/20 dark:shadow-neutral-900/40 transition-all duration-300 ease-in-out ${
+        isVisible ? 'translate-y-0' : '-translate-y-full'
+      }`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             {/* Logo */}
@@ -141,7 +176,7 @@ export default function Navbar() {
                           </Link>
                         );
                       })}
-                      <hr className="my-1 border-neutral-200 dark:border-neutral-700" />
+                      <hr className="my-1 border-neutral-200/30 dark:border-neutral-700/30" />
                       <button 
                         onClick={handleLogout}
                         className="w-full flex items-center space-x-2 text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors duration-200"
@@ -186,7 +221,7 @@ export default function Navbar() {
 
         {/* Mobile Navigation */}
         {mobileMenuOpen && (
-          <div className="md:hidden border-t border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900">
+          <div className="md:hidden bg-white/95 dark:bg-neutral-900/95 backdrop-blur-xl shadow-lg">
             <div className="px-4 py-3 space-y-1">
               {navigation.map((item) => {
                 const Icon = item.icon;
@@ -207,7 +242,7 @@ export default function Navbar() {
                 );
               })}
               
-              <hr className="my-3 border-neutral-200 dark:border-neutral-800" />
+              <hr className="my-3 border-neutral-200/30 dark:border-neutral-700/30" />
               
               {isLoggedIn ? (
                 <>

@@ -6,7 +6,7 @@ export interface Wallpaper {
   thumbnailUrl: string;
   width: number;
   height: number;
-  format: 'png' | 'jpg' | 'webp';
+  format: 'png' | 'jpg' | 'webp' | 'gif';
   createdAt: string;
   downloads: number;
   tags: string[];
@@ -29,7 +29,7 @@ export interface GenerateImageResponse {
 export interface ImageProcessOptions {
   width: number;
   height: number;
-  format: 'png' | 'jpg' | 'webp';
+  format: 'png' | 'jpg' | 'webp' | 'gif';
   quality?: number;
   optimize360?: boolean;
 }

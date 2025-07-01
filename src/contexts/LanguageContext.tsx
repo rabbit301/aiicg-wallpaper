@@ -90,6 +90,7 @@ const translations = {
       animationDesc: '创意动画和特效',
       live: '直播',
       liveDesc: '直播元素和装饰',
+      smallScreen: '小屏幕动图',
       startCreating: '开始创作',
       viewMore: '查看更多',
       totalContent: '总内容数量',
@@ -97,6 +98,16 @@ const translations = {
       continuousUpdate: '持续更新',
       loadFailed: '加载失败',
       retry: '重试'
+    },
+
+    // 侧边栏
+    sidebar: {
+      browseCategories: '浏览分类',
+      searchPlaceholder: '搜索内容...',
+      popularCategories: '热门分类',
+      items: '项目',
+      quickFilter: '快速筛选',
+      createNow: '立即创作'
     },
     
     // 图库页面
@@ -439,6 +450,7 @@ const translations = {
       animationDesc: 'Creative animations and effects',
       live: 'Live',
       liveDesc: 'Live streaming elements and decorations',
+      smallScreen: 'Small Screen GIFs',
       startCreating: 'Start Creating',
       viewMore: 'View More',
       totalContent: 'Total Content',
@@ -446,6 +458,16 @@ const translations = {
       continuousUpdate: 'Continuous Updates',
       loadFailed: 'Load Failed',
       retry: 'Retry'
+    },
+
+    // 侧边栏
+    sidebar: {
+      browseCategories: 'Browse Categories',
+      searchPlaceholder: 'Search content...',
+      popularCategories: 'Popular Categories',
+      items: 'items',
+      quickFilter: 'Quick Filter',
+      createNow: 'Create Now'
     },
     
     // 图库页面

@@ -275,7 +275,7 @@ export default function CategoryGallery() {
                 <div className={`bg-gradient-to-br ${config.bgColor} border ${config.borderColor} rounded-2xl p-6 hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1`}>
                   {/* Icon and Title */}
                   <div className="text-center mb-6">
-                    <div className={`w-16 h-16 bg-gradient-to-br ${config.color} rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-200`}>
+                    <div className={`w-16 h-16 bg-gradient-to-br ${config.color} rounded-2xl flex items-center justify-center mx-auto mb-4 transition-colors duration-200`}>
                       <Icon className="h-8 w-8 text-white" />
                     </div>
                     <h3 className="text-xl font-bold text-neutral-900 dark:text-white mb-2">
@@ -294,7 +294,7 @@ export default function CategoryGallery() {
                     {categoryData.preview.slice(0, 6).map((image, index) => (
                       <div
                         key={image.id}
-                        className="aspect-square bg-neutral-200 dark:bg-neutral-700 rounded-lg overflow-hidden group-hover:scale-105 transition-transform duration-200"
+                        className="aspect-square bg-neutral-200 dark:bg-neutral-700 rounded-lg overflow-hidden transition-colors duration-200"
                         style={{ animationDelay: `${index * 100}ms` }}
                       >
                         <img

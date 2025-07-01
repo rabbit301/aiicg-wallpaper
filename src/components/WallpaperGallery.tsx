@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Download, Eye, Clock, Tag } from 'lucide-react';
+// 移除所有无用的lucide-react imports
 import { Wallpaper } from '@/types';
 import Image from 'next/image';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -60,31 +60,7 @@ export default function WallpaperGallery({
     }
   };
 
-  const handleDownload = async (wallpaper: Wallpaper) => {
-    try {
-      // 更新下载次数
-      await fetch(`/api/download/${wallpaper.id}`, { method: 'POST' });
-      
-      // 触发下载
-      const link = document.createElement('a');
-      link.href = wallpaper.imageUrl;
-      link.download = `${wallpaper.title}.${wallpaper.format}`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-
-      // 更新本地状态
-      setWallpapers(prev => 
-        prev.map(w => 
-          w.id === wallpaper.id 
-            ? { ...w, downloads: w.downloads + 1 }
-            : w
-        )
-      );
-    } catch (error) {
-      console.error('下载失败:', error);
-    }
-  };
+  // 移除未使用的handleDownload函数
 
   const handlePreview = (wallpaper: Wallpaper) => {
     window.open(wallpaper.imageUrl, '_blank');
@@ -144,23 +120,25 @@ export default function WallpaperGallery({
 
   return (
     <div className="py-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {wallpapers.map((wallpaper) => (
           <div
             key={wallpaper.id}
-            className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-200 transform hover:-translate-y-1"
+            className="group bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-2xl overflow-hidden border border-neutral-100 dark:border-neutral-700 transition-shadow duration-300 cursor-pointer"
+            onClick={() => handlePreview(wallpaper)}
           >
-            {/* 图片容器 */}
-            <div className="relative aspect-square bg-gray-100 dark:bg-gray-700">
+            {/* 优化图片容器 */}
+            <div className="relative aspect-[4/3] bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800 group-hover:from-gray-50 dark:group-hover:from-gray-600 transition-all duration-300"
+              style={{ minHeight: '240px' }}
+            >
               <Image
                 src={wallpaper.thumbnailUrl || wallpaper.imageUrl}
                 alt={wallpaper.title}
                 fill
-                className="object-cover cursor-pointer"
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 priority={wallpapers.indexOf(wallpaper) < 3} // 前3张优先加载
                 loading={wallpapers.indexOf(wallpaper) < 6 ? "eager" : "lazy"} // 前6张即时加载，其余懒加载
-                onClick={() => handlePreview(wallpaper)}
                 onError={(e) => {
                   const target = e.target as HTMLImageElement;
                   // 如果缩略图加载失败，尝试加载原图
@@ -173,78 +151,41 @@ export default function WallpaperGallery({
                 }}
               />
 
-              {/* 悬停时显示的操作按钮 */}
-              <div className="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-40 transition-all duration-200 flex items-center justify-center opacity-0 hover:opacity-100">
-                <div className="flex space-x-2">
-                  <button
-                    onClick={() => handlePreview(wallpaper)}
-                    className="p-2 bg-white bg-opacity-90 rounded-full hover:bg-opacity-100 transition-all duration-200"
-                    title={t('gallery.preview')}
-                  >
-                    <Eye className="h-4 w-4 text-gray-700" />
-                  </button>
-                  <button
-                    onClick={() => handleDownload(wallpaper)}
-                    className="p-2 bg-white bg-opacity-90 rounded-full hover:bg-opacity-100 transition-all duration-200"
-                    title={t('gallery.download')}
-                  >
-                    <Download className="h-4 w-4 text-gray-700" />
-                  </button>
+              {/* 微妙的悬停效果提升点击欲望 */}
+              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300 flex items-center justify-center">
+                <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm px-4 py-2 rounded-full">
+                  <span className="text-sm font-medium text-gray-900 dark:text-white">点击预览</span>
                 </div>
               </div>
 
-              {/* 360优化标识 */}
-              {wallpaper.optimizedFor360 && (
-                <div className="absolute top-2 right-2 bg-purple-600 text-white text-xs px-2 py-1 rounded-full">
-                  {t('gallery.optimized360')}
-                </div>
-              )}
+              {/* 精选badges - 仅保留真正有用的 */}
+              <div className="absolute top-3 right-3 flex flex-col gap-2">
+                {/* 仅保留GIF动图标识 */}
+                {(wallpaper.imageUrl.includes('.gif') || wallpaper.format === 'gif') && (
+                  <div className="bg-gradient-to-r from-pink-500 to-violet-500 text-white text-xs px-2 py-1 rounded-full shadow-lg flex items-center gap-1">
+                    <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
+                    GIF
+                  </div>
+                )}
+                {/* HD高质量标识 */}
+                {wallpaper.width >= 1920 && (
+                  <div className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-xs px-2 py-1 rounded-full shadow-lg">
+                    HD
+                  </div>
+                )}
+              </div>
             </div>
 
-            {/* 信息区域 */}
-            <div className="p-4">
+            {/* 优化信息条 - 保持简洁但有质感 */}
+            <div className="p-4 bg-gradient-to-r from-white to-gray-50 dark:from-gray-800 dark:to-gray-750">
               <h3 className="font-semibold text-gray-900 dark:text-white mb-2 line-clamp-1">
                 {wallpaper.title}
               </h3>
               
-              {/* 提示词 */}
-              {wallpaper.prompt && (
-                <p className="text-sm text-gray-600 dark:text-gray-400 mb-2 line-clamp-2">
-                  {wallpaper.prompt}
-                </p>
-              )}
-
-              {/* 元信息 */}
-              <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400 mb-3">
+              {/* 基本元信息 */}
+              <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
                 <span>{wallpaper.width} × {wallpaper.height}</span>
-                <span className="uppercase">{wallpaper.format}</span>
-              </div>
-
-              {/* 标签 */}
-              {wallpaper.tags.length > 0 && (
-                <div className="flex flex-wrap gap-1 mb-3">
-                  {wallpaper.tags.slice(0, 3).map((tag, index) => (
-                    <span
-                      key={index}
-                      className="inline-flex items-center px-2 py-1 text-xs bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-full"
-                    >
-                      <Tag className="h-3 w-3 mr-1" />
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-              )}
-
-              {/* 底部信息 */}
-              <div className="flex items-center justify-between">
-                <div className="flex items-center text-xs text-gray-500 dark:text-gray-400">
-                  <Download className="h-3 w-3 mr-1" />
-                  {wallpaper.downloads}
-                </div>
-                <div className="flex items-center text-xs text-gray-500 dark:text-gray-400">
-                  <Clock className="h-3 w-3 mr-1" />
-                  {new Date(wallpaper.createdAt).toLocaleDateString()}
-                </div>
+                <span className="uppercase font-medium">{wallpaper.format}</span>
               </div>
             </div>
           </div>
