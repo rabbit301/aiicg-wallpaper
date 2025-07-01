@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Layout from '@/components/Layout';
 import { Settings, User, Bell, Shield, Palette, Download, Loader2, Check } from 'lucide-react';
 import AvatarSelector from '@/components/AvatarSelector';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface UserProfile {
   id: string;
@@ -35,6 +36,7 @@ interface PrivacySettings {
 type SettingsTab = 'profile' | 'notifications' | 'privacy' | 'appearance' | 'downloads';
 
 export default function SettingsPage() {
+  const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState<SettingsTab>('profile');
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [privacySettings, setPrivacySettings] = useState<PrivacySettings | null>(null);
@@ -112,7 +114,7 @@ export default function SettingsPage() {
   const handleAvatarChange = (avatarUrl: string) => {
     setProfile(prev => prev ? { ...prev, avatar: avatarUrl } : null);
     setFormData(prev => ({ ...prev, avatar: avatarUrl })); // 同时更新formData
-    setSavedMessage('头像已选择，请点击"保存更改"按钮完成保存');
+    setSavedMessage(t('settingsPage.avatarSelected'));
     setTimeout(() => setSavedMessage(''), 5000);
   };
 
@@ -155,14 +157,14 @@ export default function SettingsPage() {
       if (response.ok) {
         const updatedProfile = await response.json();
         setProfile(updatedProfile);
-        setSavedMessage('保存成功！');
+        setSavedMessage(t('settingsPage.saveSuccess'));
         setTimeout(() => setSavedMessage(''), 3000);
       } else {
-        setSavedMessage('保存失败，请稍后重试');
+        setSavedMessage(t('settingsPage.saveFailed'));
       }
     } catch (error) {
       console.error('保存失败:', error);
-      setSavedMessage('保存失败，请稍后重试');
+      setSavedMessage(t('settingsPage.saveFailed'));
     } finally {
       setSaving(false);
     }
@@ -183,25 +185,25 @@ export default function SettingsPage() {
       });
 
       if (response.ok) {
-        setSavedMessage('隐私设置保存成功！');
+        setSavedMessage(t('settingsPage.privacySaveSuccess'));
         setTimeout(() => setSavedMessage(''), 3000);
       } else {
-        setSavedMessage('保存失败，请稍后重试');
+        setSavedMessage(t('settingsPage.saveFailed'));
       }
     } catch (error) {
       console.error('保存失败:', error);
-      setSavedMessage('保存失败，请稍后重试');
+      setSavedMessage(t('settingsPage.saveFailed'));
     } finally {
       setSaving(false);
     }
   };
 
   const sidebarItems = [
-    { id: 'profile', name: '个人信息', icon: User },
-    { id: 'privacy', name: '隐私安全', icon: Shield },
-    { id: 'notifications', name: '通知设置', icon: Bell },
-    { id: 'appearance', name: '外观设置', icon: Palette },
-    { id: 'downloads', name: '下载设置', icon: Download },
+    { id: 'profile', name: t('settingsPage.profile'), icon: User },
+    { id: 'privacy', name: t('settingsPage.privacy'), icon: Shield },
+    { id: 'notifications', name: t('settingsPage.notifications'), icon: Bell },
+    { id: 'appearance', name: t('settingsPage.appearance'), icon: Palette },
+    { id: 'downloads', name: t('settingsPage.downloads'), icon: Download },
   ];
 
   if (loading) {
@@ -220,10 +222,10 @@ export default function SettingsPage() {
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-neutral-900 dark:text-white mb-2">
-            设置
+            {t('settingsPage.title')}
           </h1>
           <p className="text-neutral-600 dark:text-neutral-400">
-            管理您的账户设置和偏好
+            {t('settingsPage.subtitle')}
           </p>
         </div>
 
@@ -259,21 +261,21 @@ export default function SettingsPage() {
               {activeTab === 'profile' && (
                 <div>
                   <h2 className="text-2xl font-bold text-neutral-900 dark:text-white mb-6">
-                    个人信息
+                    {t('settingsPage.profileInfo')}
                   </h2>
 
                   <form onSubmit={handleSaveProfile} className="space-y-6">
                     {/* Avatar */}
                     <div>
                       <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-3">
-                        头像
+                        {t('settingsPage.avatar')}
                       </label>
                       <div className="flex items-center space-x-4">
                         <div className="w-16 h-16 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-xl flex items-center justify-center overflow-hidden">
                           {profile?.avatar ? (
                             <img 
                               src={profile.avatar} 
-                              alt="用户头像" 
+                              alt={t('settingsPage.avatar')} 
                               className="w-full h-full object-cover"
                             />
                           ) : (
@@ -287,7 +289,7 @@ export default function SettingsPage() {
                             onUpload={handleAvatarUploadFile}
                           />
                           <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-1">
-                            点击&ldquo;更改头像&rdquo;可选择AI生成头像或上传自定义图片
+                            {t('settingsPage.avatarTip')}
                           </p>
                         </div>
                       </div>
@@ -296,44 +298,44 @@ export default function SettingsPage() {
                     {/* Username */}
                     <div>
                       <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
-                        用户名
+                        {t('settingsPage.username')}
                       </label>
                       <input
                         type="text"
                         value={formData.username}
                         onChange={(e) => handleInputChange('username', e.target.value)}
                         className="w-full px-4 py-3 border border-neutral-300 dark:border-neutral-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white placeholder-neutral-500 dark:placeholder-neutral-400"
-                        placeholder="请输入用户名"
+                        placeholder={t('settingsPage.usernamePlaceholder')}
                       />
                     </div>
 
                     {/* Email */}
                     <div>
                       <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
-                        邮箱地址
+                        {t('settingsPage.email')}
                       </label>
                       <input
                         type="email"
                         value={formData.email}
                         onChange={(e) => handleInputChange('email', e.target.value)}
                         className="w-full px-4 py-3 border border-neutral-300 dark:border-neutral-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white placeholder-neutral-500 dark:placeholder-neutral-400"
-                        placeholder="请输入邮箱地址"
+                        placeholder={t('settingsPage.emailPlaceholder')}
                       />
                       <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-1">
-                        用于接收重要通知和密码重置
+                        {t('settingsPage.emailTip')}
                       </p>
                     </div>
 
                     {/* Bio */}
                     <div>
                       <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
-                        个人简介
+                        {t('settingsPage.bio')}
                       </label>
                       <textarea
                         rows={4}
                         value={formData.bio}
                         onChange={(e) => handleInputChange('bio', e.target.value)}
-                        placeholder="介绍一下自己..."
+                        placeholder={t('settingsPage.bioPlaceholder')}
                         className="w-full px-4 py-3 border border-neutral-300 dark:border-neutral-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white dark:bg-neutral-700 text-neutral-900 dark:text-white placeholder-neutral-500 dark:placeholder-neutral-400"
                       />
                     </div>
@@ -341,7 +343,7 @@ export default function SettingsPage() {
                     {/* Language */}
                     <div>
                       <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
-                        语言偏好
+                        {t('settingsPage.language')}
                       </label>
                       <select 
                         value={formData.language}
@@ -358,7 +360,7 @@ export default function SettingsPage() {
                     {/* Timezone */}
                     <div>
                       <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
-                        时区
+                        {t('settingsPage.timezone')}
                       </label>
                       <select 
                         value={formData.timezone}
@@ -394,10 +396,10 @@ export default function SettingsPage() {
                         {saving ? (
                           <>
                             <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                            保存中...
+                            {t('settingsPage.saving')}
                           </>
                         ) : (
-                          '保存更改'
+                          t('settingsPage.saveChanges')
                         )}
                       </button>
                     </div>
@@ -409,7 +411,7 @@ export default function SettingsPage() {
               {activeTab === 'privacy' && privacySettings && (
                 <div>
                   <h2 className="text-2xl font-bold text-neutral-900 dark:text-white mb-6">
-                    隐私设置
+                    {t('settingsPage.privacySettings')}
                   </h2>
 
                   <form onSubmit={handleSavePrivacy} className="space-y-6">
@@ -417,10 +419,10 @@ export default function SettingsPage() {
                     <div className="flex items-center justify-between p-4 bg-neutral-50 dark:bg-neutral-700 rounded-lg">
                       <div>
                         <div className="font-medium text-neutral-900 dark:text-white">
-                          保存生成的壁纸
+                          {t('settingsPage.saveGenerated')}
                         </div>
                         <div className="text-sm text-neutral-500 dark:text-neutral-400">
-                          是否自动保存AI生成的壁纸到您的作品集
+                          {t('settingsPage.saveGeneratedDesc')}
                         </div>
                       </div>
                       <label className="relative inline-flex items-center cursor-pointer">
@@ -438,10 +440,10 @@ export default function SettingsPage() {
                     <div className="flex items-center justify-between p-4 bg-neutral-50 dark:bg-neutral-700 rounded-lg">
                       <div>
                         <div className="font-medium text-neutral-900 dark:text-white">
-                          保存压缩的图片
+                          {t('settingsPage.saveCompressed')}
                         </div>
                         <div className="text-sm text-neutral-500 dark:text-neutral-400">
-                          是否保存经过压缩处理的图片记录
+                          {t('settingsPage.saveCompressedDesc')}
                         </div>
                       </div>
                       <label className="relative inline-flex items-center cursor-pointer">
@@ -459,10 +461,10 @@ export default function SettingsPage() {
                     <div className="flex items-center justify-between p-4 bg-neutral-50 dark:bg-neutral-700 rounded-lg">
                       <div>
                         <div className="font-medium text-neutral-900 dark:text-white">
-                          在首页展示作品
+                          {t('settingsPage.showInHomepage')}
                         </div>
                         <div className="text-sm text-neutral-500 dark:text-neutral-400">
-                          是否允许您的作品在网站首页展示
+                          {t('settingsPage.showInHomepageDesc')}
                         </div>
                       </div>
                       <label className="relative inline-flex items-center cursor-pointer">
@@ -481,10 +483,10 @@ export default function SettingsPage() {
                       <div className="p-4 bg-neutral-50 dark:bg-neutral-700 rounded-lg">
                         <div className="mb-3">
                           <div className="font-medium text-neutral-900 dark:text-white">
-                            首页展示数量
+                            {t('settingsPage.maxHomepageImages')}
                           </div>
                           <div className="text-sm text-neutral-500 dark:text-neutral-400">
-                            在首页最多展示几张您的作品 (1-12张)
+                            {t('settingsPage.maxHomepageImagesDesc')}
                           </div>
                         </div>
                         <input
