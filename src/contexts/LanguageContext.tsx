@@ -222,6 +222,148 @@ const translations = {
       maxHomepageImages: '首页展示数量',
       maxHomepageImagesDesc: '在首页最多展示几张您的作品 (1-12张)',
       privacySaveSuccess: '隐私设置保存成功！'
+    },
+
+    // 隐私政策页面
+    privacy: {
+      title: '隐私政策',
+      subtitle: '了解我们如何收集、使用和保护您的个人信息',
+      lastUpdated: '最后更新：2024年12月28日',
+      dataCollection: {
+        title: '信息收集',
+        intro: '我们收集以下信息以提供更好的服务：',
+        item1: '账户信息：用户名、邮箱地址、头像等基本信息',
+        item2: '使用数据：生成壁纸记录、下载历史、偏好设置',
+        item3: '技术信息：设备类型、浏览器信息、IP地址',
+        item4: '用户生成内容：上传的图片、AI生成的壁纸、个人简介'
+      },
+      dataUsage: {
+        title: '信息使用',
+        intro: '我们使用收集的信息用于：',
+        service: {
+          title: '服务提供',
+          desc: '提供AI壁纸生成、图片压缩等核心功能服务'
+        },
+        improvement: {
+          title: '服务改进',
+          desc: '分析使用模式，改进产品功能和用户体验'
+        },
+        communication: {
+          title: '用户沟通',
+          desc: '发送服务通知、更新信息和客户支持'
+        },
+        legal: {
+          title: '法律合规',
+          desc: '遵守法律法规，保护用户和平台安全'
+        }
+      },
+      dataSecurity: {
+        title: '数据安全',
+        intro: '我们采用多层安全措施保护您的信息：',
+        encryption: {
+          title: '数据加密',
+          desc: '所有敏感数据采用行业标准加密技术保护'
+        },
+        access: {
+          title: '访问控制',
+          desc: '严格限制员工访问权限，定期审核访问日志'
+        },
+        backup: {
+          title: '备份保护',
+          desc: '定期备份重要数据，确保数据安全性和可恢复性'
+        }
+      },
+      userRights: {
+        title: '用户权利',
+        intro: '根据相关法律法规，您享有以下权利：',
+        access: '访问权',
+        accessDesc: '查看我们收集的关于您的个人信息',
+        correct: '更正权',
+        correctDesc: '更正不准确或不完整的个人信息',
+        delete: '删除权',
+        deleteDesc: '要求删除您的个人信息（在某些条件下）',
+        portable: '数据可携权',
+        portableDesc: '以结构化格式导出您的个人数据'
+      },
+      cookies: {
+        title: 'Cookie使用',
+        intro: '我们使用Cookie和类似技术来改善用户体验、分析网站使用情况和提供个性化内容。',
+        management: '您可以通过浏览器设置管理Cookie偏好，但这可能影响某些功能的正常使用。'
+      },
+      contact: {
+        title: '联系我们',
+        intro: '如果您对本隐私政策有任何疑问或需要行使您的权利，请通过以下方式联系我们：',
+        contactPage: '查看联系方式'
+      }
+    },
+
+    // 联系我们页面
+    contact: {
+      title: '联系我们',
+      subtitle: '有问题或建议？我们随时为您提供帮助',
+      email: {
+        title: '邮件联系',
+        subtitle: '发送详细信息给我们',
+        direct: '直接发送邮件'
+      },
+      telegram: {
+        title: 'Telegram客服',
+        subtitle: '即时在线客服支持',
+        description: '24小时智能客服，快速响应您的问题',
+        fastResponse: '快速响应',
+        responseTime: '通常在5分钟内回复',
+        available: '全天在线',
+        timezone: '北京时间 00:00-24:00',
+        language: '多语言支持',
+        languages: '中文、English',
+        startChat: '开始对话',
+        botHandle: '机器人账号'
+      },
+      form: {
+        name: '姓名',
+        namePlaceholder: '请输入您的姓名',
+        email: '邮箱',
+        emailPlaceholder: '请输入您的邮箱地址',
+        subject: '主题',
+        subjectPlaceholder: '请简要描述问题',
+        message: '详细描述',
+        messagePlaceholder: '请详细描述您的问题或建议...',
+        send: '发送邮件'
+      },
+      faq: {
+        title: '常见问题',
+        subtitle: '查看常见问题的快速解答',
+        q1: '如何生成AI壁纸？',
+        a1: '在AI生成页面输入您想要的描述，选择尺寸和样式，点击生成即可。我们的AI会根据您的描述创建独特的壁纸。',
+        q2: '图片压缩是否安全？',
+        a2: '是的，我们使用客户端压缩技术，您的图片不会上传到服务器。免费版提供基础压缩，AI版本提供更高质量的智能优化。',
+        q3: '如何联系技术支持？',
+        a3: '您可以通过邮件 support@aiicg.com 或 Telegram @aiicgbot 联系我们。我们通常在工作时间内快速响应。'
+      },
+      support: {
+        title: '客服时间',
+        email: '邮件支持',
+        emailHours: '24小时内回复',
+        telegram: 'Telegram支持',
+        telegramHours: '即时响应'
+      }
+    },
+
+    // Footer翻译
+    footer: {
+      brand: 'AIICG壁纸站',
+      description: '专业的AI壁纸生成和图片处理平台，提供高质量的壁纸生成、格式转换和压缩服务。',
+      features: '功能',
+      support: '支持',
+      legal: '法律',
+      aiGeneration: 'AI壁纸生成',
+      imageCompression: '图片压缩',
+      formatConversion: '格式转换',
+      help: '使用帮助',
+      contactUs: '联系我们',
+      privacyPolicy: '隐私政策',
+      termsOfService: '服务条款',
+      copyright: '保留所有权利.'
     }
   },
   'en': {
@@ -429,6 +571,148 @@ const translations = {
       maxHomepageImages: 'Homepage Display Count',
       maxHomepageImagesDesc: 'Maximum number of your works to display on homepage (1-12)',
       privacySaveSuccess: 'Privacy settings saved successfully!'
+    },
+
+    // 隐私政策页面
+    privacy: {
+      title: 'Privacy Policy',
+      subtitle: 'Learn how we collect, use and protect your personal information',
+      lastUpdated: 'Last updated: December 28, 2024',
+      dataCollection: {
+        title: 'Information Collection',
+        intro: 'We collect the following information to provide better services:',
+        item1: 'Account information: username, email address, avatar and other basic information',
+        item2: 'Usage data: wallpaper generation records, download history, preference settings',
+        item3: 'Technical information: device type, browser information, IP address',
+        item4: 'User-generated content: uploaded images, AI-generated wallpapers, personal bio'
+      },
+      dataUsage: {
+        title: 'Information Usage',
+        intro: 'We use the collected information for:',
+        service: {
+          title: 'Service Provision',
+          desc: 'Provide core services like AI wallpaper generation and image compression'
+        },
+        improvement: {
+          title: 'Service Improvement',
+          desc: 'Analyze usage patterns to improve product features and user experience'
+        },
+        communication: {
+          title: 'User Communication',
+          desc: 'Send service notifications, updates and customer support'
+        },
+        legal: {
+          title: 'Legal Compliance',
+          desc: 'Comply with laws and regulations, protect user and platform security'
+        }
+      },
+      dataSecurity: {
+        title: 'Data Security',
+        intro: 'We employ multi-layer security measures to protect your information:',
+        encryption: {
+          title: 'Data Encryption',
+          desc: 'All sensitive data is protected with industry-standard encryption technology'
+        },
+        access: {
+          title: 'Access Control',
+          desc: 'Strictly limit employee access permissions and regularly audit access logs'
+        },
+        backup: {
+          title: 'Backup Protection',
+          desc: 'Regularly backup important data to ensure data security and recoverability'
+        }
+      },
+      userRights: {
+        title: 'User Rights',
+        intro: 'According to relevant laws and regulations, you have the following rights:',
+        access: 'Right to Access',
+        accessDesc: 'View personal information we have collected about you',
+        correct: 'Right to Rectification',
+        correctDesc: 'Correct inaccurate or incomplete personal information',
+        delete: 'Right to Erasure',
+        deleteDesc: 'Request deletion of your personal information (under certain conditions)',
+        portable: 'Right to Data Portability',
+        portableDesc: 'Export your personal data in a structured format'
+      },
+      cookies: {
+        title: 'Cookie Usage',
+        intro: 'We use cookies and similar technologies to improve user experience, analyze website usage and provide personalized content.',
+        management: 'You can manage cookie preferences through your browser settings, but this may affect the normal use of certain features.'
+      },
+      contact: {
+        title: 'Contact Us',
+        intro: 'If you have any questions about this privacy policy or need to exercise your rights, please contact us through:',
+        contactPage: 'View Contact Information'
+      }
+    },
+
+    // 联系我们页面
+    contact: {
+      title: 'Contact Us',
+      subtitle: 'Have questions or suggestions? We are here to help',
+      email: {
+        title: 'Email Contact',
+        subtitle: 'Send detailed information to us',
+        direct: 'Send email directly'
+      },
+      telegram: {
+        title: 'Telegram Support',
+        subtitle: 'Instant online customer support',
+        description: '24-hour intelligent customer service, quick response to your questions',
+        fastResponse: 'Fast Response',
+        responseTime: 'Usually reply within 5 minutes',
+        available: 'Available 24/7',
+        timezone: 'Beijing Time 00:00-24:00',
+        language: 'Multi-language Support',
+        languages: '中文, English',
+        startChat: 'Start Chat',
+        botHandle: 'Bot Account'
+      },
+      form: {
+        name: 'Name',
+        namePlaceholder: 'Please enter your name',
+        email: 'Email',
+        emailPlaceholder: 'Please enter your email address',
+        subject: 'Subject',
+        subjectPlaceholder: 'Please briefly describe the issue',
+        message: 'Detailed Description',
+        messagePlaceholder: 'Please describe your issue or suggestion in detail...',
+        send: 'Send Email'
+      },
+      faq: {
+        title: 'Frequently Asked Questions',
+        subtitle: 'Find quick answers to common questions',
+        q1: 'How to generate AI wallpapers?',
+        a1: 'Enter your desired description on the AI generation page, select size and style, then click generate. Our AI will create unique wallpapers based on your description.',
+        q2: 'Is image compression safe?',
+        a2: 'Yes, we use client-side compression technology, your images are not uploaded to the server. The free version provides basic compression, while the AI version offers higher quality intelligent optimization.',
+        q3: 'How to contact technical support?',
+        a3: 'You can contact us via email support@aiicg.com or Telegram @aiicgbot. We usually respond quickly during business hours.'
+      },
+      support: {
+        title: 'Support Hours',
+        email: 'Email Support',
+        emailHours: 'Reply within 24 hours',
+        telegram: 'Telegram Support',
+        telegramHours: 'Instant response'
+      }
+    },
+
+    // Footer翻译
+    footer: {
+      brand: 'AIICG Wallpaper',
+      description: 'Professional AI wallpaper generation and image processing platform, providing high-quality wallpaper generation, format conversion and compression services.',
+      features: 'Features',
+      support: 'Support',
+      legal: 'Legal',
+      aiGeneration: 'AI Wallpaper Generation',
+      imageCompression: 'Image Compression',
+      formatConversion: 'Format Conversion',
+      help: 'Help',
+      contactUs: 'Contact Us',
+      privacyPolicy: 'Privacy Policy',
+      termsOfService: 'Terms of Service',
+      copyright: 'All rights reserved.'
     }
   }
 } as const;

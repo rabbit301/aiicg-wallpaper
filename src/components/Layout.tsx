@@ -2,6 +2,7 @@
 
 import { ReactNode } from 'react';
 import Navbar from './Navbar';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface LayoutProps {
   children: ReactNode;
@@ -9,6 +10,7 @@ interface LayoutProps {
 }
 
 export default function Layout({ children, className = '' }: LayoutProps) {
+  const { t } = useLanguage();
   return (
     <div className="min-h-screen bg-gradient-to-br from-neutral-50 via-white to-primary-50 dark:from-neutral-900 dark:via-neutral-900 dark:to-neutral-800">
       <Navbar />
@@ -27,11 +29,11 @@ export default function Layout({ children, className = '' }: LayoutProps) {
                   <span className="text-white font-bold text-sm">AI</span>
                 </div>
                 <span className="text-xl font-bold text-neutral-900 dark:text-white">
-                  AIICG壁纸站
+                  {t('footer.brand')}
                 </span>
               </div>
               <p className="text-neutral-600 dark:text-neutral-400 mb-4 max-w-md">
-                专业的AI壁纸生成和图片处理平台，提供高质量的壁纸生成、格式转换和压缩服务。
+                {t('footer.description')}
               </p>
               <div className="flex space-x-4">
                 <a href="#" className="text-neutral-400 hover:text-primary-600 transition-colors duration-200">
@@ -51,22 +53,22 @@ export default function Layout({ children, className = '' }: LayoutProps) {
             
             <div>
               <h3 className="text-sm font-semibold text-neutral-900 dark:text-white tracking-wider uppercase mb-4">
-                功能
+                {t('footer.features')}
               </h3>
               <ul className="space-y-3">
                 <li>
                   <a href="/generate" className="text-neutral-600 dark:text-neutral-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200">
-                    AI壁纸生成
+                    {t('footer.aiGeneration')}
                   </a>
                 </li>
                 <li>
                   <a href="/compress" className="text-neutral-600 dark:text-neutral-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200">
-                    图片压缩
+                    {t('footer.imageCompression')}
                   </a>
                 </li>
                 <li>
                   <a href="/compress" className="text-neutral-600 dark:text-neutral-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200">
-                    格式转换
+                    {t('footer.formatConversion')}
                   </a>
                 </li>
               </ul>
@@ -74,22 +76,22 @@ export default function Layout({ children, className = '' }: LayoutProps) {
             
             <div>
               <h3 className="text-sm font-semibold text-neutral-900 dark:text-white tracking-wider uppercase mb-4">
-                支持
+                {t('footer.support')}
               </h3>
               <ul className="space-y-3">
                 <li>
-                  <a href="#" className="text-neutral-600 dark:text-neutral-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200">
-                    使用帮助
+                  <a href="/contact#faq" className="text-neutral-600 dark:text-neutral-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200">
+                    {t('footer.help')}
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="text-neutral-600 dark:text-neutral-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200">
-                    联系我们
+                  <a href="/contact" className="text-neutral-600 dark:text-neutral-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200">
+                    {t('footer.contactUs')}
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="text-neutral-600 dark:text-neutral-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200">
-                    隐私政策
+                  <a href="/privacy" className="text-neutral-600 dark:text-neutral-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200">
+                    {t('footer.privacyPolicy')}
                   </a>
                 </li>
               </ul>
@@ -98,7 +100,7 @@ export default function Layout({ children, className = '' }: LayoutProps) {
           
           <div className="mt-8 pt-8 border-t border-neutral-200 dark:border-neutral-800">
             <p className="text-center text-neutral-500 dark:text-neutral-400 text-sm">
-              © 2024 AIICG壁纸站. 保留所有权利.
+              © 2024 {t('footer.brand')}. {t('footer.copyright')}
             </p>
           </div>
         </div>
