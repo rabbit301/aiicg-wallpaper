@@ -1,11 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-// 移除所有无用的lucide-react imports
 import { Wallpaper } from '@/types';
 import Image from 'next/image';
 import { useLanguage } from '@/contexts/LanguageContext';
-// 移除复杂的图片优化导入，专注于 Next.js 原生优化
+import WallpaperModal from './WallpaperModal';
 
 interface WallpaperGalleryProps {
   searchQuery?: string;
@@ -14,16 +13,18 @@ interface WallpaperGalleryProps {
   limit?: number; // 限制显示数量
 }
 
-export default function WallpaperGallery({ 
-  searchQuery, 
-  tag, 
+export default function WallpaperGallery({
+  searchQuery,
+  tag,
   showPopular = false,
-  limit 
+  limit
 }: WallpaperGalleryProps) {
   const { t } = useLanguage();
   const [wallpapers, setWallpapers] = useState<Wallpaper[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedWallpaper, setSelectedWallpaper] = useState<Wallpaper | null>(null);
+  const [modalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
     fetchWallpapers();
@@ -60,13 +61,15 @@ export default function WallpaperGallery({
     }
   };
 
-  // 移除未使用的handleDownload函数
-
   const handlePreview = (wallpaper: Wallpaper) => {
-    window.open(wallpaper.imageUrl, '_blank');
+    setSelectedWallpaper(wallpaper);
+    setModalOpen(true);
   };
 
-  // 移除复杂的图片处理逻辑，直接使用原始URL
+  const handleCloseModal = () => {
+    setModalOpen(false);
+    setSelectedWallpaper(null);
+  };
 
   if (loading) {
     return (
@@ -124,11 +127,11 @@ export default function WallpaperGallery({
         {wallpapers.map((wallpaper) => (
           <div
             key={wallpaper.id}
-            className="group bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-2xl overflow-hidden border border-neutral-100 dark:border-neutral-700 transition-shadow duration-300 cursor-pointer"
+            className="group cursor-pointer"
             onClick={() => handlePreview(wallpaper)}
           >
-            {/* 优化图片容器 */}
-            <div className="relative aspect-[4/3] bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800 group-hover:from-gray-50 dark:group-hover:from-gray-600 transition-all duration-300"
+            {/* 极简图片容器 */}
+            <div className="relative aspect-[4/3] bg-neutral-100 dark:bg-neutral-800 rounded-lg overflow-hidden transition-all duration-200 hover:shadow-lg"
               style={{ minHeight: '240px' }}
             >
               <Image
@@ -151,12 +154,8 @@ export default function WallpaperGallery({
                 }}
               />
 
-              {/* 微妙的悬停效果提升点击欲望 */}
-              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300 flex items-center justify-center">
-                <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm px-4 py-2 rounded-full">
-                  <span className="text-sm font-medium text-gray-900 dark:text-white">点击预览</span>
-                </div>
-              </div>
+              {/* 极简悬停效果 */}
+              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-200"></div>
 
               {/* 精选badges - 仅保留真正有用的 */}
               <div className="absolute top-3 right-3 flex flex-col gap-2">
@@ -176,14 +175,12 @@ export default function WallpaperGallery({
               </div>
             </div>
 
-            {/* 优化信息条 - 保持简洁但有质感 */}
-            <div className="p-4 bg-gradient-to-r from-white to-gray-50 dark:from-gray-800 dark:to-gray-750">
-              <h3 className="font-semibold text-gray-900 dark:text-white mb-2 line-clamp-1">
+            {/* 极简信息条 - 无背景设计 */}
+            <div className="mt-3">
+              <h3 className="font-medium text-neutral-900 dark:text-white text-sm line-clamp-1 mb-1">
                 {wallpaper.title}
               </h3>
-              
-              {/* 基本元信息 */}
-              <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
+              <div className="flex items-center justify-between text-xs text-neutral-500 dark:text-neutral-400">
                 <span>{wallpaper.width} × {wallpaper.height}</span>
                 <span className="uppercase font-medium">{wallpaper.format}</span>
               </div>
@@ -191,6 +188,13 @@ export default function WallpaperGallery({
           </div>
         ))}
       </div>
+
+      {/* 图片预览模态框 */}
+      <WallpaperModal
+        wallpaper={selectedWallpaper}
+        isOpen={modalOpen}
+        onClose={handleCloseModal}
+      />
     </div>
   );
 }

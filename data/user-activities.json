@@ -1,5 +1,57 @@
 [
   {
+    "type": "compress",
+    "title": "压缩图片: 山谷壁纸.png",
+    "details": {
+      "originalSize": 951358,
+      "compressedSize": 48498,
+      "compressionRatio": 94.90223449006578,
+      "format": "webp",
+      "processingTime": 77
+    },
+    "id": "1753094145700",
+    "timestamp": "2025-07-21T10:35:45.700Z"
+  },
+  {
+    "type": "compress",
+    "title": "压缩图片: 山谷壁纸.png",
+    "details": {
+      "originalSize": 951358,
+      "compressedSize": 71742,
+      "compressionRatio": 92.4589902013753,
+      "format": "webp",
+      "processingTime": 114
+    },
+    "id": "1753093901533",
+    "timestamp": "2025-07-21T10:31:41.533Z"
+  },
+  {
+    "type": "compress",
+    "title": "压缩图片: 山谷壁纸.png",
+    "details": {
+      "originalSize": 951358,
+      "compressedSize": 48498,
+      "compressionRatio": 94.90223449006578,
+      "format": "webp",
+      "processingTime": 78
+    },
+    "id": "1753092965902",
+    "timestamp": "2025-07-21T10:16:05.902Z"
+  },
+  {
+    "type": "compress",
+    "title": "压缩图片: 山谷壁纸.png",
+    "details": {
+      "originalSize": 951358,
+      "compressedSize": 48498,
+      "compressionRatio": 94.90223449006578,
+      "format": "webp",
+      "processingTime": 97
+    },
+    "id": "1753092776833",
+    "timestamp": "2025-07-21T10:12:56.833Z"
+  },
+  {
     "type": "generate",
     "title": "未命名壁纸",
     "details": {

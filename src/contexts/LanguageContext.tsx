@@ -27,6 +27,7 @@ const translations = {
     'login': '登录',
     'logout': '退出登录',
     'loginRegister': '登录',
+    'optional': '可选',
     
     // 主题
     theme: {
@@ -133,6 +134,43 @@ const translations = {
         aiGeneration: 'AI智能生成',
         multiSize: '多尺寸支持',
         optimization: '专业优化'
+      },
+      // 新增翻译键
+      quickGenerate: '快速生成',
+      stylePresets: '风格预sets',
+      generationHistory: '生成历史',
+      wallpaperTitle: '壁纸标题',
+      titlePlaceholder: '为您的壁纸起个名字...',
+      promptLabel: '生图提示词',
+      promptSupport: '支持中文，自动翻译',
+      promptPlaceholder: '描述您想要的壁纸，支持中文输入...',
+      wallpaperSize: '壁纸尺寸',
+      generateButton: '生成壁纸',
+      generating: '生成中...',
+      generationResult: '生成结果',
+      clickToPreview: '点击预览',
+      savedToGallery: '壁纸已保存到图库，点击图片可放大预览',
+      characters: '字符',
+      clear: '清空',
+      expand: '展开',
+      collapse: '收起',
+      randomStyle: '随机风格',
+      popularRecommend: '热门推荐',
+      todayPick: '今日精选',
+      aiRecommend: 'AI推荐',
+      // 预设分类
+      presets: {
+        popular: '热门风格',
+        anime: '二次元',
+        nature: '自然风光',
+        abstract: '抽象艺术'
+      },
+      // 尺寸选项
+      sizes: {
+        desktopFhd: '桌面 FHD',
+        mobilePortrait: '手机竖屏',
+        square1024: '方形 1K',
+        desktop4k: '桌面 4K'
       },
       tipsTitle: '创作小贴士',
       tipsDesc: '掌握这些技巧，让您的AI壁纸更加出色',
@@ -387,6 +425,7 @@ const translations = {
     'login': 'Sign In',
     'logout': 'Logout',
     'loginRegister': 'Sign In',
+    'optional': 'optional',
     
     // 主题
     theme: {
@@ -493,6 +532,43 @@ const translations = {
         aiGeneration: 'AI Smart Generation',
         multiSize: 'Multi-Size Support',
         optimization: 'Professional Optimization'
+      },
+      // 新增翻译键
+      quickGenerate: 'Quick Generate',
+      stylePresets: 'Style Presets',
+      generationHistory: 'Generation History',
+      wallpaperTitle: 'Wallpaper Title',
+      titlePlaceholder: 'Give your wallpaper a name...',
+      promptLabel: 'Generation Prompt',
+      promptSupport: 'Chinese supported, auto-translate',
+      promptPlaceholder: 'Describe the wallpaper you want...',
+      wallpaperSize: 'Wallpaper Size',
+      generateButton: 'Generate Wallpaper',
+      generating: 'Generating...',
+      generationResult: 'Generation Result',
+      clickToPreview: 'Click to Preview',
+      savedToGallery: 'Wallpaper saved to gallery, click image to preview',
+      characters: 'characters',
+      clear: 'Clear',
+      expand: 'Expand',
+      collapse: 'Collapse',
+      randomStyle: 'Random Style',
+      popularRecommend: 'Popular',
+      todayPick: 'Today\'s Pick',
+      aiRecommend: 'AI Recommend',
+      // 预设分类
+      presets: {
+        popular: 'Popular Styles',
+        anime: 'Anime Style',
+        nature: 'Nature',
+        abstract: 'Abstract Art'
+      },
+      // 尺寸选项
+      sizes: {
+        desktopFhd: 'Desktop FHD',
+        mobilePortrait: 'Mobile Portrait',
+        square1024: 'Square 1K',
+        desktop4k: 'Desktop 4K'
       },
       tipsTitle: 'Creation Tips',
       tipsDesc: 'Master these tips to make your AI wallpapers even better',
