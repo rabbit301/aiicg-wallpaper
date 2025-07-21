@@ -48,7 +48,35 @@ const translations = {
       powerfulFeatures: '强大的功能特性',
       featuresDesc: '集成最新AI技术，为您提供全方位的图片处理解决方案'
     },
-    
+
+    // 通用
+    common: {
+      loading: '加载中...',
+      error: '出错了',
+      retry: '重试',
+      cancel: '取消',
+      confirm: '确认',
+      save: '保存',
+      delete: '删除',
+      edit: '编辑',
+      close: '关闭',
+      back: '返回',
+      next: '下一步',
+      previous: '上一步',
+      submit: '提交',
+      reset: '重置',
+      search: '搜索',
+      filter: '筛选',
+      sort: '排序',
+      view: '查看',
+      download: '下载',
+      upload: '上传',
+      share: '分享',
+      copy: '复制',
+      more: '更多',
+      preview: '预览'
+    },
+
     // 首页
     home: {
       title: 'AI壁纸生成器',
@@ -529,7 +557,35 @@ const translations = {
         processImage: 'Process Image'
       }
     },
-    
+
+    // 通用
+    common: {
+      loading: 'Loading...',
+      error: 'Error occurred',
+      retry: 'Retry',
+      cancel: 'Cancel',
+      confirm: 'Confirm',
+      save: 'Save',
+      delete: 'Delete',
+      edit: 'Edit',
+      close: 'Close',
+      back: 'Back',
+      next: 'Next',
+      previous: 'Previous',
+      submit: 'Submit',
+      reset: 'Reset',
+      search: 'Search',
+      filter: 'Filter',
+      sort: 'Sort',
+      view: 'View',
+      download: 'Download',
+      upload: 'Upload',
+      share: 'Share',
+      copy: 'Copy',
+      more: 'More',
+      preview: 'Preview'
+    },
+
     // 分类页面
     category: {
       featuredContent: 'Featured Content Categories',

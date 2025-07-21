@@ -3,6 +3,7 @@
 import Layout from '@/components/Layout';
 import CategoryGallery from '@/components/CategoryGallery';
 import WallpaperGallery from '@/components/WallpaperGallery';
+import MasonryWallpaperGallery from '@/components/MasonryWallpaperGallery';
 import { Sparkles, Wand2, Image, TrendingUp } from 'lucide-react';
 import Link from 'next/link';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -134,9 +135,9 @@ export default function Home() {
                 </p>
               </div>
               
-              {/* 显示最新的6张壁纸 */}
-              <div className="max-w-6xl mx-auto">
-                <WallpaperGallery showPopular={false} limit={6} />
+              {/* 显示最新的12张壁纸 - 即梦AI风格 */}
+              <div className="max-w-7xl mx-auto">
+                <MasonryWallpaperGallery showPopular={false} limit={12} />
               </div>
 
               <div className="text-center mt-8">

@@ -99,44 +99,42 @@ export default function CategoryGallery() {
       setError(null);
 
       // 获取本地 AI 生成的壁纸
-      const [wallpapersResponse, giphyResponse] = await Promise.allSettled([
-        fetch('/api/wallpapers'),
-        fetch('/api/giphy-content')
-      ]);
+      const wallpapersResponse = await fetch('/api/wallpapers');
+      const wallpapersResult = await wallpapersResponse.json();
 
       const categoriesData: CategoryData[] = [];
 
       // 处理本地 AI 生成壁纸
-      if (wallpapersResponse.status === 'fulfilled') {
-        const wallpapersResult = await wallpapersResponse.value.json();
-        if (wallpapersResult.success && wallpapersResult.wallpapers.length > 0) {
-          const aiWallpapers: GiphyImage[] = wallpapersResult.wallpapers.slice(0, 6).map((w: LocalWallpaper) => ({
-            id: w.id,
-            title: w.title,
-            url: w.imageUrl,
-            webp_url: w.thumbnailUrl,
-            thumbnail: w.thumbnailUrl,
-            width: w.width,
-            height: w.height,
-            category: 'ai-generated' as const,
-            tags: w.tags,
-            source: 'local'
-          }));
+      if (wallpapersResult.success && wallpapersResult.wallpapers.length > 0) {
+        const aiWallpapers: GiphyImage[] = wallpapersResult.wallpapers.slice(0, 6).map((w: LocalWallpaper) => ({
+          id: w.id,
+          title: w.title,
+          url: w.imageUrl,
+          webp_url: w.thumbnailUrl,
+          thumbnail: w.thumbnailUrl,
+          width: w.width,
+          height: w.height,
+          category: 'ai-generated' as const,
+          tags: w.tags,
+          source: 'local'
+        }));
 
-          categoriesData.push({
-            category: 'ai-generated',
-            count: wallpapersResult.wallpapers.length,
-            preview: aiWallpapers
-          });
-        }
+        categoriesData.push({
+          category: 'ai-generated',
+          count: wallpapersResult.wallpapers.length,
+          preview: aiWallpapers
+        });
       }
 
-      // 处理外部资源
-      if (giphyResponse.status === 'fulfilled') {
-        const giphyResult = await giphyResponse.value.json();
+      // 尝试获取外部资源（可选）
+      try {
+        const giphyResponse = await fetch('/api/giphy-content');
+        const giphyResult = await giphyResponse.json();
         if (giphyResult.success && giphyResult.overview) {
           categoriesData.push(...giphyResult.overview);
         }
+      } catch (giphyError) {
+        console.log('外部资源加载失败，使用本地数据:', giphyError);
       }
 
       // 如果没有任何数据，添加示例数据

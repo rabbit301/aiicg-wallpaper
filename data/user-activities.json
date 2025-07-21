@@ -1,6 +1,19 @@
 [
   {
     "type": "compress",
+    "title": "压缩图片: 23.jpg",
+    "details": {
+      "originalSize": 1389087,
+      "compressedSize": 29618,
+      "compressionRatio": 97.8678081358475,
+      "format": "webp",
+      "processingTime": 161
+    },
+    "id": "1753118074502",
+    "timestamp": "2025-07-21T17:14:34.502Z"
+  },
+  {
+    "type": "compress",
     "title": "压缩图片: 山谷壁纸.png",
     "details": {
       "originalSize": 951358,
