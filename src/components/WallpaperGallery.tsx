@@ -5,6 +5,8 @@ import { Wallpaper } from '@/types';
 import Image from 'next/image';
 import { useLanguage } from '@/contexts/LanguageContext';
 import WallpaperModal from './WallpaperModal';
+import { Wand2, Eye } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 interface WallpaperGalleryProps {
   searchQuery?: string;
@@ -20,6 +22,7 @@ export default function WallpaperGallery({
   limit
 }: WallpaperGalleryProps) {
   const { t } = useLanguage();
+  const router = useRouter();
   const [wallpapers, setWallpapers] = useState<Wallpaper[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -69,6 +72,33 @@ export default function WallpaperGallery({
   const handleCloseModal = () => {
     setModalOpen(false);
     setSelectedWallpaper(null);
+  };
+
+  // 生成同款功能
+  const handleGenerateSimilar = (wallpaper: Wallpaper, e: React.MouseEvent) => {
+    e.stopPropagation(); // 阻止事件冒泡，避免触发预览
+
+    // 构建基于当前壁纸的提示词
+    let prompt = wallpaper.title || '';
+
+    // 如果有标签，添加到提示词中
+    if (wallpaper.tags && wallpaper.tags.length > 0) {
+      prompt += ', ' + wallpaper.tags.join(', ');
+    }
+
+    // 添加风格描述
+    if (wallpaper.style) {
+      prompt += ', ' + wallpaper.style;
+    }
+
+    // 如果没有足够的信息，使用默认描述
+    if (!prompt.trim()) {
+      prompt = '类似风格的精美壁纸';
+    }
+
+    // 跳转到生成页面并预填提示词
+    const encodedPrompt = encodeURIComponent(prompt);
+    router.push(`/generate?prompt=${encodedPrompt}&reference=${wallpaper.id}`);
   };
 
   if (loading) {
@@ -127,8 +157,7 @@ export default function WallpaperGallery({
         {wallpapers.map((wallpaper) => (
           <div
             key={wallpaper.id}
-            className="group cursor-pointer"
-            onClick={() => handlePreview(wallpaper)}
+            className="group"
           >
             {/* 极简图片容器 */}
             <div className="relative aspect-[4/3] bg-neutral-100 dark:bg-neutral-800 rounded-lg overflow-hidden transition-all duration-200 hover:shadow-lg"
@@ -154,8 +183,31 @@ export default function WallpaperGallery({
                 }}
               />
 
-              {/* 极简悬停效果 */}
-              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-200"></div>
+              {/* 悬停遮罩和操作按钮 */}
+              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-200">
+                {/* 操作按钮 - 悬停时显示 */}
+                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                  <div className="flex gap-2">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handlePreview(wallpaper);
+                      }}
+                      className="flex items-center px-3 py-2 bg-white/90 hover:bg-white text-gray-800 rounded-lg shadow-lg transition-colors text-sm font-medium"
+                    >
+                      <Eye className="h-4 w-4 mr-1" />
+                      预览
+                    </button>
+                    <button
+                      onClick={(e) => handleGenerateSimilar(wallpaper, e)}
+                      className="flex items-center px-3 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg shadow-lg transition-colors text-sm font-medium"
+                    >
+                      <Wand2 className="h-4 w-4 mr-1" />
+                      生成同款
+                    </button>
+                  </div>
+                </div>
+              </div>
 
               {/* 精选badges - 仅保留真正有用的 */}
               <div className="absolute top-3 right-3 flex flex-col gap-2">

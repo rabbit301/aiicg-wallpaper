@@ -3,6 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import { Wand2, Sparkles, TrendingUp, AlertCircle, Crown, ShoppingCart } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import VipUpgradeModal from './VipUpgradeModal';
+import { VipService } from '@/lib/vip-service';
 
 interface PromptAnalysis {
   score: number;
@@ -52,7 +54,7 @@ export default function PromptOptimizer({
   const [analysis, setAnalysis] = useState<PromptAnalysis | null>(null);
   const [optimizationResult, setOptimizationResult] = useState<OptimizationResult | null>(null);
   const [limitInfo, setLimitInfo] = useState<LimitInfo | null>(null);
-  const [showPurchaseModal, setShowPurchaseModal] = useState(false);
+  const [showVipModal, setShowVipModal] = useState(false);
 
   // 获取限制信息
   useEffect(() => {
@@ -111,7 +113,7 @@ export default function PromptOptimizer({
     // 检查限制
     if (limitInfo && !limitInfo.canOptimize) {
       if (limitInfo.needsPurchase) {
-        setShowPurchaseModal(true);
+        setShowVipModal(true);
         return;
       }
     }
@@ -141,7 +143,7 @@ export default function PromptOptimizer({
         }
       } else {
         if (data.limitInfo?.needsPurchase) {
-          setShowPurchaseModal(true);
+          setShowVipModal(true);
         }
         console.error('优化失败:', data.error);
       }
@@ -340,11 +342,11 @@ export default function PromptOptimizer({
           </div>
           {!limitInfo.isVip && limitInfo.needsPurchase && (
             <button
-              onClick={() => setShowPurchaseModal(true)}
+              onClick={() => setShowVipModal(true)}
               className="flex items-center px-3 py-1 bg-purple-600 text-white text-sm rounded-lg hover:bg-purple-700 transition-colors"
             >
-              <ShoppingCart className="h-4 w-4 mr-1" />
-              购买次数
+              <Crown className="h-4 w-4 mr-1" />
+              升级VIP
             </button>
           )}
         </div>
@@ -376,6 +378,18 @@ export default function PromptOptimizer({
 
       {/* 优化结果 */}
       {renderOptimizationResult()}
+
+      {/* VIP升级模态框 */}
+      <VipUpgradeModal
+        isOpen={showVipModal}
+        onClose={() => setShowVipModal(false)}
+        onSuccess={() => {
+          setShowVipModal(false);
+          fetchLimitInfo(); // 刷新限制信息
+        }}
+        feature="promptOptimization"
+        trigger="limit_reached"
+      />
     </div>
   );
 }

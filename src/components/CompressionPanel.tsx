@@ -9,21 +9,22 @@ import { formatFileSize, formatCompressionRatio, formatProcessingTime } from '@/
 import type { CompressionPreset } from '@/lib/compression-utils';
 import { generateCompressionEvaluation, generateStarRating, getScoreColorClass } from '@/lib/emotion-evaluator';
 import type { EmotionEvaluation } from '@/lib/emotion-evaluator';
+import { useLanguage } from '@/contexts/LanguageContext';
 
-// 水冷冷头屏幕尺寸预设
-const COOLING_SCREEN_PRESETS = {
-  custom: { name: '自定义尺寸', width: 0, height: 0 },
-  square_480: { name: '方形 480×480 (标准)', width: 480, height: 480 },
-  square_640: { name: '方形 640×640 (高清)', width: 640, height: 640 },
-  square_800: { name: '方形 800×800 (超清)', width: 800, height: 800 },
-  landscape_640_480: { name: '横屏 640×480 (4:3)', width: 640, height: 480 },
-  landscape_800_600: { name: '横屏 800×600 (4:3)', width: 800, height: 600 },
-  landscape_854_480: { name: '横屏 854×480 (16:9)', width: 854, height: 480 },
-  portrait_480_640: { name: '竖屏 480×640 (3:4)', width: 480, height: 640 },
-  portrait_600_800: { name: '竖屏 600×800 (3:4)', width: 600, height: 800 },
-  round_480: { name: '圆形 480×480 (圆屏适配)', width: 480, height: 480 },
-  round_640: { name: '圆形 640×640 (圆屏适配)', width: 640, height: 640 },
-} as const;
+// 水冷冷头屏幕尺寸预设 - 使用函数以支持国际化
+const getCoolingScreenPresets = (t: (key: string) => string) => ({
+  custom: { name: t('compressPage.customSize'), width: 0, height: 0 },
+  square_480: { name: t('compressPage.squareStandard'), width: 480, height: 480 },
+  square_640: { name: t('compressPage.squareHD'), width: 640, height: 640 },
+  square_800: { name: t('compressPage.squareUHD'), width: 800, height: 800 },
+  landscape_640_480: { name: t('compressPage.landscape43'), width: 640, height: 480 },
+  landscape_800_600: { name: t('compressPage.landscape43HD'), width: 800, height: 600 },
+  landscape_854_480: { name: t('compressPage.landscape169'), width: 854, height: 480 },
+  portrait_480_640: { name: t('compressPage.portrait34'), width: 480, height: 640 },
+  portrait_600_800: { name: t('compressPage.portrait34HD'), width: 600, height: 800 },
+  round_480: { name: t('compressPage.roundStandard'), width: 480, height: 480 },
+  round_640: { name: t('compressPage.roundHD'), width: 640, height: 640 },
+});
 
 interface CompressionResult {
   originalSize: number;
@@ -39,6 +40,7 @@ interface CompressionResult {
 }
 
 export default function CompressionPanel() {
+  const { t } = useLanguage();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [preset, setPreset] = useState<CompressionPreset>('balanced');
   const [isCompressing, setIsCompressing] = useState(false);
@@ -70,7 +72,8 @@ export default function CompressionPanel() {
   const handleCoolingPresetChange = (presetKey: string) => {
     setCoolingPreset(presetKey);
     if (presetKey !== 'custom') {
-      const preset = COOLING_SCREEN_PRESETS[presetKey as keyof typeof COOLING_SCREEN_PRESETS];
+      const presets = getCoolingScreenPresets(t);
+      const preset = presets[presetKey as keyof typeof presets];
       setCustomOptions(prev => ({
         ...prev,
         width: preset.width.toString(),
@@ -99,7 +102,8 @@ export default function CompressionPanel() {
 
       // 添加尺寸设置
       if (coolingPreset !== 'custom') {
-        const presetConfig = COOLING_SCREEN_PRESETS[coolingPreset as keyof typeof COOLING_SCREEN_PRESETS];
+        const presets = getCoolingScreenPresets(t);
+        const presetConfig = presets[coolingPreset as keyof typeof presets];
         formData.append('width', presetConfig.width.toString());
         formData.append('height', presetConfig.height.toString());
         console.log('应用水冷预设:', presetConfig.name, presetConfig.width, 'x', presetConfig.height);
@@ -114,12 +118,13 @@ export default function CompressionPanel() {
         console.log('启用圆形裁剪');
       }
 
+      const presets = getCoolingScreenPresets(t);
       console.log('发送压缩请求，参数:', {
         preset,
         quality: customOptions.quality,
         format: customOptions.format,
-        width: coolingPreset !== 'custom' ? COOLING_SCREEN_PRESETS[coolingPreset as keyof typeof COOLING_SCREEN_PRESETS].width : customOptions.width,
-        height: coolingPreset !== 'custom' ? COOLING_SCREEN_PRESETS[coolingPreset as keyof typeof COOLING_SCREEN_PRESETS].height : customOptions.height,
+        width: coolingPreset !== 'custom' ? presets[coolingPreset as keyof typeof presets].width : customOptions.width,
+        height: coolingPreset !== 'custom' ? presets[coolingPreset as keyof typeof presets].height : customOptions.height,
         cropToCircle: coolingPreset.includes('round')
       });
 
@@ -220,28 +225,28 @@ export default function CompressionPanel() {
     <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 md:p-8">
       <div className="text-center mb-8">
         <h2 className="text-3xl font-bold text-gray-800 dark:text-white mb-2">
-          智能图片压缩
+          {t('compressPage.compressionTool')}
         </h2>
         <p className="text-gray-600 dark:text-gray-300">
-          基于先进算法的高效压缩，优化文件大小同时保持图片质量
+          {t('compressPage.compressionDesc')}
         </p>
       </div>
 
       {/* 预设选择 */}
       <div className="mb-6">
         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-          压缩预设
+          {t('compressPage.compressionPreset')}
         </label>
         <select
           value={preset}
           onChange={(e) => setPreset(e.target.value as CompressionPreset)}
           className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
         >
-          <option value="high_quality">高质量 (95% 质量)</option>
-          <option value="balanced">平衡 (85% 质量，推荐)</option>
-          <option value="high_compression">高压缩 (70% 质量)</option>
-          <option value="water_cooling_360">360水冷优化</option>
-          <option value="animation_optimized">动画优化</option>
+          <option value="high_quality">{t('compressPage.highQuality')}</option>
+          <option value="balanced">{t('compressPage.balanced')}</option>
+          <option value="high_compression">{t('compressPage.highCompression')}</option>
+          <option value="water_cooling_360">{t('compressPage.waterCooling360')}</option>
+          <option value="animation_optimized">{t('compressPage.animationOptimized')}</option>
         </select>
       </div>
 
@@ -249,14 +254,14 @@ export default function CompressionPanel() {
       <div className="mb-6">
         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
           <Monitor className="inline h-4 w-4 mr-1" />
-          水冷冷头屏幕尺寸
+          {t('compressPage.coolingScreenSize')}
         </label>
         <select
           value={coolingPreset}
           onChange={(e) => handleCoolingPresetChange(e.target.value)}
           className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
         >
-          {Object.entries(COOLING_SCREEN_PRESETS).map(([key, preset]) => (
+          {Object.entries(getCoolingScreenPresets(t)).map(([key, preset]) => (
             <option key={key} value={key}>
               {preset.name}
             </option>
@@ -264,8 +269,8 @@ export default function CompressionPanel() {
         </select>
         {coolingPreset !== 'custom' && (
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-            输出尺寸：{COOLING_SCREEN_PRESETS[coolingPreset as keyof typeof COOLING_SCREEN_PRESETS].width} × {COOLING_SCREEN_PRESETS[coolingPreset as keyof typeof COOLING_SCREEN_PRESETS].height} 像素
-            {coolingPreset.includes('round') && ' (圆形屏幕优化)'}
+            {t('compressPage.outputSize')}：{getCoolingScreenPresets(t)[coolingPreset as keyof ReturnType<typeof getCoolingScreenPresets>].width} × {getCoolingScreenPresets(t)[coolingPreset as keyof ReturnType<typeof getCoolingScreenPresets>].height} {t('compressPage.pixels')}
+            {coolingPreset.includes('round') && ` ${t('compressPage.roundScreenOptimized')}`}
           </p>
         )}
       </div>
@@ -277,7 +282,7 @@ export default function CompressionPanel() {
           className="flex items-center text-sm text-purple-600 hover:text-purple-700"
         >
           <Settings className="h-4 w-4 mr-1" />
-          高级选项
+          {t('compressPage.advancedOptions')}
         </button>
         
         {showAdvanced && (
@@ -285,7 +290,7 @@ export default function CompressionPanel() {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  质量 (1-100)
+                  {t('compressPage.quality')}
                 </label>
                 <input
                   type="number"
@@ -296,10 +301,10 @@ export default function CompressionPanel() {
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded focus:ring-2 focus:ring-purple-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                 />
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  输出格式
+                  {t('compressPage.outputFormat')}
                 </label>
                 <select
                   value={customOptions.format}
@@ -317,11 +322,11 @@ export default function CompressionPanel() {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  宽度 (像素)
+                  {t('compressPage.width')}
                 </label>
                 <input
                   type="number"
-                  placeholder="自动"
+                  placeholder={t('compressPage.auto')}
                   value={customOptions.width}
                   onChange={(e) => {
                     setCustomOptions(prev => ({ ...prev, width: e.target.value }));
@@ -334,11 +339,11 @@ export default function CompressionPanel() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  高度 (像素)
+                  {t('compressPage.height')}
                 </label>
                 <input
                   type="number"
-                  placeholder="自动"
+                  placeholder={t('compressPage.auto')}
                   value={customOptions.height}
                   onChange={(e) => {
                     setCustomOptions(prev => ({ ...prev, height: e.target.value }));
@@ -353,7 +358,7 @@ export default function CompressionPanel() {
             {coolingPreset !== 'custom' && (
               <div className="mt-2 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
                 <p className="text-sm text-blue-600 dark:text-blue-400">
-                  已选择水冷屏幕预设，尺寸将自动设置为 {COOLING_SCREEN_PRESETS[coolingPreset as keyof typeof COOLING_SCREEN_PRESETS].width} × {COOLING_SCREEN_PRESETS[coolingPreset as keyof typeof COOLING_SCREEN_PRESETS].height} 像素
+                  {t('compressPage.presetApplied')} {getCoolingScreenPresets(t)[coolingPreset as keyof ReturnType<typeof getCoolingScreenPresets>].width} × {getCoolingScreenPresets(t)[coolingPreset as keyof ReturnType<typeof getCoolingScreenPresets>].height} {t('compressPage.pixels')}
                 </p>
               </div>
             )}
@@ -388,10 +393,10 @@ export default function CompressionPanel() {
           ) : (
             <div>
               <p className="text-lg font-medium text-gray-800 dark:text-white mb-2">
-                点击选择图片文件
+                {t('compressPage.selectImage')}
               </p>
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                支持 PNG、JPEG、WebP、GIF 等格式
+                {t('compressPage.supportedFormats2')}
               </p>
             </div>
           )}
@@ -407,12 +412,12 @@ export default function CompressionPanel() {
         {isCompressing ? (
           <>
             <Loader2 className="h-5 w-5 animate-spin" />
-            <span>压缩中...</span>
+            <span>{t('compressPage.compressing')}</span>
           </>
         ) : (
           <>
             <Zap className="h-5 w-5" />
-            <span>开始压缩</span>
+            <span>{t('compressPage.startCompression')}</span>
           </>
         )}
       </button>
@@ -423,9 +428,9 @@ export default function CompressionPanel() {
           <div className="flex items-center space-x-3">
             <Loader2 className="h-5 w-5 animate-spin text-blue-600" />
             <div>
-              <p className="text-blue-800 dark:text-blue-200 font-medium">图片压缩处理中...</p>
+              <p className="text-blue-800 dark:text-blue-200 font-medium">{t('compressPage.processingHint')}</p>
               <p className="text-sm text-blue-600 dark:text-blue-400">
-                正在使用高效算法进行压缩，预计需要5-15秒
+                {t('compressPage.processingDesc')}
               </p>
             </div>
           </div>
@@ -444,14 +449,14 @@ export default function CompressionPanel() {
         <div className="mt-8 p-6 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
           <div className="text-center mb-6">
             <h3 className="text-lg font-semibold text-green-800 dark:text-green-200 mb-2">
-              压缩完成！
+              {t('compressPage.compressionComplete')}
             </h3>
             
             {/* 回退提示信息 */}
             {result.fallbackUsed && (
               <div className="mb-4 p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
                 <p className="text-sm text-yellow-800 dark:text-yellow-200">
-                  <span className="font-medium">提示&colon;</span> {result.fallbackReason}
+                  <span className="font-medium">{t('compressPage.hint')}&colon;</span> {result.fallbackReason}
                 </p>
               </div>
             )}
@@ -482,7 +487,7 @@ export default function CompressionPanel() {
           {/* 压缩效果对比 */}
           <div className="mb-6">
             <h4 className="text-md font-medium text-gray-800 dark:text-white mb-4 text-center">
-              压缩效果对比
+              {t('compressPage.compressionEffect')}
             </h4>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -490,7 +495,7 @@ export default function CompressionPanel() {
               <div className="text-center">
                 <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-xl border border-gray-200 dark:border-gray-600">
                   <h5 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-                    原始图片
+                    {t('compressPage.originalImage')}
                   </h5>
                   <div className="relative bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-700 rounded-lg p-3 overflow-hidden">
                     {selectedFile ? (
@@ -512,7 +517,7 @@ export default function CompressionPanel() {
                       {formatFileSize(result.originalSize)}
                     </div>
                     <div className="text-xs text-gray-500 dark:text-gray-400">
-                      原始大小
+                      {t('compressPage.originalSize')}
                     </div>
                   </div>
                 </div>
@@ -522,7 +527,7 @@ export default function CompressionPanel() {
               <div className="text-center">
                 <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-xl border border-gray-200 dark:border-gray-600">
                   <h5 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-                    压缩后图片
+                    {t('compressPage.compressedImage')}
                   </h5>
                   <div className="relative bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 rounded-lg p-3 overflow-hidden">
                     <img
@@ -541,11 +546,11 @@ export default function CompressionPanel() {
                     </div>
                     {selectedFile && (
                       <div className="text-xs text-blue-600 dark:text-blue-400">
-                        尺寸变化: {selectedFile.name ? '原图' : '原始'} → 压缩后
+                        {t('compressPage.sizeChange')}: {t('compressPage.original')} → {t('compressPage.compressed')}
                       </div>
                     )}
                     <div className="text-xs font-medium text-green-600 dark:text-green-400">
-                      节省 {formatCompressionRatio(result.compressionRatio)}
+                      {t('compressPage.saved')} {formatCompressionRatio(result.compressionRatio)}
                     </div>
                   </div>
                 </div>
@@ -559,7 +564,7 @@ export default function CompressionPanel() {
                 className="inline-flex items-center px-4 py-2 text-sm bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors border border-blue-200 dark:border-blue-700"
               >
                 <Eye className="h-4 w-4 mr-2" />
-                放大查看详细对比
+                {t('compressPage.viewDetailedComparison')}
               </button>
             </div>
           </div>
@@ -570,28 +575,28 @@ export default function CompressionPanel() {
               <div className="text-2xl font-bold text-green-600 dark:text-green-400">
                 {formatCompressionRatio(result.compressionRatio)}
               </div>
-              <div className="text-sm text-gray-600 dark:text-gray-400">压缩率</div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">{t('compressPage.compressionRatio')}</div>
             </div>
 
             <div className="text-center p-3 bg-white dark:bg-gray-700 rounded-lg">
               <div className="text-lg font-semibold text-gray-800 dark:text-white">
                 {formatFileSize(result.originalSize - result.compressedSize)}
               </div>
-              <div className="text-sm text-gray-600 dark:text-gray-400">节省空间</div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">{t('compressPage.savedSpace')}</div>
             </div>
 
             <div className="text-center p-3 bg-white dark:bg-gray-700 rounded-lg">
               <div className="text-lg font-semibold text-gray-800 dark:text-white">
                 {result.format.toUpperCase()}
               </div>
-              <div className="text-sm text-gray-600 dark:text-gray-400">输出格式</div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">{t('compressPage.outputFormat')}</div>
             </div>
 
             <div className="text-center p-3 bg-white dark:bg-gray-700 rounded-lg">
               <div className="text-lg font-semibold text-gray-800 dark:text-white">
                 {formatProcessingTime(result.processingTime)}
               </div>
-              <div className="text-sm text-gray-600 dark:text-gray-400">处理时间</div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">{t('compressPage.processingTime')}</div>
             </div>
           </div>
 
@@ -602,7 +607,7 @@ export default function CompressionPanel() {
               className="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-6 rounded-lg transition-colors flex items-center justify-center space-x-2"
             >
               <Download className="h-4 w-4" />
-              <span>下载压缩后的图片</span>
+              <span>{t('compressPage.downloadCompressed')}</span>
             </button>
 
             <button
@@ -618,7 +623,7 @@ export default function CompressionPanel() {
               className="bg-gray-500 hover:bg-gray-600 text-white font-medium py-2 px-6 rounded-lg transition-colors flex items-center justify-center space-x-2"
             >
               <Upload className="h-4 w-4" />
-              <span>压缩新图片</span>
+              <span>{t('compressPage.compressNew')}</span>
             </button>
           </div>
         </div>
@@ -638,7 +643,7 @@ export default function CompressionPanel() {
                       : 'bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300'
                   }`}
                 >
-                  原始图片
+                  {t('compressPage.originalImage')}
                 </button>
                 <button
                   onClick={() => setPreviewImage('compressed')}
@@ -648,7 +653,7 @@ export default function CompressionPanel() {
                       : 'bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300'
                   }`}
                 >
-                  压缩后图片
+                  {t('compressPage.compressedImagePreview')}
                 </button>
               </div>
               <button

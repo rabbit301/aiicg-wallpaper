@@ -1,11 +1,13 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { Wand2, Loader2, Sparkles, History, Shuffle, Image as ImageIcon, Zap, Heart } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import WallpaperModal from './WallpaperModal';
 import PromptOptimizer from './PromptOptimizer';
-import PurchaseModal from './PurchaseModal';
+import VipUpgradeModal from './VipUpgradeModal';
+import { VipService } from '@/lib/vip-service';
 import { SCREEN_PRESETS, ScreenPreset } from '@/lib/fal-client';
 import { generateWallpaperEvaluation } from '@/lib/emotion-evaluator';
 import type { EmotionEvaluation } from '@/lib/emotion-evaluator';
@@ -81,6 +83,7 @@ interface GenerationHistory {
 
 export default function WallpaperGeneratorNew() {
   const { t, locale } = useLanguage();
+  const searchParams = useSearchParams();
 
   // 获取本地化的快速生成选项
   const quickGenerateOptions = getQuickGenerateOptions(t);
@@ -105,7 +108,23 @@ export default function WallpaperGeneratorNew() {
 
   // 提示词优化状态
   const [showOptimizer, setShowOptimizer] = useState(false);
-  const [showPurchaseModal, setShowPurchaseModal] = useState(false);
+  const [showVipModal, setShowVipModal] = useState(false);
+
+  // 处理URL参数 - 支持"生成同款"功能
+  useEffect(() => {
+    const promptParam = searchParams.get('prompt');
+    const referenceParam = searchParams.get('reference');
+
+    if (promptParam) {
+      setPrompt(decodeURIComponent(promptParam));
+
+      // 如果有参考ID，可以在这里添加额外的处理逻辑
+      if (referenceParam) {
+        console.log('生成同款，参考ID:', referenceParam);
+        // 可以在这里添加参考壁纸的信息显示
+      }
+    }
+  }, [searchParams]);
 
   // 加载生成历史
   useEffect(() => {
@@ -245,9 +264,9 @@ export default function WallpaperGeneratorNew() {
     setShowOptimizer(false);
   };
 
-  // 处理购买成功
-  const handlePurchaseSuccess = () => {
-    setShowPurchaseModal(false);
+  // 处理VIP升级成功
+  const handleVipUpgradeSuccess = () => {
+    setShowVipModal(false);
     // 可以在这里刷新限制信息或显示成功消息
   };
 
@@ -562,11 +581,13 @@ export default function WallpaperGeneratorNew() {
         </div>
       )}
 
-      {/* 购买模态框 */}
-      <PurchaseModal
-        isOpen={showPurchaseModal}
-        onClose={() => setShowPurchaseModal(false)}
-        onSuccess={handlePurchaseSuccess}
+      {/* VIP升级模态框 */}
+      <VipUpgradeModal
+        isOpen={showVipModal}
+        onClose={() => setShowVipModal(false)}
+        onSuccess={handleVipUpgradeSuccess}
+        feature="aiGeneration"
+        trigger="limit_reached"
       />
     </div>
   );
