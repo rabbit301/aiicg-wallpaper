@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react';
 import { Wand2, Loader2, Sparkles, History, Shuffle, Image as ImageIcon, Zap, Heart } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import WallpaperModal from './WallpaperModal';
+import PromptOptimizer from './PromptOptimizer';
+import PurchaseModal from './PurchaseModal';
 import { SCREEN_PRESETS, ScreenPreset } from '@/lib/fal-client';
 import { generateWallpaperEvaluation } from '@/lib/emotion-evaluator';
 import type { EmotionEvaluation } from '@/lib/emotion-evaluator';
@@ -100,6 +102,10 @@ export default function WallpaperGeneratorNew() {
   const [generationHistory, setGenerationHistory] = useState<GenerationHistory[]>([]);
   const [showHistory, setShowHistory] = useState(false);
   const [selectedPreview, setSelectedPreview] = useState<string | null>(null);
+
+  // 提示词优化状态
+  const [showOptimizer, setShowOptimizer] = useState(false);
+  const [showPurchaseModal, setShowPurchaseModal] = useState(false);
 
   // 加载生成历史
   useEffect(() => {
@@ -231,6 +237,18 @@ export default function WallpaperGeneratorNew() {
       });
       setModalOpen(true);
     }
+  };
+
+  // 处理提示词优化结果
+  const handleOptimized = (result: any) => {
+    setPrompt(result.optimized);
+    setShowOptimizer(false);
+  };
+
+  // 处理购买成功
+  const handlePurchaseSuccess = () => {
+    setShowPurchaseModal(false);
+    // 可以在这里刷新限制信息或显示成功消息
   };
 
   return (
@@ -389,13 +407,23 @@ export default function WallpaperGeneratorNew() {
                   <span className="text-xs text-neutral-500 dark:text-neutral-400">
                     {prompt.trim().length} {t('generatePage.characters')}
                   </span>
-                  <button
-                    type="button"
-                    onClick={() => setPrompt('')}
-                    className="text-xs text-primary-600 hover:text-primary-700 dark:text-primary-400"
-                  >
-                    {t('generatePage.clear')}
-                  </button>
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setShowOptimizer(true)}
+                      className="flex items-center text-xs text-purple-600 hover:text-purple-700 dark:text-purple-400 px-2 py-1 rounded border border-purple-200 hover:bg-purple-50 dark:border-purple-600 dark:hover:bg-purple-900/20 transition-colors"
+                    >
+                      <Sparkles className="h-3 w-3 mr-1" />
+                      AI优化
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setPrompt('')}
+                      className="text-xs text-primary-600 hover:text-primary-700 dark:text-primary-400"
+                    >
+                      {t('generatePage.clear')}
+                    </button>
+                  </div>
                 </div>
               </div>
 
@@ -505,6 +533,40 @@ export default function WallpaperGeneratorNew() {
           setModalOpen(false);
           setSelectedWallpaper(null);
         }}
+      />
+
+      {/* 提示词优化模态框 */}
+      {showOptimizer && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-neutral-800 rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">
+                  AI提示词优化器
+                </h2>
+                <button
+                  onClick={() => setShowOptimizer(false)}
+                  className="p-2 hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded-lg transition-colors"
+                >
+                  <span className="sr-only">关闭</span>
+                  ✕
+                </button>
+              </div>
+
+              <PromptOptimizer
+                initialPrompt={prompt}
+                onOptimized={handleOptimized}
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 购买模态框 */}
+      <PurchaseModal
+        isOpen={showPurchaseModal}
+        onClose={() => setShowPurchaseModal(false)}
+        onSuccess={handlePurchaseSuccess}
       />
     </div>
   );

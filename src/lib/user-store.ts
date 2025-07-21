@@ -32,7 +32,7 @@ interface UserStats {
 
 interface UserActivity {
   id: string;
-  type: 'generate' | 'download' | 'compress';
+  type: 'generate' | 'download' | 'compress' | 'optimize' | 'purchase';
   title: string;
   timestamp: string;
   details?: any;

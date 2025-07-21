@@ -24,6 +24,14 @@ interface User {
     generateCount: number;
     compressCount: number;
     downloadCount: number;
+    optimizeCount: number; // 新增：提示词优化次数
+  };
+  // 新增：优化相关设置
+  optimizationSettings?: {
+    dailyOptimizeLimit: number; // 每日优化限制
+    totalOptimizeCount: number; // 总优化次数
+    lastOptimizeDate: string; // 最后优化日期
+    purchasedOptimizations: number; // 购买的优化次数
   };
 }
 
@@ -32,6 +40,7 @@ interface GuestSession {
   generateCount: number;
   compressCount: number;
   downloadCount: number;
+  optimizeCount: number; // 新增：提示词优化次数
   createdAt: string;
 }
 
@@ -135,7 +144,14 @@ export class AuthStore {
         usageStats: {
           generateCount: 0,
           compressCount: 0,
-          downloadCount: 0
+          downloadCount: 0,
+          optimizeCount: 0
+        },
+        optimizationSettings: {
+          dailyOptimizeLimit: 3, // 普通用户每日3次
+          totalOptimizeCount: 0,
+          lastOptimizeDate: new Date().toISOString().split('T')[0],
+          purchasedOptimizations: 0
         }
       };
 
@@ -203,6 +219,7 @@ export class AuthStore {
         generateCount: 0,
         compressCount: 0,
         downloadCount: 0,
+        optimizeCount: 0,
         createdAt: new Date().toISOString()
       };
 
@@ -222,7 +239,7 @@ export class AuthStore {
   }
 
   // 更新访客使用统计
-  async updateGuestUsage(sessionId: string, type: 'generate' | 'compress' | 'download'): Promise<GuestSession | null> {
+  async updateGuestUsage(sessionId: string, type: 'generate' | 'compress' | 'download' | 'optimize'): Promise<GuestSession | null> {
     try {
       const sessions = await this.getGuestSessions();
       const sessionIndex = sessions.findIndex(s => s.id === sessionId);
@@ -240,6 +257,9 @@ export class AuthStore {
         case 'download':
           session.downloadCount++;
           break;
+        case 'optimize':
+          session.optimizeCount++;
+          break;
       }
 
       sessions[sessionIndex] = session;
@@ -252,7 +272,7 @@ export class AuthStore {
   }
 
   // 更新用户使用统计
-  async updateUserUsage(userId: string, type: 'generate' | 'compress' | 'download'): Promise<boolean> {
+  async updateUserUsage(userId: string, type: 'generate' | 'compress' | 'download' | 'optimize'): Promise<boolean> {
     try {
       const users = await this.getAllUsers();
       const userIndex = users.findIndex(u => u.id === userId);
@@ -269,6 +289,14 @@ export class AuthStore {
           break;
         case 'download':
           user.usageStats.downloadCount++;
+          break;
+        case 'optimize':
+          user.usageStats.optimizeCount++;
+          // 更新优化设置
+          if (user.optimizationSettings) {
+            user.optimizationSettings.totalOptimizeCount++;
+            user.optimizationSettings.lastOptimizeDate = new Date().toISOString().split('T')[0];
+          }
           break;
       }
 
@@ -301,6 +329,154 @@ export class AuthStore {
     }
 
     return { canUse: false, totalUsage: 0, limit };
+  }
+
+  // 检查提示词优化限制
+  async checkOptimizationLimit(sessionId?: string, userId?: string): Promise<{
+    canOptimize: boolean;
+    dailyUsed: number;
+    dailyLimit: number;
+    totalUsed: number;
+    isVip: boolean;
+    needsPurchase: boolean;
+  }> {
+    if (userId) {
+      // 注册用户
+      const users = await this.getAllUsers();
+      const user = users.find(u => u.id === userId);
+
+      if (!user) {
+        return { canOptimize: false, dailyUsed: 0, dailyLimit: 0, totalUsed: 0, isVip: false, needsPurchase: false };
+      }
+
+      // VIP用户无限制
+      if (user.isVip) {
+        return {
+          canOptimize: true,
+          dailyUsed: 0,
+          dailyLimit: -1, // -1表示无限制
+          totalUsed: user.optimizationSettings?.totalOptimizeCount || 0,
+          isVip: true,
+          needsPurchase: false
+        };
+      }
+
+      // 普通用户检查每日限制
+      const today = new Date().toISOString().split('T')[0];
+      const settings = user.optimizationSettings;
+
+      if (!settings) {
+        return { canOptimize: false, dailyUsed: 0, dailyLimit: 3, totalUsed: 0, isVip: false, needsPurchase: true };
+      }
+
+      // 检查是否是新的一天
+      const lastOptimizeDate = settings.lastOptimizeDate;
+      let dailyUsed = 0;
+
+      if (lastOptimizeDate === today) {
+        // 同一天，计算今日使用次数
+        const activities = await this.getUserTodayActivities(userId, 'optimize');
+        dailyUsed = activities.length;
+      }
+
+      const dailyLimit = settings.dailyOptimizeLimit;
+      const purchasedOptimizations = settings.purchasedOptimizations || 0;
+
+      // 可以使用：未达到每日限制 或 有购买的次数
+      const canOptimize = dailyUsed < dailyLimit || purchasedOptimizations > 0;
+      const needsPurchase = dailyUsed >= dailyLimit && purchasedOptimizations === 0;
+
+      return {
+        canOptimize,
+        dailyUsed,
+        dailyLimit,
+        totalUsed: settings.totalOptimizeCount,
+        isVip: false,
+        needsPurchase
+      };
+    }
+
+    if (sessionId) {
+      // 访客用户 - 每日限制1次
+      const session = await this.getGuestSession(sessionId);
+      const dailyLimit = 1;
+      const dailyUsed = session?.optimizeCount || 0;
+
+      return {
+        canOptimize: dailyUsed < dailyLimit,
+        dailyUsed,
+        dailyLimit,
+        totalUsed: dailyUsed,
+        isVip: false,
+        needsPurchase: dailyUsed >= dailyLimit
+      };
+    }
+
+    return { canOptimize: false, dailyUsed: 0, dailyLimit: 0, totalUsed: 0, isVip: false, needsPurchase: false };
+  }
+
+  // 获取用户今日活动记录
+  private async getUserTodayActivities(userId: string, type: string): Promise<any[]> {
+    try {
+      // 这里应该从用户活动记录中获取今日的活动
+      // 简化实现，返回空数组
+      return [];
+    } catch {
+      return [];
+    }
+  }
+
+  // 购买优化次数
+  async purchaseOptimizations(userId: string, count: number): Promise<boolean> {
+    try {
+      const users = await this.getAllUsers();
+      const userIndex = users.findIndex(u => u.id === userId);
+
+      if (userIndex === -1) return false;
+
+      const user = users[userIndex];
+      if (!user.optimizationSettings) {
+        user.optimizationSettings = {
+          dailyOptimizeLimit: 3,
+          totalOptimizeCount: 0,
+          lastOptimizeDate: new Date().toISOString().split('T')[0],
+          purchasedOptimizations: 0
+        };
+      }
+
+      user.optimizationSettings.purchasedOptimizations += count;
+      users[userIndex] = user;
+      await this.saveUsers(users);
+
+      return true;
+    } catch (error) {
+      console.error('购买优化次数失败:', error);
+      return false;
+    }
+  }
+
+  // 消费购买的优化次数
+  async consumePurchasedOptimization(userId: string): Promise<boolean> {
+    try {
+      const users = await this.getAllUsers();
+      const userIndex = users.findIndex(u => u.id === userId);
+
+      if (userIndex === -1) return false;
+
+      const user = users[userIndex];
+      if (!user.optimizationSettings || user.optimizationSettings.purchasedOptimizations <= 0) {
+        return false;
+      }
+
+      user.optimizationSettings.purchasedOptimizations--;
+      users[userIndex] = user;
+      await this.saveUsers(users);
+
+      return true;
+    } catch (error) {
+      console.error('消费购买的优化次数失败:', error);
+      return false;
+    }
   }
 }
 

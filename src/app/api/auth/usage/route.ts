@@ -21,7 +21,7 @@ export async function POST(request: Request) {
   try {
     const { sessionId, userId, type } = await request.json();
 
-    if (!type || !['generate', 'compress', 'download'].includes(type)) {
+    if (!type || !['generate', 'compress', 'download', 'optimize'].includes(type)) {
       return NextResponse.json({ error: '无效的操作类型' }, { status: 400 });
     }
 
