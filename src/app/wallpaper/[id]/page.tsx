@@ -37,7 +37,7 @@ export default function WallpaperDetailPage() {
       const data = await response.json();
       setWallpaper(data.wallpaper);
     } catch (err) {
-      setError(err instanceof Error ? err.message : '加载失败');
+      setError(err instanceof Error ? err.message : t('wallpaper.loadFailed'));
     } finally {
       setLoading(false);
     }
@@ -51,7 +51,7 @@ export default function WallpaperDetailPage() {
         setRelatedWallpapers(data.wallpapers);
       }
     } catch (err) {
-      console.error('获取相关壁纸失败:', err);
+      console.error('Failed to get related wallpapers:', err);
     }
   };
 
@@ -67,7 +67,7 @@ export default function WallpaperDetailPage() {
       prompt += ', ' + wallpaper.style;
     }
     if (!prompt.trim()) {
-      prompt = '类似风格的精美壁纸';
+      prompt = t('wallpaper.similarStyle');
     }
     
     const encodedPrompt = encodeURIComponent(prompt);
@@ -87,7 +87,7 @@ export default function WallpaperDetailPage() {
   // 下载功能
   const handleDownload = () => {
     if (!wallpaper) return;
-    console.log('下载壁纸:', wallpaper.id);
+    console.log('Download wallpaper:', wallpaper.id);
   };
 
   // 分享功能
@@ -97,7 +97,7 @@ export default function WallpaperDetailPage() {
     if (navigator.share) {
       navigator.share({
         title: wallpaper.title,
-        text: `查看这张精美的AI生成壁纸：${wallpaper.title}`,
+        text: `${t('wallpaper.shareText')}：${wallpaper.title}`,
         url: window.location.href
       });
     } else {
@@ -110,7 +110,7 @@ export default function WallpaperDetailPage() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-white dark:bg-neutral-900">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
-        <span className="ml-2 text-neutral-600 dark:text-neutral-400">加载中...</span>
+        <span className="ml-2 text-neutral-600 dark:text-neutral-400">{t('common.loading')}</span>
       </div>
     );
   }
@@ -119,12 +119,12 @@ export default function WallpaperDetailPage() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-white dark:bg-neutral-900">
         <div className="text-center">
-          <p className="text-red-600 dark:text-red-400 mb-4">{error || '壁纸不存在'}</p>
+          <p className="text-red-600 dark:text-red-400 mb-4">{error || t('wallpaper.notFound')}</p>
           <Link
             href="/"
             className="text-purple-600 hover:text-purple-700 underline"
           >
-            返回首页
+{t('wallpaper.backToHome')}
           </Link>
         </div>
       </div>
@@ -145,7 +145,7 @@ export default function WallpaperDetailPage() {
                 <ArrowLeft className="h-5 w-5" />
               </button>
               <div className="text-sm text-neutral-600 dark:text-neutral-400">
-                作品详情
+                {t('wallpaper.details')}
               </div>
             </div>
             
@@ -167,7 +167,7 @@ export default function WallpaperDetailPage() {
                 className="flex items-center px-3 py-2 bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 rounded-lg hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors text-sm"
               >
                 <Download className="h-4 w-4 mr-1" />
-                <span className="hidden sm:inline">下载</span>
+                <span className="hidden sm:inline">{t('common.download')}</span>
               </button>
               
               <button
@@ -175,7 +175,7 @@ export default function WallpaperDetailPage() {
                 className="flex items-center px-3 py-2 bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 rounded-lg hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors text-sm"
               >
                 <Share2 className="h-4 w-4 mr-1" />
-                <span className="hidden sm:inline">分享</span>
+                <span className="hidden sm:inline">{t('common.share')}</span>
               </button>
             </div>
           </div>
@@ -189,13 +189,24 @@ export default function WallpaperDetailPage() {
           <div className="lg:col-span-2">
             <div className="bg-neutral-50 dark:bg-neutral-800 rounded-xl p-8 flex items-center justify-center">
               <div className="relative max-w-full max-h-[70vh]">
-                <Image
-                  src={wallpaper.imageUrl}
-                  alt={wallpaper.title}
-                  width={800}
-                  height={600}
-                  className="max-w-full max-h-full object-contain rounded-lg shadow-lg"
-                />
+                {/* 判断是否使用兰空图床，如果是则直接使用原图 */}
+                {wallpaper.imageUrl.includes('555125.xyz') ? (
+                  // 兰空图床：直接使用原图，绕过Next.js优化
+                  <img
+                    src={wallpaper.imageUrl}
+                    alt={wallpaper.title}
+                    className="max-w-full max-h-full object-contain rounded-lg shadow-lg"
+                  />
+                ) : (
+                  // 其他图床：使用Next.js优化
+                  <Image
+                    src={wallpaper.imageUrl}
+                    alt={wallpaper.title}
+                    width={800}
+                    height={600}
+                    className="max-w-full max-h-full object-contain rounded-lg shadow-lg"
+                  />
+                )}
               </div>
             </div>
             
@@ -320,12 +331,23 @@ export default function WallpaperDetailPage() {
                   className="group block"
                 >
                   <div className="relative aspect-square rounded-lg overflow-hidden bg-neutral-100 dark:bg-neutral-800">
-                    <Image
-                      src={related.imageUrl}
-                      alt={related.title}
-                      fill
-                      className="object-cover transition-transform duration-300 group-hover:scale-105"
-                    />
+                    {/* 判断是否使用兰空图床，如果是则直接使用原图 */}
+                    {related.imageUrl.includes('555125.xyz') ? (
+                      // 兰空图床：直接使用原图，绕过Next.js优化
+                      <img
+                        src={related.imageUrl}
+                        alt={related.title}
+                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                      />
+                    ) : (
+                      // 其他图床：使用Next.js优化
+                      <Image
+                        src={related.imageUrl}
+                        alt={related.title}
+                        fill
+                        className="object-cover transition-transform duration-300 group-hover:scale-105"
+                      />
+                    )}
                   </div>
                   <h3 className="mt-2 text-sm font-medium text-neutral-900 dark:text-white line-clamp-2">
                     {related.title}

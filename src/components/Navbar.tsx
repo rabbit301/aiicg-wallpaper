@@ -69,7 +69,6 @@ export default function Navbar() {
 
   const getUserNavigation = () => [
     { name: t('profile'), href: '/profile', icon: User },
-    { name: t('settings'), href: '/settings', icon: Settings },
   ];
   
   const userNavigation = getUserNavigation();
@@ -90,8 +89,8 @@ export default function Navbar() {
     setMobileMenuOpen(false);
   };
 
-  const handleAuthSuccess = (userData: any) => {
-    login(userData);
+  const handleAuthSuccess = (userData: any, token?: string) => {
+    login(userData, token);
   };
 
   return (
@@ -108,7 +107,7 @@ export default function Navbar() {
                   <Sparkles className="h-5 w-5 text-white" />
                 </div>
                 <span className="text-xl font-bold bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent">
-                  AIICG壁纸站
+                  {t('footer.brand')}
                 </span>
               </Link>
             </div>
@@ -148,9 +147,9 @@ export default function Navbar() {
                     {/* 用户头像 */}
                     <div className="w-6 h-6 rounded-lg overflow-hidden bg-gradient-to-br from-primary-500 to-secondary-500 flex items-center justify-center">
                       {user?.avatar && !user.avatar.includes('/avatars/presets/') ? (
-                        <img 
+                           <img 
                           src={user.avatar} 
-                          alt="用户头像" 
+                             alt={t('settingsPage.avatar')}
                           className="w-full h-full object-cover"
                         />
                       ) : (
@@ -163,6 +162,26 @@ export default function Navbar() {
                   {/* Dropdown Menu */}
                   <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-neutral-800 rounded-lg shadow-lg border border-neutral-200 dark:border-neutral-700 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
                     <div className="py-1">
+                      {/* Admin Links */}
+                      { (user?.role === 'super_admin' || user?.role === 'admin') && (
+                        <>
+                          <Link
+                            href="/admin"
+                            className="flex items-center space-x-2 px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors duration-200"
+                          >
+                            <Settings className="h-4 w-4" />
+                            <span>{t('nav.admin.dashboard')}</span>
+                          </Link>
+                          <Link
+                            href="/admin/notifications"
+                            className="flex items-center space-x-2 px-4 py-2 text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors duration-200"
+                          >
+                            <Settings className="h-4 w-4" />
+                            <span>{t('nav.admin.notifications')}</span>
+                          </Link>
+                          <hr className="my-1 border-neutral-200/30 dark:border-neutral-700/30" />
+                        </>
+                      )}
                       {userNavigation.map((item) => {
                         const Icon = item.icon;
                         return (
@@ -188,12 +207,12 @@ export default function Navbar() {
                   </div>
                 </div>
               ) : (
-                <button
-                  onClick={() => setAuthModalOpen(true)}
+                <Link
+                  href="/login"
                   className="px-6 py-2 bg-white dark:bg-neutral-800 text-primary-600 dark:text-primary-400 font-medium rounded-lg border border-primary-200 dark:border-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/20 hover:border-primary-400 dark:hover:border-primary-500 transition-all duration-200 shadow-sm hover:shadow-md"
                 >
                   {t('login')}
-                </button>
+                </Link>
               )}
             </div>
 
@@ -244,7 +263,7 @@ export default function Navbar() {
               
               <hr className="my-3 border-neutral-200/30 dark:border-neutral-700/30" />
               
-              {isLoggedIn ? (
+                  {isLoggedIn ? (
                 <>
                   {/* 用户信息 */}
                   <div className="flex items-center space-x-3 px-3 py-3">
@@ -259,9 +278,9 @@ export default function Navbar() {
                         <User className="h-4 w-4 text-white" />
                       )}
                     </div>
-                    <span className="text-base font-medium text-neutral-900 dark:text-neutral-100">
-                      {user?.username}
-                    </span>
+                     <span className="text-base font-medium text-neutral-900 dark:text-neutral-100">
+                       {user?.username}
+                     </span>
                   </div>
 
                   {userNavigation.map((item) => {
@@ -278,7 +297,27 @@ export default function Navbar() {
                       </Link>
                     );
                   })}
-                  
+                      {(user?.role === 'super_admin' || user?.role === 'admin') && (
+                        <>
+                          <Link
+                            href="/admin"
+                            onClick={() => setMobileMenuOpen(false)}
+                            className="flex items-center space-x-3 px-3 py-3 rounded-lg text-base font-medium text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-all duration-200"
+                          >
+                            <Settings className="h-5 w-5" />
+                            <span>{t('nav.admin.dashboard')}</span>
+                          </Link>
+                          <Link
+                            href="/admin/notifications"
+                            onClick={() => setMobileMenuOpen(false)}
+                            className="flex items-center space-x-3 px-3 py-3 rounded-lg text-base font-medium text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-all duration-200"
+                          >
+                            <Settings className="h-5 w-5" />
+                            <span>{t('nav.admin.notifications')}</span>
+                          </Link>
+                          <hr className="my-3 border-neutral-200/30 dark:border-neutral-700/30" />
+                        </>
+                      )}
                   <button 
                     onClick={handleLogout}
                     className="w-full text-left flex items-center space-x-3 px-3 py-3 rounded-lg text-base font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all duration-200"
@@ -288,15 +327,13 @@ export default function Navbar() {
                   </button>
                 </>
               ) : (
-                <button 
-                  onClick={() => {
-                    setAuthModalOpen(true);
-                    setMobileMenuOpen(false);
-                  }}
-                  className="w-full text-center px-3 py-3 rounded-lg text-base font-medium bg-white dark:bg-neutral-800 text-primary-600 dark:text-primary-400 border border-primary-200 dark:border-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-all duration-200"
+                <Link
+                  href="/login"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="w-full text-center block px-3 py-3 rounded-lg text-base font-medium bg-white dark:bg-neutral-800 text-primary-600 dark:text-primary-400 border border-primary-200 dark:border-primary-600 hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-all duration-200"
                 >
                   {t('loginRegister')}
-                </button>
+                </Link>
               )}
             </div>
           </div>

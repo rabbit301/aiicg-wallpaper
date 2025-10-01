@@ -1,13 +1,26 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // 外部包配置（修复警告）
+  // 外部包配置（修复警告�?
   serverExternalPackages: ['sharp'],
-  
+
+  // API代理配置 - 解决跨域问题
+  async rewrites() {
+    const backendUrl = process.env.NEXT_PUBLIC_GO_BACKEND_URL || 'http://localhost:8080';
+    return [
+      {
+        source: '/api/v1/:path*',
+        destination: `${backendUrl}/api/v1/:path*`,
+      },
+    ];
+  },
+
   // 图片优化配置
   images: {
     domains: [
-      'res.cloudinary.com', 
+      '555125.xyz', // 兰空图床域名（优先）
+      'sc-maas.oss-cn-shanghai.aliyuncs.com', // FastGPT/阿里云OSS域名
+      'res.cloudinary.com',
       'fal.media',
       'v3.fal.media',  // fal.ai v3 API 域名
       'cdn.fal.media', // fal.ai CDN 域名
@@ -15,6 +28,10 @@ const nextConfig: NextConfig = {
       'api.fal.media', // fal.ai API 域名
       'images.unsplash.com',
       'images.pexels.com',
+      'cdn.pixabay.com',
+      'source.unsplash.com',
+      'picsum.photos',
+      // 移除 'via.placeholder.com'，改用本地SVG占位符
       'media.giphy.com',
       'localhost'
     ],
@@ -33,9 +50,9 @@ const nextConfig: NextConfig = {
       resolveExtensions: ['.tsx', '.ts', '.jsx', '.js'],
     },
   },
-  // 解决 LightningCSS 在 CF Pages 上的问题
+  // 解决 LightningCSS �?CF Pages 上的问题
   webpack: (config, { isServer, dev }) => {
-    // 在 CF Pages 构建环境中，跳过原生模块的严格检查
+    // �?CF Pages 构建环境中，跳过原生模块的严格检�?
     if (process.env.CF_PAGES && !dev) {
       config.externals = config.externals || []
       config.externals.push({
@@ -73,7 +90,7 @@ const nextConfig: NextConfig = {
               chunks: 'all',
               maxSize: 10 * 1024 * 1024, // 10MB限制
             },
-            // 添加更细粒度的分割
+            // 添加更细粒度的分�?
             react: {
               test: /[\\/]node_modules[\\/](react|react-dom)[\\/]/,
               name: 'react',
@@ -92,7 +109,7 @@ const nextConfig: NextConfig = {
         },
       };
       
-      // 在非开发环境且在CF Pages上完全禁用缓存
+      // 在非开发环境且在CF Pages上完全禁用缓�?
       if (process.env.CF_PAGES) {
         config.cache = false;
       }

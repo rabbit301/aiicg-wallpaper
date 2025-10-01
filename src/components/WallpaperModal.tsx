@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { X, Download, ChevronLeft, ChevronRight, ZoomIn, ZoomOut } from 'lucide-react';
 import { Wallpaper } from '@/types';
 import Image from 'next/image';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface WallpaperModalProps {
   wallpaper: Wallpaper | null;
@@ -22,6 +23,7 @@ export default function WallpaperModal({
   onPrevious,
   showNavigation = false
 }: WallpaperModalProps) {
+  const { t } = useLanguage();
   const [isZoomed, setIsZoomed] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
   const [downloading, setDownloading] = useState(false);
@@ -90,7 +92,7 @@ export default function WallpaperModal({
         document.body.removeChild(a);
       }
     } catch (error) {
-      console.error('下载失败:', error);
+      console.error('Download failed:', error);
     } finally {
       setDownloading(false);
     }
@@ -137,7 +139,7 @@ export default function WallpaperModal({
             <button
               onClick={() => setIsZoomed(!isZoomed)}
               className="p-2 bg-white/10 hover:bg-white/20 rounded-lg backdrop-blur-sm transition-colors"
-              title={isZoomed ? '缩小' : '放大'}
+              title={isZoomed ? t('actions.zoomOut') : t('actions.zoomIn')}
             >
               {isZoomed ? (
                 <ZoomOut className="h-5 w-5 text-white" />
@@ -154,7 +156,7 @@ export default function WallpaperModal({
             >
               <Download className="h-4 w-4 text-white" />
               <span className="text-white text-sm">
-                {downloading ? '下载中...' : '下载'}
+                {downloading ? t('status.downloading') : t('common.download')}
               </span>
             </button>
 
@@ -182,17 +184,31 @@ export default function WallpaperModal({
               </div>
             )}
             
-            <Image
-              src={wallpaper.imageUrl}
-              alt={wallpaper.title}
-              width={wallpaper.width}
-              height={wallpaper.height}
-              className={`max-w-full max-h-full object-contain rounded-lg transition-opacity duration-300 ${
-                imageLoaded ? 'opacity-100' : 'opacity-0'
-              }`}
-              onLoad={() => setImageLoaded(true)}
-              priority
-            />
+            {/* 判断是否使用兰空图床，如果是则直接使用原图 */}
+            {wallpaper.imageUrl.includes('555125.xyz') ? (
+              // 兰空图床：直接使用原图，绕过Next.js优化
+              <img
+                src={wallpaper.imageUrl}
+                alt={wallpaper.title}
+                className={`max-w-full max-h-full object-contain rounded-lg transition-opacity duration-300 ${
+                  imageLoaded ? 'opacity-100' : 'opacity-0'
+                }`}
+                onLoad={() => setImageLoaded(true)}
+              />
+            ) : (
+              // 其他图床：使用Next.js优化
+              <Image
+                src={wallpaper.imageUrl}
+                alt={wallpaper.title}
+                width={wallpaper.width}
+                height={wallpaper.height}
+                className={`max-w-full max-h-full object-contain rounded-lg transition-opacity duration-300 ${
+                  imageLoaded ? 'opacity-100' : 'opacity-0'
+                }`}
+                onLoad={() => setImageLoaded(true)}
+                priority
+              />
+            )}
           </div>
         </div>
 

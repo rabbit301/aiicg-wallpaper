@@ -11,6 +11,12 @@ export interface Wallpaper {
   downloads: number;
   tags: string[];
   optimizedFor360: boolean;
+  // 额外属性
+  likes?: number;
+  views?: number;
+  style?: string;
+  author?: string;
+  size?: string;
 }
 
 export interface GenerateImageRequest {

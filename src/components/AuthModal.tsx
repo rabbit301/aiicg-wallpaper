@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { X, User, Mail, Lock, Loader2, Check } from 'lucide-react';
+import { api } from '@/lib/api-client';
 
 interface UserData {
   id: string;
@@ -13,7 +14,7 @@ interface UserData {
 interface AuthModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSuccess: (user: UserData) => void;
+  onSuccess: (user: UserData, token?: string) => void;
   initialMode?: 'login' | 'register';
 }
 
@@ -35,24 +36,22 @@ export default function AuthModal({ isOpen, onClose, onSuccess, initialMode = 'l
     setError('');
 
     try {
-      const endpoint = mode === 'login' ? '/api/auth/login' : '/api/auth/register';
-      const body = mode === 'login' 
-        ? { username: formData.username, password: formData.password }
-        : formData;
-
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body)
-      });
-
-      const data = await response.json();
-
-      if (data.success) {
-        onSuccess(data.user);
-        onClose();
+      if (mode === 'login') {
+        const result = await api.auth.login({ username: formData.username, password: formData.password });
+        if (result && result.user) {
+          onSuccess(result.user, result.access_token);
+          onClose();
+        } else {
+          setError('操作失败');
+        }
       } else {
-        setError(data.error || '操作失败');
+        const result = await api.auth.register({ username: formData.username, email: formData.email, password: formData.password });
+        if (result && result.user) {
+          onSuccess(result.user, result.access_token);
+          onClose();
+        } else {
+          setError('操作失败');
+        }
       }
     } catch (error) {
       console.error('认证失败:', error);

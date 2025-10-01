@@ -267,7 +267,7 @@ export default function CategoryGallery() {
             return (
               <Link
                 key={categoryData.category}
-                href={categoryData.category === 'ai-generated' ? '/generate' : `/category/${categoryData.category}`}
+                href={categoryData.category === 'ai-generated' ? '/generate' : categoryData.category === 'wallpaper' ? '/wallpaper' : `/category/${categoryData.category}`}
                 className="group"
               >
                 <div className={`bg-gradient-to-br ${config.bgColor} border ${config.borderColor} rounded-2xl p-6 hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1`}>

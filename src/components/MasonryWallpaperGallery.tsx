@@ -135,14 +135,27 @@ export default function MasonryWallpaperGallery({
             <div className="relative rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
               {/* 图片容器 - 无边框，纯图片展示 */}
               <div className="relative overflow-hidden">
-                <Image
-                  src={wallpaper.imageUrl}
-                  alt={wallpaper.title}
-                  width={300}
-                  height={getRandomHeight(index)}
-                  className="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-105"
-                  style={{ aspectRatio: 'auto' }}
-                />
+                {/* 判断是否使用兰空图床，如果是则直接使用原图 */}
+                {wallpaper.imageUrl.includes('555125.xyz') ? (
+                  // 兰空图床：直接使用原图，绕过Next.js优化
+                  <img
+                    src={wallpaper.imageUrl}
+                    alt={wallpaper.title}
+                    className="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-105"
+                    style={{ aspectRatio: 'auto' }}
+                    loading={index < 6 ? "eager" : "lazy"}
+                  />
+                ) : (
+                  // 其他图床：使用Next.js优化
+                  <Image
+                    src={wallpaper.imageUrl}
+                    alt={wallpaper.title}
+                    width={300}
+                    height={getRandomHeight(index)}
+                    className="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-105"
+                    style={{ aspectRatio: 'auto' }}
+                  />
+                )}
 
                 {/* 悬停遮罩 - 仅在悬停时显示信息 */}
                 <div className={`absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent transition-opacity duration-300 ${

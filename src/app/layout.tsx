@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { LanguageProvider } from "@/contexts/LanguageContext";
+import { NotificationProvider } from "@/contexts/NotificationContext";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -21,11 +22,13 @@ export default function RootLayout({
         suppressHydrationWarning
       >
         <LanguageProvider>
-          <ThemeProvider>
-            <AuthProvider>
-              {children}
-            </AuthProvider>
-          </ThemeProvider>
+          <AuthProvider>
+            <ThemeProvider>
+              <NotificationProvider>
+                {children}
+              </NotificationProvider>
+            </ThemeProvider>
+          </AuthProvider>
         </LanguageProvider>
       </body>
     </html>

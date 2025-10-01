@@ -1,0 +1,360 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import Layout from '@/components/Layout';
+import { useAuth } from '@/contexts/AuthContext';
+import {
+  User,
+  Download,
+  Settings,
+  Loader2,
+  Calendar,
+  Wallet,
+  BarChart3,
+  Zap,
+  Crown,
+  Trophy,
+  Activity,
+  DollarSign,
+  Sparkles,
+  Users,
+  Gift,
+  Share2,
+  Copy,
+  Check,
+  Star,
+  Award,
+  QrCode,
+  Bell,
+  Shield,
+  Eye,
+  EyeOff
+} from 'lucide-react';
+
+interface UserProfile {
+  id: string;
+  username: string;
+  email: string;
+  avatar?: string;
+  joinedAt: string;
+  isVip: boolean;
+  level: number;
+  levelName: string;
+  currentXP: number;
+  nextLevelXP: number;
+}
+
+interface UsageStats {
+  today: {
+    aiGenerated: number;
+    imagesDownloaded: number;
+    timeSpent: number;
+  };
+  total: {
+    aiGenerated: number;
+    imagesDownloaded: number;
+    timeSpent: number;
+    moneySpent: number;
+  };
+}
+
+interface InviteStats {
+  totalInvites: number;
+  successfulInvites: number;
+  pendingInvites: number;
+  totalEarnings: number;
+  thisMonthEarnings: number;
+  inviteCode: string;
+  inviteLink: string;
+  commissionRate: number;
+}
+
+type TabType = 'overview' | 'stats' | 'invite' | 'achievements' | 'settings' | 'billing';
+
+export default function ProfilePage() {
+  const { user: currentUser, isLoggedIn } = useAuth();
+
+  const [activeTab, setActiveTab] = useState<TabType>('overview');
+  const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [usageStats, setUsageStats] = useState<UsageStats | null>(null);
+  const [inviteStats, setInviteStats] = useState<InviteStats | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [copiedInviteCode, setCopiedInviteCode] = useState(false);
+  const [copiedInviteLink, setCopiedInviteLink] = useState(false);
+
+  useEffect(() => {
+    if (!isLoggedIn) {
+      window.location.href = '/login';
+      return;
+    }
+    loadUserData();
+  }, [isLoggedIn]);
+
+  const loadUserData = async () => {
+    if (!currentUser) return;
+
+    try {
+      setLoading(true);
+      setError(null);
+
+      // 模拟数据
+      const mockProfile: UserProfile = {
+        id: currentUser.id,
+        username: currentUser.username,
+        email: currentUser.email,
+        avatar: currentUser.avatar,
+        joinedAt: currentUser.createdAt || '2024-01-15T00:00:00Z',
+        isVip: true,
+        level: 8,
+        levelName: '创作专家',
+        currentXP: 2450,
+        nextLevelXP: 3000
+      };
+
+      const mockUsageStats: UsageStats = {
+        today: { aiGenerated: 8, imagesDownloaded: 15, timeSpent: 45 },
+        total: { aiGenerated: 1247, imagesDownloaded: 3892, timeSpent: 12450, moneySpent: 89.50 }
+      };
+
+      const mockInviteStats: InviteStats = {
+        totalInvites: 23,
+        successfulInvites: 18,
+        pendingInvites: 5,
+        totalEarnings: 156.80,
+        thisMonthEarnings: 45.20,
+        inviteCode: 'AIART2024',
+        inviteLink: `https://aiicg-wallpaper.com/register?ref=${currentUser.id}`,
+        commissionRate: 20
+      };
+
+      setProfile(mockProfile);
+      setUsageStats(mockUsageStats);
+      setInviteStats(mockInviteStats);
+
+    } catch (error: any) {
+      console.error('加载用户数据失败:', error);
+      setError('加载用户数据失败');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const formatTime = (minutes: number): string => {
+    if (minutes < 60) return `${minutes}分钟`;
+    const hours = Math.floor(minutes / 60);
+    const remainingMinutes = minutes % 60;
+    return `${hours}小时${remainingMinutes > 0 ? remainingMinutes + '分钟' : ''}`;
+  };
+
+  const formatDate = (dateString: string): string => {
+    return new Date(dateString).toLocaleDateString('zh-CN', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  };
+
+  const copyToClipboard = async (text: string, type: 'code' | 'link') => {
+    try {
+      await navigator.clipboard.writeText(text);
+      if (type === 'code') {
+        setCopiedInviteCode(true);
+        setTimeout(() => setCopiedInviteCode(false), 2000);
+      } else {
+        setCopiedInviteLink(true);
+        setTimeout(() => setCopiedInviteLink(false), 2000);
+      }
+    } catch (error) {
+      console.error('复制失败:', error);
+    }
+  };
+
+  const shareInviteLink = async () => {
+    if (navigator.share && inviteStats) {
+      try {
+        await navigator.share({
+          title: 'AI壁纸生成器 - 邀请好友',
+          text: '快来体验最强AI壁纸生成器，创作属于你的独特壁纸！',
+          url: inviteStats.inviteLink
+        });
+      } catch (error) {
+        console.error('分享失败:', error);
+        copyToClipboard(inviteStats.inviteLink, 'link');
+      }
+    } else if (inviteStats) {
+      copyToClipboard(inviteStats.inviteLink, 'link');
+    }
+  };
+
+  if (loading) {
+    return (
+      <Layout>
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="text-center">
+            <Loader2 className="h-12 w-12 animate-spin text-primary-600 mx-auto mb-4" />
+            <p className="text-neutral-600 dark:text-neutral-400">加载个人中心中...</p>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
+
+  if (error) {
+    return (
+      <Layout>
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="text-center">
+            <div className="w-16 h-16 bg-red-100 dark:bg-red-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
+              <User className="h-8 w-8 text-red-600 dark:text-red-400" />
+            </div>
+            <h3 className="text-lg font-medium text-neutral-900 dark:text-white mb-2">加载失败</h3>
+            <p className="text-neutral-600 dark:text-neutral-400 mb-4">{error}</p>
+            <button
+              onClick={loadUserData}
+              className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+            >
+              重试
+            </button>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
+
+  return (
+    <Layout>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-neutral-900 dark:text-white mb-2">个人中心</h1>
+          <p className="text-neutral-600 dark:text-neutral-400">管理您的账户、查看数据统计、邀请好友赚取收益</p>
+        </div>
+
+        {/* Navigation Tabs */}
+        <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-lg border border-neutral-200 dark:border-neutral-700 mb-8">
+          <div className="border-b border-neutral-200 dark:border-neutral-700">
+            <nav className="flex space-x-8 px-6 py-4 overflow-x-auto">
+              {[
+                { id: 'overview', label: '概览', icon: BarChart3 },
+                { id: 'stats', label: '数据统计', icon: Activity },
+                { id: 'invite', label: '邀请推广', icon: Users },
+                { id: 'achievements', label: '成就系统', icon: Trophy },
+                { id: 'settings', label: '账户设置', icon: Settings },
+                { id: 'billing', label: '账单管理', icon: DollarSign }
+              ].map(tab => {
+                const Icon = tab.icon;
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id as TabType)}
+                    className={`flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors whitespace-nowrap ${
+                      activeTab === tab.id
+                        ? 'bg-primary-100 dark:bg-primary-900/20 text-primary-700 dark:text-primary-300'
+                        : 'text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-200'
+                    }`}
+                  >
+                    <Icon className="h-4 w-4 mr-2" />
+                    {tab.label}
+                  </button>
+                );
+              })}
+            </nav>
+          </div>
+
+          {/* Tab Content */}
+          <div className="p-6">
+            {/* Overview Tab - 概览 */}
+            {activeTab === 'overview' && profile && usageStats && inviteStats && (
+              <div className="space-y-8">
+                {/* User Profile Card */}
+                <div className="bg-gradient-to-r from-primary-500 to-secondary-500 rounded-2xl p-6 text-white">
+                  <div className="flex items-center justify-between mb-6">
+                    <div className="flex items-center">
+                      <div className="w-20 h-20 bg-white/20 rounded-2xl flex items-center justify-center mr-6 overflow-hidden">
+                        {profile.avatar ? (
+                          <img
+                            src={profile.avatar}
+                            alt="用户头像"
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <User className="h-10 w-10" />
+                        )}
+                      </div>
+                      <div>
+                        <h2 className="text-2xl font-bold mb-1">{profile.username}</h2>
+                        <p className="text-white/80 mb-2">{profile.email}</p>
+                        <div className="flex items-center">
+                          <Crown className="h-4 w-4 mr-1" />
+                          <span className="text-sm">等级 {profile.level} - {profile.levelName}</span>
+                        </div>
+                      </div>
+                    </div>
+                    {profile.isVip && (
+                      <div className="flex items-center bg-yellow-500/20 px-4 py-2 rounded-full">
+                        <Sparkles className="h-5 w-5 mr-2" />
+                        <span className="font-medium">VIP会员</span>
+                      </div>
+                    )}
+                  </div>
+                  
+                  <div className="mb-6">
+                    <div className="flex justify-between text-sm mb-2">
+                      <span>经验值进度</span>
+                      <span>{profile.currentXP} / {profile.nextLevelXP} XP</span>
+                    </div>
+                    <div className="w-full bg-white/20 rounded-full h-3">
+                      <div 
+                        className="bg-white rounded-full h-3 transition-all duration-300"
+                        style={{ width: `${(profile.currentXP / profile.nextLevelXP) * 100}%` }}
+                      ></div>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div className="text-center">
+                      <div className="text-2xl font-bold">{usageStats.total.aiGenerated}</div>
+                      <div className="text-white/80 text-sm">AI生成</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-2xl font-bold">{usageStats.total.imagesDownloaded}</div>
+                      <div className="text-white/80 text-sm">图片下载</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-2xl font-bold">{inviteStats.successfulInvites}</div>
+                      <div className="text-white/80 text-sm">成功邀请</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-2xl font-bold">${inviteStats.totalEarnings}</div>
+                      <div className="text-white/80 text-sm">邀请收益</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Other tabs placeholder */}
+            {activeTab !== 'overview' && (
+              <div className="text-center py-12">
+                <div className="w-16 h-16 bg-neutral-100 dark:bg-neutral-700 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Settings className="h-8 w-8 text-neutral-400" />
+                </div>
+                <h3 className="text-lg font-medium text-neutral-900 dark:text-white mb-2">
+                  {activeTab === 'stats' && '数据统计'}
+                  {activeTab === 'invite' && '邀请推广'}
+                  {activeTab === 'achievements' && '成就系统'}
+                  {activeTab === 'settings' && '账户设置'}
+                  {activeTab === 'billing' && '账单管理'}
+                </h3>
+                <p className="text-neutral-600 dark:text-neutral-400">
+                  此功能正在开发中，敬请期待...
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </Layout>
+  );
+}

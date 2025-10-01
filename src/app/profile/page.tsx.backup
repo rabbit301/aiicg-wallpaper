@@ -1,0 +1,431 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import Layout from '@/components/Layout';
+import { useAuth } from '@/contexts/AuthContext';
+import {
+  User,
+  Download,
+  Settings,
+  Loader2,
+  X,
+  Mail,
+  Calendar,
+  Wallet,
+  BarChart3,
+  FileImage,
+  Zap,
+  Minimize2,
+  CreditCard,
+  History,
+  Package
+} from 'lucide-react';
+import Link from 'next/link';
+
+interface UserProfile {
+  id: string;
+  username: string;
+  email: string;
+  avatar?: string;
+  joinedAt: string;
+  accountBalance: number;
+}
+
+interface UsageStats {
+  currentMonth: {
+    aiGenerated: number;
+    imagesDownloaded: number;
+    imagesCompressed: number;
+  };
+  total: {
+    aiGenerated: number;
+    imagesDownloaded: number;
+    imagesCompressed: number;
+  };
+  today: {
+    aiGenerated: number;
+    imagesDownloaded: number;
+    imagesCompressed: number;
+  };
+}
+
+interface PricingPlan {
+  id: string;
+  name: string;
+  price: number;
+  features: {
+    aiGeneration: number;
+    imageDownload: number;
+    imageCompression: number;
+  };
+  isPopular?: boolean;
+}
+
+interface UsageHistory {
+  date: string;
+  type: 'ai_generation' | 'image_download' | 'image_compression';
+  count: number;
+  cost: number;
+}
+
+type TabType = 'overview' | 'usage' | 'pricing' | 'history';
+
+export default function ProfilePage() {
+  const { user: currentUser, isLoggedIn } = useAuth();
+
+  const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [usageStats, setUsageStats] = useState<UsageStats | null>(null);
+  const [pricingPlans, setPricingPlans] = useState<PricingPlan[]>([]);
+  const [usageHistory, setUsageHistory] = useState<UsageHistory[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<TabType>('overview');
+
+  useEffect(() => {
+    if (!isLoggedIn) {
+      window.location.href = '/login';
+      return;
+    }
+    loadUserData();
+  }, [isLoggedIn]);
+
+  const loadUserData = async () => {
+    if (!currentUser) return;
+
+    try {
+      setLoading(true);
+      setError(null);
+
+      const mockProfile: UserProfile = {
+        id: currentUser.id,
+        username: currentUser.username,
+        email: currentUser.email,
+        avatar: currentUser.avatar,
+        joinedAt: currentUser.createdAt || new Date().toISOString(),
+        accountBalance: 25.80
+      };
+
+      const mockUsageStats: UsageStats = {
+        currentMonth: {
+          aiGenerated: 45,
+          imagesDownloaded: 128,
+          imagesCompressed: 23
+        },
+        total: {
+          aiGenerated: 156,
+          imagesDownloaded: 892,
+          imagesCompressed: 67
+        },
+        today: {
+          aiGenerated: 3,
+          imagesDownloaded: 12,
+          imagesCompressed: 2
+        }
+      };
+
+      const mockPricingPlans: PricingPlan[] = [
+        {
+          id: 'free',
+          name: '免费版',
+          price: 0,
+          features: {
+            aiGeneration: 10,
+            imageDownload: 50,
+            imageCompression: 20
+          }
+        },
+        {
+          id: 'basic',
+          name: '基础版',
+          price: 9.99,
+          features: {
+            aiGeneration: 100,
+            imageDownload: 500,
+            imageCompression: 200
+          },
+          isPopular: true
+        },
+        {
+          id: 'pro',
+          name: '专业版',
+          price: 19.99,
+          features: {
+            aiGeneration: -1,
+            imageDownload: -1,
+            imageCompression: -1
+          }
+        }
+      ];
+
+      const mockUsageHistory: UsageHistory[] = [
+        {
+          date: '2024-12-25',
+          type: 'ai_generation',
+          count: 3,
+          cost: 0.30
+        },
+        {
+          date: '2024-12-25',
+          type: 'image_download',
+          count: 12,
+          cost: 0.12
+        },
+        {
+          date: '2024-12-24',
+          type: 'image_compression',
+          count: 5,
+          cost: 0.25
+        }
+      ];
+
+      setProfile(mockProfile);
+      setUsageStats(mockUsageStats);
+      setPricingPlans(mockPricingPlans);
+      setUsageHistory(mockUsageHistory);
+
+    } catch (error: any) {
+      console.error('加载用户数据失败:', error);
+      setError('加载用户数据失败');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('zh-CN', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  };
+
+  const getUsageTypeText = (type: string) => {
+    switch (type) {
+      case 'ai_generation':
+        return 'AI生成';
+      case 'image_download':
+        return '图片下载';
+      case 'image_compression':
+        return '图片压缩';
+      default:
+        return '未知';
+    }
+  };
+
+  const getUsageTypeIcon = (type: string) => {
+    switch (type) {
+      case 'ai_generation':
+        return <Zap className="h-4 w-4" />;
+      case 'image_download':
+        return <Download className="h-4 w-4" />;
+      case 'image_compression':
+        return <Minimize2 className="h-4 w-4" />;
+      default:
+        return <FileImage className="h-4 w-4" />;
+    }
+  };
+
+  if (loading) {
+    return (
+      <Layout>
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="text-center">
+            <Loader2 className="h-12 w-12 animate-spin text-primary-600 mx-auto mb-4" />
+            <p className="text-neutral-600 dark:text-neutral-400">加载个人资料中...</p>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
+
+  if (error) {
+    return (
+      <Layout>
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="text-center">
+            <div className="w-16 h-16 bg-red-100 dark:bg-red-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
+              <X className="h-8 w-8 text-red-600 dark:text-red-400" />
+            </div>
+            <h3 className="text-lg font-medium text-neutral-900 dark:text-white mb-2">
+              加载失败
+            </h3>
+            <p className="text-neutral-600 dark:text-neutral-400 mb-4">
+              {error}
+            </p>
+            <button
+              onClick={loadUserData}
+              className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+            >
+              重试
+            </button>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
+
+  return (
+    <Layout>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Profile Header */}
+        <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-lg border border-neutral-200 dark:border-neutral-700 p-6 mb-8">
+          <div className="flex flex-col sm:flex-row items-center sm:items-start space-y-4 sm:space-y-0 sm:space-x-6">
+            {/* Avatar */}
+            <div className="w-20 h-20 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-2xl flex items-center justify-center overflow-hidden">
+              {profile?.avatar ? (
+                <img
+                  src={profile.avatar}
+                  alt="用户头像"
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <User className="h-10 w-10 text-white" />
+              )}
+            </div>
+
+            {/* User Info */}
+            <div className="flex-1 text-center sm:text-left">
+              <h1 className="text-2xl font-bold text-neutral-900 dark:text-white mb-2">
+                {profile?.username || '用户名'}
+              </h1>
+              <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4 space-y-2 sm:space-y-0 text-neutral-600 dark:text-neutral-400">
+                <div className="flex items-center justify-center sm:justify-start">
+                  <Mail className="h-4 w-4 mr-2" />
+                  {profile?.email}
+                </div>
+                <div className="flex items-center justify-center sm:justify-start">
+                  <Calendar className="h-4 w-4 mr-2" />
+                  加入于 {profile?.joinedAt ? formatDate(profile.joinedAt) : '2024年1月'}
+                </div>
+              </div>
+            </div>
+
+            {/* Account Balance */}
+            <div className="text-center sm:text-right">
+              <div className="flex items-center justify-center sm:justify-end mb-2">
+                <Wallet className="h-5 w-5 text-green-600 mr-2" />
+                <span className="text-sm text-neutral-600 dark:text-neutral-400">账户余额</span>
+              </div>
+              <div className="text-2xl font-bold text-green-600">
+                ${profile?.accountBalance?.toFixed(2) || '0.00'}
+              </div>
+              <Link
+                href="/billing"
+                className="inline-flex items-center mt-2 px-3 py-1 text-sm bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-300 rounded-lg hover:bg-green-200 dark:hover:bg-green-900/30 transition-colors"
+              >
+                <CreditCard className="h-3 w-3 mr-1" />
+                充值
+              </Link>
+            </div>
+
+            {/* Settings Button */}
+            <div>
+              <Link
+                href="/settings"
+                className="inline-flex items-center px-4 py-2 bg-primary-600 text-white font-medium rounded-lg hover:bg-primary-700 transition-colors"
+              >
+                <Settings className="h-4 w-4 mr-2" />
+                设置
+              </Link>
+            </div>
+          </div>
+        </div>
+
+        {/* Simple Usage Overview */}
+        <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-lg border border-neutral-200 dark:border-neutral-700 p-6">
+          <h2 className="text-xl font-semibold text-neutral-900 dark:text-white mb-6">使用统计</h2>
+          
+          {/* Today's Usage */}
+          <div className="mb-8">
+            <h3 className="text-lg font-medium text-neutral-900 dark:text-white mb-4">今日用量</h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 border border-blue-200 dark:border-blue-800">
+                <div className="flex items-center">
+                  <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
+                    <Zap className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                  </div>
+                  <div className="ml-3">
+                    <p className="text-2xl font-bold text-blue-900 dark:text-blue-100">
+                      {usageStats?.today.aiGenerated || 0}
+                    </p>
+                    <p className="text-sm text-blue-600 dark:text-blue-400">AI生成</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-4 border border-green-200 dark:border-green-800">
+                <div className="flex items-center">
+                  <div className="w-10 h-10 bg-green-100 dark:bg-green-900/30 rounded-lg flex items-center justify-center">
+                    <Download className="h-5 w-5 text-green-600 dark:text-green-400" />
+                  </div>
+                  <div className="ml-3">
+                    <p className="text-2xl font-bold text-green-900 dark:text-green-100">
+                      {usageStats?.today.imagesDownloaded || 0}
+                    </p>
+                    <p className="text-sm text-green-600 dark:text-green-400">图片下载</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-purple-50 dark:bg-purple-900/20 rounded-lg p-4 border border-purple-200 dark:border-purple-800">
+                <div className="flex items-center">
+                  <div className="w-10 h-10 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center">
+                    <Minimize2 className="h-5 w-5 text-purple-600 dark:text-purple-400" />
+                  </div>
+                  <div className="ml-3">
+                    <p className="text-2xl font-bold text-purple-900 dark:text-purple-100">
+                      {usageStats?.today.imagesCompressed || 0}
+                    </p>
+                    <p className="text-sm text-purple-600 dark:text-purple-400">图片压缩</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Monthly Usage */}
+          <div>
+            <h3 className="text-lg font-medium text-neutral-900 dark:text-white mb-4">本月用量</h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="bg-neutral-50 dark:bg-neutral-700 rounded-lg p-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-neutral-600 dark:text-neutral-400">AI生成</p>
+                    <p className="text-xl font-bold text-neutral-900 dark:text-white">
+                      {usageStats?.currentMonth.aiGenerated || 0}
+                    </p>
+                  </div>
+                  <Zap className="h-6 w-6 text-blue-500" />
+                </div>
+              </div>
+
+              <div className="bg-neutral-50 dark:bg-neutral-700 rounded-lg p-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-neutral-600 dark:text-neutral-400">图片下载</p>
+                    <p className="text-xl font-bold text-neutral-900 dark:text-white">
+                      {usageStats?.currentMonth.imagesDownloaded || 0}
+                    </p>
+                  </div>
+                  <Download className="h-6 w-6 text-green-500" />
+                </div>
+              </div>
+
+              <div className="bg-neutral-50 dark:bg-neutral-700 rounded-lg p-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-neutral-600 dark:text-neutral-400">图片压缩</p>
+                    <p className="text-xl font-bold text-neutral-900 dark:text-white">
+                      {usageStats?.currentMonth.imagesCompressed || 0}
+                    </p>
+                  </div>
+                  <Minimize2 className="h-6 w-6 text-purple-500" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </Layout>
+  );
+}

@@ -130,6 +130,108 @@ body {
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
+/* 404页面动画 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.8s ease-out;
+}
+
+/* 数字艺术画廊3D效果 */
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+.transform-gpu {
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+}
+
+/* 霓虹发光效果 */
+@keyframes neonGlow {
+  0%, 100% {
+    box-shadow: 0 0 5px rgba(0, 255, 255, 0.5), 0 0 10px rgba(0, 255, 255, 0.3), 0 0 15px rgba(0, 255, 255, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.8), 0 0 20px rgba(0, 255, 255, 0.5), 0 0 30px rgba(0, 255, 255, 0.3);
+  }
+}
+
+.neon-glow {
+  animation: neonGlow 2s ease-in-out infinite;
+}
+
+/* 粒子动画 */
+@keyframes particleFloat {
+  0%, 100% {
+    transform: translateY(0px) translateX(0px);
+    opacity: 0.3;
+  }
+  25% {
+    transform: translateY(-10px) translateX(5px);
+    opacity: 0.8;
+  }
+  50% {
+    transform: translateY(-5px) translateX(-5px);
+    opacity: 1;
+  }
+  75% {
+    transform: translateY(-15px) translateX(3px);
+    opacity: 0.6;
+  }
+}
+
+.particle-float {
+  animation: particleFloat 4s ease-in-out infinite;
+}
+
+/* 全息效果 */
+@keyframes hologram {
+  0%, 100% {
+    opacity: 0.8;
+    transform: translateZ(0);
+  }
+  50% {
+    opacity: 1;
+    transform: translateZ(10px);
+  }
+}
+
+.hologram-effect {
+  animation: hologram 3s ease-in-out infinite;
+}
+
+/* 数字雨效果 */
+@keyframes digitalRain {
+  0% {
+    transform: translateY(-100vh);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100vh);
+    opacity: 0;
+  }
+}
+
+.digital-rain {
+  animation: digitalRain 10s linear infinite;
+}
+
 /* 自定义样式 */
 .line-clamp-2 {
   display: -webkit-box;

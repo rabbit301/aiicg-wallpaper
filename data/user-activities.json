@@ -1,5 +1,149 @@
 [
   {
+    "type": "generate",
+    "title": "AI生成 - 2025/9/12",
+    "details": {
+      "preset": "square_1024",
+      "originalPrompt": "给我生成一副凡人修仙传的海报,oil painting style, artistic, classical art",
+      "enhancedPrompt": "Generate me a poster of the mortal cultivation of immortals, oil painting style, artistic, classical art",
+      "imageSize": "1024x576"
+    },
+    "id": "1757664365039",
+    "timestamp": "2025-09-12T08:06:05.040Z"
+  },
+  {
+    "type": "generate",
+    "title": "AI生成 - 2025/9/12",
+    "details": {
+      "preset": "square_1024",
+      "originalPrompt": "给我生成一副凡人修仙传的海报,, cyberpunk style, neon lights, futuristic, sci-fi",
+      "enhancedPrompt": "Generate me a poster of the mortal cultivation of immortals, cyberpunk style, neon lights, futuristic, sci-fi",
+      "imageSize": "1024x576"
+    },
+    "id": "1757664338534",
+    "timestamp": "2025-09-12T08:05:38.534Z"
+  },
+  {
+    "type": "generate",
+    "title": "AI生成 - 2025/9/12",
+    "details": {
+      "preset": "square_1024",
+      "originalPrompt": "给我生成一副凡人修仙传的海报,, vintage style, retro, nostalgic, film grain",
+      "enhancedPrompt": "Generate me a poster of the mortal cultivation of immortals, vintage style, retro, nostalgic, film grain",
+      "imageSize": "1024x576"
+    },
+    "id": "1757664268043",
+    "timestamp": "2025-09-12T08:04:28.043Z"
+  },
+  {
+    "type": "generate",
+    "title": "AI生成 - 2025/9/12",
+    "details": {
+      "preset": "square_1024",
+      "originalPrompt": "给我生成一副凡人修仙传的海报,, fantasy art, magical, mystical, ethereal",
+      "enhancedPrompt": "Generate me a poster of the mortal cultivation of immortals, fantasy art, magical, mysterious, ethereal",
+      "imageSize": "1024x576"
+    },
+    "id": "1757664243154",
+    "timestamp": "2025-09-12T08:04:03.154Z"
+  },
+  {
+    "type": "generate",
+    "title": "AI生成 - 2025/9/12",
+    "details": {
+      "preset": "desktop_fhd",
+      "originalPrompt": "给我生成一副凡人修仙传的海报, pixel art style, 8-bit, retro gaming",
+      "enhancedPrompt": "Generate me a poster of the mortal cultivation of immortals, pixel art style, 8-bit, retro gaming",
+      "imageSize": "1024x576"
+    },
+    "id": "1757664194037",
+    "timestamp": "2025-09-12T08:03:14.037Z"
+  },
+  {
+    "type": "generate",
+    "title": "AI生成 - 2025/9/12",
+    "details": {
+      "preset": "desktop_fhd",
+      "originalPrompt": "给我生成一副凡人修仙传的海报",
+      "enhancedPrompt": "Generate me a poster of the mortal cultivation of immortals",
+      "imageSize": "1024x576"
+    },
+    "id": "1757664103936",
+    "timestamp": "2025-09-12T08:01:43.936Z"
+  },
+  {
+    "type": "generate",
+    "title": "AI生成 - 2025/8/1",
+    "details": {
+      "preset": "desktop_fhd",
+      "originalPrompt": "Hamburger food truck led sign , under water , bubbles, fish around, dark background,",
+      "enhancedPrompt": "Hamburger food truck led sign , under water , bubbles, fish around, dark background,",
+      "imageSize": "1024x576"
+    },
+    "id": "1754042711522",
+    "timestamp": "2025-08-01T10:05:11.522Z"
+  },
+  {
+    "type": "generate",
+    "title": "未命名壁纸",
+    "details": {
+      "preset": "desktop_fhd",
+      "originalPrompt": "未命名壁纸, AI生成, desktop_fhd",
+      "enhancedPrompt": "Unnamed wallpaper, AI generation, desktop_fhd, high quality, detailed, beautiful, masterpiece, 8k resolution",
+      "imageSize": "1024x576"
+    },
+    "id": "1753267550759",
+    "timestamp": "2025-07-23T10:45:50.759Z"
+  },
+  {
+    "type": "generate",
+    "title": "未命名壁纸",
+    "details": {
+      "preset": "desktop_fhd",
+      "originalPrompt": "这是一张充满古埃及风情的艺术摄影作品。图中的人物身着精美的埃及风格服装，头戴经典的法老头饰，有着蓝色和金色条纹。她穿着白色的飘逸长袍，配以华丽的金色装饰和镶嵌着绿松石的项链首饰。 人物以优雅的姿态斜倚着，营造出一种慵懒而神秘的氛围。前景中点燃的蜡烛增添了温暖的光影效果，而背景投射的几何图案像是曼陀罗花纹，为整个画面增添了神秘的东方色彩。 磨砂感，朦胧感，高噪点，低像素，看起来像是90年代的照片",
+      "enhancedPrompt": "This is an ancient Egyptian artistic photography., high quality, detailed, beautiful, masterpiece, 8k resolution",
+      "imageSize": "1024x576"
+    },
+    "id": "1753263939516",
+    "timestamp": "2025-07-23T09:45:39.516Z"
+  },
+  {
+    "type": "generate",
+    "title": "未命名壁纸",
+    "details": {
+      "preset": "desktop_fhd",
+      "originalPrompt": "电影感叙事镜头，一位长发年轻女子身着斑驳花色吊带裙，肌肤点缀血迹与擦伤，慵懒倚靠粗糙石墙；低饱和暗色调，柔和侧光勾勒身体曲线，凸显皮肤纹理与伤痕细节；胶片颗粒质感，营造凄美脆弱的悲剧氛围，背景简化强化人物叙事张力，衣物纹理、血迹细节精准刻画，光影层次传递细腻情绪",
+      "enhancedPrompt": "Film-sensual narrative shot, a young woman with long hair is wearing a mottled sling skirt, her skin is decorated with blood and scratches, and she leans lazyly against a rough stone wall; low saturation dark tones, soft side light outlines the body curves, highlighting the skin texture and scar details; the grain texture of the film creates a poignant and fragile tragic atmosphere, the background simplifies and strengthens the narrative tension of the characters, the texture of the clothes and blood stains are accurately portrayed, and the light and shadow levels convey delicate emotions",
+      "imageSize": "1024x576"
+    },
+    "id": "1753263865503",
+    "timestamp": "2025-07-23T09:44:25.503Z"
+  },
+  {
+    "type": "generate",
+    "title": "小狗",
+    "details": {
+      "preset": "desktop_fhd",
+      "originalPrompt": "生成一张小狗图片, high quality, detailed, masterpiece, intricate details, sharp focus, beautiful composition, stunning visual, 8k resolution",
+      "enhancedPrompt": "Generate a puppy picture, high quality, detailed, masterpiece, intricate details, sharp focus, beautiful composition, stunning visual, 8k resolution",
+      "imageSize": "1024x576"
+    },
+    "id": "1753251639321",
+    "timestamp": "2025-07-23T06:20:39.321Z"
+  },
+  {
+    "type": "generate",
+    "title": "小猫",
+    "details": {
+      "preset": "desktop_fhd",
+      "originalPrompt": "生成一张小猫的图片",
+      "enhancedPrompt": "Generate a picture of a kitten, high quality, detailed, beautiful, masterpiece, 8k resolution",
+      "imageSize": "1024x576"
+    },
+    "id": "1753251255777",
+    "timestamp": "2025-07-23T06:14:15.777Z"
+  },
+  {
     "type": "compress",
     "title": "压缩图片: 23.jpg",
     "details": {
@@ -111,17 +255,5 @@
     },
     "id": "1751254245965",
     "timestamp": "2025-06-30T03:30:45.965Z"
-  },
-  {
-    "type": "generate",
-    "title": "未命名壁纸",
-    "details": {
-      "preset": "desktop_fhd",
-      "originalPrompt": "电子音乐可视化效果，频谱波形，数字艺术，赛博朋克美学, 日式浮世绘",
-      "enhancedPrompt": "electronic music visualization, spectrum waveform, digital art, cyberpunk aesthetic, 日式浮世绘",
-      "imageSize": "1024x576"
-    },
-    "id": "1751218276580",
-    "timestamp": "2025-06-29T17:31:16.580Z"
   }
 ]

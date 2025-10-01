@@ -1,4 +1,4 @@
-import { generateImage } from '@/lib/fal-client';
+import { generateImage } from '@/lib/image-generation/service';
 
 // 预设头像特征模板
 export const AVATAR_PRESETS = [
@@ -128,17 +128,18 @@ export class AvatarGenerator {
 
       console.log('生成头像，提示词:', prompt);
 
-      // 调用图像生成API
+      // 调用通用图像生成API
+      const { generateImage } = await import('@/lib/image-generation/service');
       const result = await generateImage({
         prompt: prompt,
         image_size: 'square_hd',
-        num_inference_steps: 4,
+        num_inference_steps: 20,
         num_images: 1
       });
 
       if (result.success && result.data) {
         // 从返回数据中提取图片URL
-        const imageUrl = (result.data as any)?.images?.[0]?.url;
+        const imageUrl = result.data.images?.[0]?.url;
         if (imageUrl) {
           return {
             success: true,

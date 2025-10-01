@@ -163,25 +163,43 @@ export default function WallpaperGallery({
             <div className="relative aspect-[4/3] bg-neutral-100 dark:bg-neutral-800 rounded-lg overflow-hidden transition-all duration-200 hover:shadow-lg"
               style={{ minHeight: '240px' }}
             >
-              <Image
-                src={wallpaper.thumbnailUrl || wallpaper.imageUrl}
-                alt={wallpaper.title}
-                fill
-                className="object-cover"
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                priority={wallpapers.indexOf(wallpaper) < 3} // 前3张优先加载
-                loading={wallpapers.indexOf(wallpaper) < 6 ? "eager" : "lazy"} // 前6张即时加载，其余懒加载
-                onError={(e) => {
-                  const target = e.target as HTMLImageElement;
-                  // 如果缩略图加载失败，尝试加载原图
-                  if (target.src === wallpaper.thumbnailUrl && wallpaper.thumbnailUrl !== wallpaper.imageUrl) {
-                    target.src = wallpaper.imageUrl;
-                  } else {
-                    // 如果都失败，显示占位符
-                    target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0xMDAgNzBWMTMwTTcwIDEwMEgxMzAiIHN0cm9rZT0iIzlDQTNBRiIgc3Ryb2tlLXdpZHRoPSI0IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KPC9zdmc+';
-                  }
-                }}
-              />
+              {/* 判断是否使用兰空图床，如果是则直接使用原图，否则使用Next.js优化 */}
+              {(wallpaper.imageUrl.includes('555125.xyz') || wallpaper.thumbnailUrl?.includes('555125.xyz')) ? (
+                // 兰空图床：直接使用原图，绕过Next.js优化
+                <img
+                  src={wallpaper.thumbnailUrl || wallpaper.imageUrl}
+                  alt={wallpaper.title}
+                  className="w-full h-full object-cover"
+                  loading={wallpapers.indexOf(wallpaper) < 6 ? "eager" : "lazy"}
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    if (target.src === wallpaper.thumbnailUrl && wallpaper.thumbnailUrl !== wallpaper.imageUrl) {
+                      target.src = wallpaper.imageUrl;
+                    } else {
+                      target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0xMDAgNzBWMTMwTTcwIDEwMEgxMzAiIHN0cm9rZT0iIzlDQTNBRiIgc3Ryb2tlLXdpZHRoPSI0IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KPC9zdmc+';
+                    }
+                  }}
+                />
+              ) : (
+                // 其他图床：使用Next.js优化
+                <Image
+                  src={wallpaper.thumbnailUrl || wallpaper.imageUrl}
+                  alt={wallpaper.title}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  priority={wallpapers.indexOf(wallpaper) < 3}
+                  loading={wallpapers.indexOf(wallpaper) < 6 ? "eager" : "lazy"}
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    if (target.src === wallpaper.thumbnailUrl && wallpaper.thumbnailUrl !== wallpaper.imageUrl) {
+                      target.src = wallpaper.imageUrl;
+                    } else {
+                      target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0xMDAgNzBWMTMwTTcwIDEwMEgxMzAiIHN0cm9rZT0iIzlDQTNBRiIgc3Ryb2tlLXdpZHRoPSI0IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KPC9zdmc+';
+                    }
+                  }}
+                />
+              )}
 
               {/* 悬停遮罩和操作按钮 */}
               <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-200">

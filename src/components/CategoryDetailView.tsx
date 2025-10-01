@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { User, Image, Play, Radio, Download, Grid3X3, List, Filter, Eye, Clock, Star, TrendingUp, X } from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface UnifiedWallpaperImage {
   id: string;
@@ -23,94 +24,12 @@ interface CategoryDetailViewProps {
   category: string;
 }
 
-const categoryConfig = {
-  avatar: {
-    name: '头像',
-    icon: User,
-    description: '个性头像和角色形象，展现独特的个人风格',
-    color: 'from-primary-500 to-primary-600',
-    bgColor: 'from-primary-50 to-primary-100 dark:from-primary-900/20 dark:to-primary-800/20',
-    subcategories: [
-      { id: 'anime', name: '动漫头像', icon: '🎭', count: 156 },
-      { id: 'cute', name: '可爱头像', icon: '🥰', count: 89 },
-      { id: 'kawaii', name: 'Kawaii风格', icon: '💖', count: 67 },
-      { id: 'chibi', name: 'Q版头像', icon: '😊', count: 45 },
-      { id: 'cartoon', name: '卡通头像', icon: '🎨', count: 78 }
-    ],
-    filters: [
-      { id: 'style', name: '风格', options: ['可爱', '酷炫', '简约', '复古'] },
-      { id: 'color', name: '色彩', options: ['彩色', '黑白', '渐变', '单色'] },
-      { id: 'emotion', name: '情感', options: ['开心', '酷炫', '温暖', '神秘'] }
-    ]
-  },
-  wallpaper: {
-    name: '壁纸',
-    icon: Image,
-    description: '高质量壁纸，适配各种设备屏幕',
-    color: 'from-secondary-500 to-secondary-600',
-    bgColor: 'from-secondary-50 to-secondary-100 dark:from-secondary-900/20 dark:to-secondary-800/20',
-    subcategories: [
-      { id: 'landscape', name: '风景壁纸', icon: '🏔️', count: 234 },
-      { id: 'abstract', name: '抽象艺术', icon: '🎨', count: 178 },
-      { id: 'space', name: '太空宇宙', icon: '🌌', count: 145 },
-      { id: 'urban', name: '城市风光', icon: '🏙️', count: 167 },
-      { id: 'nature', name: '自然风光', icon: '🌿', count: 203 },
-      { id: 'minimal', name: '简约风格', icon: '⚪', count: 124 }
-    ],
-    filters: [
-      { id: 'resolution', name: '分辨率', options: ['4K', '2K', '1080p', '720p'] },
-      { id: 'orientation', name: '方向', options: ['横向', '竖向', '正方形'] },
-      { id: 'color_scheme', name: '色调', options: ['暖色调', '冷色调', '中性色', '高对比'] }
-    ]
-  },
-  animation: {
-    name: '动画',
-    icon: Play,
-    description: '动态效果和动画资源，为内容增添活力',
-    color: 'from-accent-500 to-accent-600',
-    bgColor: 'from-accent-50 to-accent-100 dark:from-accent-900/20 dark:to-accent-800/20',
-    subcategories: [
-      { id: 'particle', name: '粒子动画', icon: '✨', count: 67 },
-      { id: 'geometric', name: '几何动画', icon: '🔷', count: 54 },
-      { id: 'fluid', name: '流体动画', icon: '🌊', count: 43 },
-      { id: 'abstract', name: '抽象动画', icon: '🎭', count: 38 },
-      { id: 'motion', name: '运动图形', icon: '🔄', count: 52 }
-    ],
-    filters: [
-      { id: 'duration', name: '时长', options: ['短循环', '中等', '长循环'] },
-      { id: 'speed', name: '速度', options: ['慢速', '正常', '快速'] },
-      { id: 'complexity', name: '复杂度', options: ['简单', '中等', '复杂'] }
-    ]
-  },
-  live: {
-    name: '直播',
-    icon: Radio,
-    description: '直播相关的素材和动画效果',
-    color: 'from-error-500 to-error-600',
-    bgColor: 'from-error-50 to-error-100 dark:from-error-900/20 dark:to-error-800/20',
-    subcategories: [
-      { id: 'streaming', name: '直播指示器', icon: '🔴', count: 23 },
-      { id: 'alert', name: '提醒动画', icon: '🚨', count: 19 },
-      { id: 'overlay', name: '叠加层', icon: '📺', count: 31 },
-      { id: 'graphics', name: '直播图形', icon: '🎬', count: 27 },
-      { id: 'transition', name: '转场效果', icon: '🔄', count: 15 }
-    ],
-    filters: [
-      { id: 'platform', name: '平台', options: ['Twitch', 'YouTube', '抖音', '通用'] },
-      { id: 'style', name: '风格', options: ['专业', '趣味', '简约', '华丽'] },
-      { id: 'color', name: '颜色', options: ['红色', '蓝色', '绿色', '彩虹'] }
-    ]
-  }
-};
+// 移除旧的硬编码分类配置，已替换为动态配置
 
-const sortOptions = [
-  { id: 'latest', name: '最新上传', icon: Clock },
-  { id: 'popular', name: '最受欢迎', icon: TrendingUp },
-  { id: 'downloads', name: '下载最多', icon: Download },
-  { id: 'rating', name: '评分最高', icon: Star }
-];
+// 排序选项移到组件内部，使用翻译
 
 export default function CategoryDetailView({ category }: CategoryDetailViewProps) {
+  const { t } = useLanguage();
   const [images, setImages] = useState<UnifiedWallpaperImage[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -122,7 +41,76 @@ export default function CategoryDetailView({ category }: CategoryDetailViewProps
   const [itemsPerPage] = useState(20);
   const [selectedImage, setSelectedImage] = useState<UnifiedWallpaperImage | null>(null);
 
-  const config = categoryConfig[category as keyof typeof categoryConfig];
+  // 动态分类配置，使用翻译
+  const dynamicCategoryConfig = {
+    wallpaper: {
+      name: t('categories.wallpaper.name'),
+      icon: Grid3X3,
+      description: t('categories.wallpaper.description'),
+      color: 'from-primary-500 to-primary-600',
+      bgColor: 'from-primary-50 to-primary-100 dark:from-primary-900/20 dark:to-primary-800/20',
+      subcategories: [
+        { id: 'ai-generated', name: t('subcategories.ai-generated'), icon: '🤖', count: 156 },
+        { id: 'avatar', name: t('subcategories.avatar'), icon: '👤', count: 89 },
+        { id: 'animation', name: t('subcategories.animation'), icon: '🎬', count: 134 },
+        { id: 'nature', name: t('subcategories.nature'), icon: '🌲', count: 203 },
+        { id: 'abstract', name: t('subcategories.abstract'), icon: '🎨', count: 167 },
+        { id: 'minimal', name: t('subcategories.minimal'), icon: '⚪', count: 145 }
+      ],
+      filters: [
+        { id: 'resolution', name: t('filters.resolution'), options: ['1080p', '2K', '4K', '8K'] },
+        { id: 'orientation', name: t('filters.orientation'), options: [t('filterOptions.horizontal'), t('filterOptions.vertical'), t('filterOptions.square')] },
+        { id: 'style', name: t('filters.style'), options: [t('filterOptions.modern'), t('filterOptions.vintage'), t('filterOptions.artistic')] }
+      ]
+    },
+    avatar: {
+      name: t('categories.avatar.name'),
+      icon: User,
+      description: t('categories.avatar.description'),
+      color: 'from-secondary-500 to-secondary-600',
+      bgColor: 'from-secondary-50 to-secondary-100 dark:from-secondary-900/20 dark:to-secondary-800/20',
+      subcategories: [
+        { id: 'cartoon', name: t('subcategories.cartoon'), icon: '🎭', count: 89 },
+        { id: 'realistic', name: t('subcategories.realistic'), icon: '👤', count: 67 },
+        { id: 'anime', name: t('subcategories.anime'), icon: '🌸', count: 94 },
+        { id: 'abstract', name: t('subcategories.abstract'), icon: '🎨', count: 45 },
+        { id: 'minimal', name: t('subcategories.minimal'), icon: '⚪', count: 56 }
+      ],
+      filters: [
+        { id: 'style', name: t('filters.style'), options: [t('filterOptions.cute'), t('filterOptions.cool'), t('filterOptions.elegant')] },
+        { id: 'color', name: t('filters.color'), options: [t('filterOptions.bright'), t('filterOptions.dark'), t('filterOptions.colorful'), t('filterOptions.monochrome')] },
+        { id: 'mood', name: t('filters.mood'), options: [t('filterOptions.cute'), t('filterOptions.cool'), t('filterOptions.artistic')] }
+      ]
+    },
+    animation: {
+      name: t('categories.animation.name'),
+      icon: Play,
+      description: t('categories.animation.description'),
+      color: 'from-accent-500 to-accent-600',
+      bgColor: 'from-accent-50 to-accent-100 dark:from-accent-900/20 dark:to-accent-800/20',
+      subcategories: [
+        { id: 'particle', name: t('subcategories.animation'), icon: '✨', count: 67 },
+        { id: 'geometric', name: t('subcategories.abstract'), icon: '🔷', count: 54 },
+        { id: 'fluid', name: t('subcategories.animation'), icon: '🌊', count: 43 },
+        { id: 'abstract', name: t('subcategories.abstract'), icon: '🎭', count: 38 },
+        { id: 'motion', name: t('subcategories.animation'), icon: '🔄', count: 52 }
+      ],
+      filters: [
+        { id: 'type', name: t('filters.type'), options: ['GIF', 'Video', 'SVG'] },
+        { id: 'style', name: t('filters.style'), options: [t('filterOptions.modern'), t('filterOptions.artistic')] }
+      ]
+    }
+  };
+
+  const config = dynamicCategoryConfig[category as keyof typeof dynamicCategoryConfig];
+
+  // 排序选项，使用翻译
+  const sortOptions = [
+    { id: 'latest', name: t('sort.latest'), icon: Clock },
+    { id: 'popular', name: t('sort.popular'), icon: TrendingUp },
+    { id: 'downloads', name: t('sort.downloads'), icon: Download },
+    { id: 'rating', name: t('sort.rating'), icon: Star }
+  ];
 
   useEffect(() => {
     fetchImages();
@@ -205,7 +193,7 @@ export default function CategoryDetailView({ category }: CategoryDetailViewProps
     return (
       <div className="text-center py-12">
         <h1 className="text-2xl font-bold text-neutral-900 dark:text-white">
-          分类未找到
+          {t('categoryPage.categoryNotFound')}
         </h1>
       </div>
     );
@@ -215,20 +203,50 @@ export default function CategoryDetailView({ category }: CategoryDetailViewProps
 
   return (
     <div className="min-h-screen bg-neutral-50 dark:bg-neutral-900">
-      {/* 页面头部 */}
-      <div className={`bg-gradient-to-r ${config.bgColor} border-b dark:border-neutral-800`}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="flex items-center space-x-4 mb-4">
-            <div className={`p-3 rounded-xl bg-gradient-to-r ${config.color} text-white`}>
-              <IconComponent className="h-8 w-8" />
+      {/* 优化的页面头部 */}
+      <div className={`bg-gradient-to-r ${config.bgColor} border-b border-neutral-200/50 dark:border-neutral-800/50`}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+            <div className="flex items-center space-x-4">
+              <div className={`p-3 rounded-xl bg-gradient-to-r ${config.color} text-white shadow-lg`}>
+                <IconComponent className="h-8 w-8" />
+              </div>
+              <div>
+                <h1 className="text-2xl lg:text-3xl font-bold text-neutral-900 dark:text-white">
+                  {config.name}
+                </h1>
+                <p className="text-neutral-600 dark:text-neutral-400 mt-1 text-sm lg:text-base">
+                  {config.description}
+                </p>
+              </div>
             </div>
-            <div>
-              <h1 className="text-3xl font-bold text-neutral-900 dark:text-white">
-                {config.name}
-              </h1>
-              <p className="text-neutral-600 dark:text-neutral-400 mt-1">
-                {config.description}
-              </p>
+            
+            {/* 统计信息 */}
+            <div className="flex items-center space-x-6">
+                          <div className="text-center">
+              <div className="text-2xl font-bold text-neutral-900 dark:text-white">
+                {images.length}
+              </div>
+              <div className="text-sm text-neutral-600 dark:text-neutral-400">
+                {t('categoryPage.beautifulContent')}
+              </div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-neutral-900 dark:text-white">
+                {Math.ceil(images.length / 20)}
+              </div>
+              <div className="text-sm text-neutral-600 dark:text-neutral-400">
+                {t('categoryPage.pages')}
+              </div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-primary-600 dark:text-primary-400">
+                ∞
+              </div>
+              <div className="text-sm text-neutral-600 dark:text-neutral-400">
+                {t('categoryPage.freeDownload')}
+              </div>
+            </div>
             </div>
           </div>
         </div>
@@ -236,13 +254,13 @@ export default function CategoryDetailView({ category }: CategoryDetailViewProps
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex gap-6">
-          {/* 侧边栏 */}
-          <div className="w-48 flex-shrink-0">
+          {/* 侧边栏 - 适配极简主导航 */}
+          <div className="w-32 flex-shrink-0">
             <div className="bg-white dark:bg-neutral-800 rounded-xl shadow-sm p-6 space-y-6">
               {/* 子分类 */}
               <div>
                 <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-4">
-                  子分类
+                  {t('categoryPage.subcategories')}
                 </h3>
                 <div className="space-y-2">
                   <button
@@ -255,13 +273,13 @@ export default function CategoryDetailView({ category }: CategoryDetailViewProps
                   >
                     <span className="flex items-center">
                       <span className="mr-3">📂</span>
-                      全部
+                      {t('categoryPage.all')}
                     </span>
                     <span className="text-sm text-neutral-500 dark:text-neutral-400">
                       {images.length}
                     </span>
                   </button>
-                  
+
                   {config.subcategories.map((sub) => (
                     <button
                       key={sub.id}
@@ -287,7 +305,7 @@ export default function CategoryDetailView({ category }: CategoryDetailViewProps
               {/* 筛选器 */}
               <div>
                 <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-4">
-                  筛选
+                  {t('categoryPage.filters')}
                 </h3>
                 <div className="space-y-4">
                   {config.filters.map((filter) => (
@@ -318,7 +336,7 @@ export default function CategoryDetailView({ category }: CategoryDetailViewProps
               {/* 排序 */}
               <div>
                 <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-4">
-                  排序方式
+                  {t('categoryPage.sortBy')}
                 </h3>
                 <div className="space-y-2">
                   {sortOptions.map((option) => {
@@ -372,17 +390,19 @@ export default function CategoryDetailView({ category }: CategoryDetailViewProps
                 </div>
                 
                 <span className="text-sm text-neutral-600 dark:text-neutral-400">
-                  共 {images.length} 项结果
+                  {t('categoryPage.totalResults').replace('{count}', images.length.toString())}
                 </span>
               </div>
             </div>
 
-            {/* 内容区域 */}
+            {/* 内容区域 - 改为瀑布流布局 */}
             {loading ? (
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                {Array.from({ length: 6 }).map((_, index) => (
-                  <div key={index} className="bg-white dark:bg-neutral-800 rounded-2xl overflow-hidden animate-pulse">
-                    <div className="aspect-[4/3] bg-neutral-200 dark:bg-neutral-700"></div>
+              <div className="columns-1 md:columns-2 lg:columns-3 xl:columns-4 gap-6">
+                {Array.from({ length: 12 }).map((_, index) => (
+                  <div key={index} className="break-inside-avoid mb-6">
+                    <div className="bg-white dark:bg-neutral-800 rounded-2xl overflow-hidden animate-pulse">
+                      <div className={`aspect-[${Math.random() > 0.5 ? '3/4' : '4/3'}] bg-neutral-200 dark:bg-neutral-700`}></div>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -396,55 +416,54 @@ export default function CategoryDetailView({ category }: CategoryDetailViewProps
                   onClick={fetchImages}
                   className="px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
                 >
-                  重试
+                  {t('categoryPage.retry')}
                 </button>
               </div>
             ) : images.length === 0 ? (
               <div className="text-center py-12">
                 <div className="text-neutral-400 dark:text-neutral-600 mb-4">
                   <Eye className="h-12 w-12 mx-auto mb-4" />
-                  <p className="text-lg font-medium">暂无内容</p>
-                  <p className="text-sm">尝试调整筛选条件</p>
+                  <p className="text-lg font-medium">{t('categoryPage.noContent')}</p>
+                  <p className="text-sm">{t('categoryPage.noContentDesc')}</p>
                 </div>
               </div>
             ) : (
-              <div className={
-                viewMode === 'grid'
-                  ? "grid grid-cols-1 lg:grid-cols-2 gap-8"
-                  : "space-y-6"
-              }>
+              <div className="columns-1 md:columns-2 lg:columns-3 xl:columns-4 gap-6">
                 {images.map((image) => (
-                  <div key={image.id} className={
-                    viewMode === 'grid'
-                      ? "group bg-white dark:bg-neutral-800 rounded-2xl overflow-hidden shadow-sm cursor-pointer"
-                      : "flex bg-white dark:bg-neutral-800 rounded-2xl overflow-hidden shadow-sm cursor-pointer"
-                  }
+                  <div key={image.id} className="break-inside-avoid mb-6 cursor-pointer group"
                   onClick={() => setSelectedImage(image)}
                   >
-                    <div className={viewMode === 'grid' ? "relative aspect-[4/3] overflow-hidden" : "relative w-64 h-40 overflow-hidden flex-shrink-0"}>
-                      <img
-                        src={
-                          // 优先显示gif动图，确保动画效果
-                          image.type === 'gif' || image.url.includes('.gif') 
-                            ? image.url 
-                            : image.thumbnail || image.url
-                        }
-                        alt={image.title}
-                        className="w-full h-full object-cover"
-                        onError={(e) => {
-                          const target = e.target as HTMLImageElement;
-                          // gif加载失败时的智能fallback
-                          if (target.src === image.url && image.thumbnail && image.thumbnail !== image.url) {
-                            target.src = image.thumbnail;
-                          } else {
-                            handleImageError(e);
+                    <div className="bg-white dark:bg-neutral-800 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300">
+                      <div className="relative overflow-hidden">
+                        <img
+                          src={
+                            // 优先显示gif动图，确保动画效果
+                            image.type === 'gif' || image.url.includes('.gif') 
+                              ? image.url 
+                              : image.thumbnail || image.url
                           }
-                        }}
-                        loading="lazy"
-                      />
-                      {/* 移除复杂的悬停按钮，直接点击预览 */}
-                      
-                      {/* 简化 - 移除悬停信息，保持极简 */}
+                          alt={image.title}
+                          className="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-300"
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            // gif加载失败时的智能fallback
+                            if (target.src === image.url && image.thumbnail && image.thumbnail !== image.url) {
+                              target.src = image.thumbnail;
+                            } else {
+                              handleImageError(e);
+                            }
+                          }}
+                          loading="lazy"
+                        />
+                        
+                        {/* 悬停时的渐变遮罩 */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                        
+                        {/* 标题显示在底部 */}
+                        <div className="absolute bottom-0 left-0 right-0 p-4 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                          <h3 className="text-sm font-medium truncate">{image.title}</h3>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -460,17 +479,17 @@ export default function CategoryDetailView({ category }: CategoryDetailViewProps
                     disabled={currentPage === 1}
                     className="px-4 py-2 text-sm border border-neutral-300 dark:border-neutral-600 rounded-lg hover:bg-neutral-50 dark:hover:bg-neutral-800 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    上一页
+                    {t('categoryPage.previousPage')}
                   </button>
                   <span className="px-4 py-2 text-sm text-neutral-600 dark:text-neutral-400">
-                    第 {currentPage} 页
+                    {t('categoryPage.pageInfo').replace('{page}', currentPage.toString())}
                   </span>
                   <button
                     onClick={() => setCurrentPage(prev => prev + 1)}
                     disabled={images.length < itemsPerPage}
                     className="px-4 py-2 text-sm border border-neutral-300 dark:border-neutral-600 rounded-lg hover:bg-neutral-50 dark:hover:bg-neutral-800 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    下一页
+                    {t('categoryPage.nextPage')}
                   </button>
                 </div>
               </div>
@@ -495,26 +514,26 @@ export default function CategoryDetailView({ category }: CategoryDetailViewProps
             
             {/* 顶部简洁工具栏 */}
             <div className="absolute top-4 right-4 flex items-center space-x-2">
-              <button
-                onClick={() => handleDownload(selectedImage)}
-                className="p-2 bg-black/50 text-white rounded hover:bg-black/70 transition-colors"
-                title="下载"
-              >
-                <Download className="h-5 w-5" />
-              </button>
-              <button
-                onClick={() => setSelectedImage(null)}
-                className="p-2 bg-black/50 text-white rounded hover:bg-black/70 transition-colors"
-              >
-                <X className="h-5 w-5" />
-              </button>
+                              <button
+                  onClick={() => handleDownload(selectedImage)}
+                  className="p-2 bg-black/50 text-white rounded hover:bg-black/70 transition-colors"
+                  title={t('categoryPage.download')}
+                >
+                  <Download className="h-5 w-5" />
+                </button>
+                <button
+                  onClick={() => setSelectedImage(null)}
+                  className="p-2 bg-black/50 text-white rounded hover:bg-black/70 transition-colors"
+                >
+                  <X className="h-5 w-5" />
+                </button>
             </div>
             
             {/* 底部迷你信息条 */}
             <div className="absolute bottom-4 left-4 bg-black/60 text-white px-3 py-2 rounded text-sm backdrop-blur-sm">
-              <span className="font-medium">{selectedImage.title || '精美壁纸'}</span>
+              <span className="font-medium">{selectedImage.title || t('categoryPage.imageInfo')}</span>
               <span className="mx-2 text-white/60">•</span>
-              <span className="text-white/80">{selectedImage.width} × {selectedImage.height}</span>
+              <span className="text-white/80">{t('categoryPage.resolution').replace('{width}', selectedImage.width.toString()).replace('{height}', selectedImage.height.toString())}</span>
             </div>
           </div>
         </div>

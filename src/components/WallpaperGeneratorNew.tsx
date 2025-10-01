@@ -8,7 +8,7 @@ import WallpaperModal from './WallpaperModal';
 import PromptOptimizer from './PromptOptimizer';
 import VipUpgradeModal from './VipUpgradeModal';
 import { VipService } from '@/lib/vip-service';
-import { SCREEN_PRESETS, ScreenPreset } from '@/lib/fal-client';
+import { SCREEN_PRESETS, ScreenPreset } from '@/lib/image-generation/service';
 import { generateWallpaperEvaluation } from '@/lib/emotion-evaluator';
 import type { EmotionEvaluation } from '@/lib/emotion-evaluator';
 
@@ -113,16 +113,41 @@ export default function WallpaperGeneratorNew() {
   // 处理URL参数 - 支持"生成同款"功能
   useEffect(() => {
     const promptParam = searchParams.get('prompt');
+    const modelParam = searchParams.get('model');
+    const sizeParam = searchParams.get('size');
     const referenceParam = searchParams.get('reference');
 
     if (promptParam) {
       setPrompt(decodeURIComponent(promptParam));
+    }
 
-      // 如果有参考ID，可以在这里添加额外的处理逻辑
-      if (referenceParam) {
-        console.log('生成同款，参考ID:', referenceParam);
-        // 可以在这里添加参考壁纸的信息显示
+    // 处理模型参数
+    if (modelParam) {
+      console.log('指定模型:', modelParam);
+      // 这里可以根据模型参数设置相应的生成选项
+    }
+
+    // 处理尺寸参数
+    if (sizeParam) {
+      console.log('指定尺寸:', sizeParam);
+      // 根据尺寸参数设置对应的预设
+      const sizeMapping: Record<string, string> = {
+        '1:1': 'square_1024',
+        '9:16': 'portrait_768_1024',
+        '16:9': 'landscape_1024_768',
+        '3:4': 'portrait_768_1024',
+        '4:3': 'landscape_1024_768'
+      };
+      const presetKey = sizeMapping[sizeParam];
+      if (presetKey && SCREEN_PRESETS[presetKey]) {
+        setSelectedPreset(presetKey as keyof typeof SCREEN_PRESETS);
       }
+    }
+
+    // 如果有参考ID，可以在这里添加额外的处理逻辑
+    if (referenceParam) {
+      console.log('生成同款，参考ID:', referenceParam);
+      // 可以在这里添加参考壁纸的信息显示
     }
   }, [searchParams]);
 

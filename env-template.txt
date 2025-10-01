@@ -11,10 +11,12 @@ NODE_ENV=production
 PORT=3000
 
 # -----------------------------------------------------------------------------
-# Fal.ai Configuration (AI图片生成服务)
-# 已预置可用密钥，如需更换请访问: https://fal.ai/
+# SiliconFlow Configuration (AI图片生成服务)
+# 硅基流动API配置，访问: https://siliconflow.cn/
 # -----------------------------------------------------------------------------
-FAL_KEY=367bb9eb-56e0-470c-b709-9eb211e5b9d2:22a0824074f02ce799bde0124091085d
+SILICONFLOW_API_KEY=sk-xvjfjlmgopuorzfopdoxstfrkoxipcqqmduihidhwehybrcn
+SILICONFLOW_API_URL=https://api.siliconflow.cn/v1/images/generations
+SILICONFLOW_MODEL=black-forest-labs/FLUX.1-schnell
 
 # -----------------------------------------------------------------------------
 # Cloudinary Configuration (图片处理与存储)
@@ -23,6 +25,33 @@ FAL_KEY=367bb9eb-56e0-470c-b709-9eb211e5b9d2:22a0824074f02ce799bde0124091085d
 CLOUDINARY_CLOUD_NAME=your_cloud_name
 CLOUDINARY_API_KEY=your_api_key
 CLOUDINARY_API_SECRET=your_api_secret
+
+# -----------------------------------------------------------------------------
+# 图片存储配置 (可选 - 用于优化图片加载速度)
+# 选择其中一种即可，优先级：兰空图床 > Cloudinary > OSS > 本地存储
+# -----------------------------------------------------------------------------
+
+# 兰空图床配置（推荐 - 免费、稳定、速度快）
+# 您的兰空图床信息
+LSKY_HOST=555125.xyz
+LSKY_EMAIL=ranerhash@gmail.com
+LSKY_PASSWORD=Wxh736533?
+LSKY_SSL=true
+
+# 阿里云OSS配置（推荐 - 速度快，成本低）
+# 注册地址: https://oss.console.aliyun.com/
+ALIYUN_OSS_ACCESS_KEY_ID=your_access_key_id
+ALIYUN_OSS_ACCESS_KEY_SECRET=your_access_key_secret
+ALIYUN_OSS_BUCKET=your_bucket_name
+ALIYUN_OSS_REGION=oss-cn-hangzhou
+ALIYUN_OSS_ENDPOINT=https://oss-cn-hangzhou.aliyuncs.com
+
+# 腾讯云COS配置（备选方案）
+# 注册地址: https://console.cloud.tencent.com/cos
+TENCENT_COS_SECRET_ID=your_secret_id
+TENCENT_COS_SECRET_KEY=your_secret_key
+TENCENT_COS_BUCKET=your_bucket_name
+TENCENT_COS_REGION=ap-guangzhou
 
 # -----------------------------------------------------------------------------
 # 图片内容API配置 (可选 - 用于内容聚合)

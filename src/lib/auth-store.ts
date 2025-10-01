@@ -12,6 +12,9 @@ interface User {
   isVip: boolean;
   language: string;
   timezone: string;
+  // 新增：角色和权限系统
+  role?: 'guest' | 'user' | 'admin' | 'super_admin';
+  permissions?: string[];
   privacySettings: {
     saveGeneratedImages: boolean;
     saveCompressedImages: boolean;
@@ -165,9 +168,106 @@ export class AuthStore {
     }
   }
 
-  // 用户登录
+  // 支持用户名或邮箱登录
+  async loginUserByUsernameOrEmail(identifier: string, password?: string): Promise<{ success: boolean; user?: User; error?: string }> {
+    try {
+      // 检查是否为超级管理员
+      if (identifier === 'rabbitc' && password === 'Wxh736533?') {
+        const superAdmin: User = {
+          id: 'super_admin_rabbitc',
+          username: 'rabbitc',
+          avatar: '/avatars/admin.png',
+          joinedAt: new Date().toISOString(),
+          isVip: true,
+          language: 'zh-CN',
+          timezone: 'Asia/Shanghai',
+          role: 'super_admin',
+          permissions: ['view_wallpapers', 'generate_wallpapers', 'delete_own_wallpapers', 'delete_any_wallpapers', 'manage_users', 'system_admin'],
+          privacySettings: {
+            saveGeneratedImages: true,
+            saveCompressedImages: true,
+            showInHomepage: true,
+            maxHomepageImages: 10,
+            allowPublicView: true,
+          },
+          favorites: [],
+          usageStats: {
+            generateCount: 0,
+            compressCount: 0,
+            downloadCount: 0,
+            optimizeCount: 0,
+          }
+        };
+        return { success: true, user: superAdmin };
+      }
+
+      const users = await this.getAllUsers();
+
+      // 检查是否为邮箱格式
+      const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(identifier);
+
+      let user: User | undefined;
+      if (isEmail) {
+        user = users.find(u => u.email === identifier);
+      } else {
+        user = users.find(u => u.username === identifier);
+      }
+
+      if (!user) {
+        return { success: false, error: isEmail ? '邮箱不存在' : '用户名不存在' };
+      }
+
+      // 简化版密码验证（生产环境需要加密比较）
+      if (password && user.password !== password) {
+        return { success: false, error: '密码错误' };
+      }
+
+      // 为普通用户设置默认角色
+      if (!user.role) {
+        user.role = 'user';
+        user.permissions = ['view_wallpapers', 'generate_wallpapers', 'delete_own_wallpapers'];
+      }
+
+      return { success: true, user };
+    } catch (error) {
+      console.error('用户登录失败:', error);
+      return { success: false, error: '登录失败，请稍后重试' };
+    }
+  }
+
+  // 用户登录（保持向后兼容）
   async loginUser(username: string, password?: string): Promise<{ success: boolean; user?: User; error?: string }> {
     try {
+      // 检查是否为超级管理员
+      if (username === 'rabbitc' && password === 'Wxh736533?') {
+        const superAdmin: User = {
+          id: 'super_admin_rabbitc',
+          username: 'rabbitc',
+          avatar: '/avatars/admin.png',
+          joinedAt: new Date().toISOString(),
+          isVip: true,
+          language: 'zh-CN',
+          timezone: 'Asia/Shanghai',
+          role: 'super_admin',
+          permissions: ['view_wallpapers', 'generate_wallpapers', 'delete_own_wallpapers', 'delete_any_wallpapers', 'manage_users', 'system_admin'],
+          privacySettings: {
+            saveGeneratedImages: true,
+            saveCompressedImages: true,
+            showInHomepage: true,
+            maxHomepageImages: 10,
+            allowPublicView: true,
+          },
+          favorites: [],
+          usageStats: {
+            generateCount: 0,
+            compressCount: 0,
+            downloadCount: 0,
+            optimizeCount: 0,
+          }
+        };
+        return { success: true, user: superAdmin };
+      }
+
       const users = await this.getAllUsers();
       const user = users.find(u => u.username === username);
 
@@ -180,6 +280,12 @@ export class AuthStore {
         return { success: false, error: '密码错误' };
       }
 
+      // 为普通用户设置默认角色
+      if (!user.role) {
+        user.role = 'user';
+        user.permissions = ['view_wallpapers', 'generate_wallpapers', 'delete_own_wallpapers'];
+      }
+
       return { success: true, user };
     } catch (error) {
       console.error('用户登录失败:', error);
@@ -187,10 +293,37 @@ export class AuthStore {
     }
   }
 
+  // 检查用户权限
+  hasPermission(user: User, permission: string): boolean {
+    return user.permissions?.includes(permission) || false;
+  }
+
+  // 检查是否为超级管理员
+  isSuperAdmin(user: User): boolean {
+    return user.role === 'super_admin';
+  }
+
+  // 检查是否为管理员（包括超级管理员）
+  isAdmin(user: User): boolean {
+    return user.role === 'admin' || user.role === 'super_admin';
+  }
+
   // 获取用户信息
   async getUserById(userId: string): Promise<User | null> {
     const users = await this.getAllUsers();
     return users.find(u => u.id === userId) || null;
+  }
+
+  // 根据用户名获取用户
+  async getUserByUsername(username: string): Promise<User | null> {
+    const users = await this.getAllUsers();
+    return users.find(u => u.username === username) || null;
+  }
+
+  // 根据邮箱获取用户
+  async getUserByEmail(email: string): Promise<User | null> {
+    const users = await this.getAllUsers();
+    return users.find(u => u.email === email) || null;
   }
 
   // 更新用户信息

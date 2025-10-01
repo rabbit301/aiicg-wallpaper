@@ -2,212 +2,118 @@
 
 import { useState, useEffect } from 'react';
 import Layout from '@/components/Layout';
-import { 
-  User, 
-  Image, 
-  Download, 
-  Calendar, 
-  Settings, 
-  Crown,
-  Heart,
-  Activity,
+import { useAuth } from '@/contexts/AuthContext';
+import { useLanguage } from '@/contexts/LanguageContext';
+import {
+  User,
+  Settings,
   Loader2,
-  Eye,
-  X
+  BarChart3,
+  Activity,
+  Users,
+  Trophy,
+  DollarSign,
+  TrendingUp,
+  Zap,
+  Target,
+  PieChart,
+  BarChart,
+  LineChart,
+  Clock,
+  Gift,
+  Check,
+  Copy,
+  Share2,
+  QrCode
 } from 'lucide-react';
-import Link from 'next/link';
-import { Wallpaper } from '@/types';
 
-interface UserProfile {
-  id: string;
-  username: string;
-  email: string;
-  avatar?: string;
-  bio?: string;
-  joinedAt: string;
-  isVip: boolean;
-  language: string;
-  timezone: string;
+import InviteTab from '@/components/profile/InviteTab';
+import OverviewTab from '@/components/profile/OverviewTab';
+import SettingsTab from '@/components/profile/SettingsTab';
+import StatsTab from '@/components/profile/StatsTab';
+import AchievementsTab from '@/components/profile/AchievementsTab';
+import BillingTab from '@/components/profile/BillingTab';
+
+interface UsageStats {
+  today: { aiGenerated: number; imagesDownloaded: number; timeSpent: number; };
+  thisWeek: { aiGenerated: number; imagesDownloaded: number; timeSpent: number; };
+  thisMonth: { aiGenerated: number; imagesDownloaded: number; timeSpent: number; };
+  total: { aiGenerated: number; imagesDownloaded: number; timeSpent: number; moneySpent: number; };
+  weeklyTrend: number[];
+  categoryStats: { landscape: number; portrait: number; abstract: number; anime: number; realistic: number; };
+  timeDistribution: { morning: number; afternoon: number; evening: number; night: number; };
 }
 
-interface UserStats {
-  generatedWallpapers: number;
-  downloads: number;
-  compressedImages: number;
-  daysActive: number;
-}
-
-interface UserActivity {
-  id: string;
-  type: 'generate' | 'download' | 'compress';
-  title: string;
-  timestamp: string;
-  details?: any;
-}
-
-type TabType = 'works' | 'favorites' | 'activities';
+type TabType = 'overview' | 'stats' | 'invite' | 'achievements' | 'settings' | 'billing';
 
 export default function ProfilePage() {
-  const [activeTab, setActiveTab] = useState<TabType>('works');
-  const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [stats, setStats] = useState<UserStats | null>(null);
-  const [userWallpapers, setUserWallpapers] = useState<Wallpaper[]>([]);
-  const [favoriteWallpapers, setFavoriteWallpapers] = useState<Wallpaper[]>([]);
-  const [activities, setActivities] = useState<UserActivity[]>([]);
+  const { t } = useLanguage();
+  const { user: currentUser, isLoggedIn, isLoading: authLoading } = useAuth();
+  const [activeTab, setActiveTab] = useState<TabType>('overview');
   const [loading, setLoading] = useState(true);
-  const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    loadUserData();
-  }, []);
+    // 等待认证状态完全加载
+    if (authLoading) return;
 
-  useEffect(() => {
-    if (activeTab === 'works') {
-      loadUserWallpapers();
-    } else if (activeTab === 'favorites') {
-      loadFavoriteWallpapers();
-    } else if (activeTab === 'activities') {
-      loadUserActivities();
+    if (!isLoggedIn) {
+      window.location.href = '/login';
+      return;
     }
-  }, [activeTab]);
+    loadUserData();
+  }, [isLoggedIn, authLoading]);
 
   const loadUserData = async () => {
+    if (!currentUser) return;
+
     try {
-      const [profileRes, statsRes] = await Promise.all([
-        fetch('/api/user/profile'),
-        fetch('/api/user/stats')
-      ]);
-
-      if (profileRes.ok) {
-        const profileData = await profileRes.json();
-        setProfile(profileData);
-      }
-
-      if (statsRes.ok) {
-        const statsData = await statsRes.json();
-        setStats(statsData);
-      }
-    } catch (error) {
-      console.error('加载用户数据失败:', error);
+      setLoading(true);
+      setError(null);
+      // 数据加载逻辑已移至各个组件中
+    } catch (error: any) {
+      console.error('Failed to load user data:', error);
+      setError(t('loadUserDataFailed'));
     } finally {
       setLoading(false);
     }
   };
 
-  const loadUserWallpapers = async () => {
-    try {
-      const response = await fetch('/api/user/wallpapers');
-      if (response.ok) {
-        const wallpapers = await response.json();
-        setUserWallpapers(wallpapers);
-      }
-    } catch (error) {
-      console.error('加载用户壁纸失败:', error);
-    }
+  const formatTime = (minutes: number): string => {
+    if (minutes < 60) return `${minutes}${t('formatMinutes')}`;
+    const hours = Math.floor(minutes / 60);
+    const remainingMinutes = minutes % 60;
+    return `${hours}${t('formatHours')}${remainingMinutes > 0 ? remainingMinutes + t('formatMinutes') : ''}`;
   };
 
-  const loadFavoriteWallpapers = async () => {
-    try {
-      const response = await fetch('/api/user/favorites');
-      if (response.ok) {
-        const wallpapers = await response.json();
-        setFavoriteWallpapers(wallpapers);
-      }
-    } catch (error) {
-      console.error('加载收藏壁纸失败:', error);
-    }
-  };
-
-  const loadUserActivities = async () => {
-    try {
-      const response = await fetch('/api/user/activities');
-      if (response.ok) {
-        const activitiesData = await response.json();
-        setActivities(activitiesData);
-      }
-    } catch (error) {
-      console.error('加载用户活动失败:', error);
-    }
-  };
-
-  const handleDownload = async (wallpaper: Wallpaper) => {
-    try {
-      const response = await fetch(`/api/download/${wallpaper.id}`);
-      if (response.ok) {
-        const blob = await response.blob();
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `${wallpaper.title}.${wallpaper.format}`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        window.URL.revokeObjectURL(url);
-      }
-    } catch (error) {
-      console.error('下载失败:', error);
-    }
-  };
-
-  const handleToggleFavorite = async (wallpaperId: string) => {
-    try {
-      const response = await fetch('/api/user/favorites', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ wallpaperId })
-      });
-
-      if (response.ok) {
-        const result = await response.json();
-        // 重新加载收藏列表
-        if (activeTab === 'favorites') {
-          loadFavoriteWallpapers();
-        }
-      }
-    } catch (error) {
-      console.error('切换收藏状态失败:', error);
-    }
-  };
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('zh-CN', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
-  };
-
-  const getActivityIcon = (type: string) => {
-    switch (type) {
-      case 'generate':
-        return <Image className="h-4 w-4" />;
-      case 'download':
-        return <Download className="h-4 w-4" />;
-      case 'compress':
-        return <Settings className="h-4 w-4" />;
-      default:
-        return <Activity className="h-4 w-4" />;
-    }
-  };
-
-  const getActivityText = (type: string) => {
-    switch (type) {
-      case 'generate':
-        return '生成了壁纸';
-      case 'download':
-        return '下载了壁纸';
-      case 'compress':
-        return '压缩了图片';
-      default:
-        return '进行了操作';
-    }
-  };
-
-  if (loading) {
+  // 显示加载状态直到认证完成
+  if (authLoading || loading) {
     return (
       <Layout>
         <div className="flex items-center justify-center min-h-screen">
-          <Loader2 className="h-8 w-8 animate-spin text-primary-600" />
+          <div className="text-center">
+            <Loader2 className="h-12 w-12 animate-spin text-primary-600 mx-auto mb-4" />
+            <p className="text-neutral-600 dark:text-neutral-400">{t('loadingCenter')}</p>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
+
+  if (error) {
+    return (
+      <Layout>
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="text-center">
+            <div className="w-16 h-16 bg-red-100 dark:bg-red-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
+              <User className="h-8 w-8 text-red-600 dark:text-red-400" />
+            </div>
+            <h3 className="text-lg font-medium text-neutral-900 dark:text-white mb-2">{t('loadFailed')}</h3>
+            <p className="text-neutral-600 dark:text-neutral-400 mb-4">{error}</p>
+            <button onClick={loadUserData} className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors">
+              {t('retry')}
+            </button>
+          </div>
         </div>
       </Layout>
     );
@@ -215,340 +121,65 @@ export default function ProfilePage() {
 
   return (
     <Layout>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        {/* Profile Header */}
-        <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-lg border border-neutral-200 dark:border-neutral-700 p-8 mb-8">
-          <div className="flex flex-col md:flex-row items-center md:items-start space-y-6 md:space-y-0 md:space-x-8">
-            {/* Avatar */}
-            <div className="relative">
-              <div className="w-24 h-24 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-2xl flex items-center justify-center overflow-hidden">
-                {profile?.avatar ? (
-                  <img 
-                    src={profile.avatar} 
-                    alt="用户头像" 
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <User className="h-12 w-12 text-white" />
-                )}
-              </div>
-              {profile?.isVip && (
-                <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-gradient-to-br from-accent-500 to-warning-500 rounded-lg flex items-center justify-center">
-                  <Crown className="h-4 w-4 text-white" />
-                </div>
-              )}
-            </div>
-
-            {/* User Info */}
-            <div className="flex-1 text-center md:text-left">
-              <h1 className="text-3xl font-bold text-neutral-900 dark:text-white mb-2">
-                {profile?.username || '用户名'}
-              </h1>
-              <p className="text-neutral-600 dark:text-neutral-400 mb-4">
-                {profile?.email || 'user@example.com'}
-              </p>
-              <div className="flex flex-wrap justify-center md:justify-start gap-4">
-                {profile?.isVip && (
-                  <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300">
-                    <Crown className="h-4 w-4 mr-1" />
-                    VIP会员
-                  </span>
-                )}
-                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-neutral-100 dark:bg-neutral-700 text-neutral-700 dark:text-neutral-300">
-                  <Calendar className="h-4 w-4 mr-1" />
-                  加入于 {profile?.joinedAt ? formatDate(profile.joinedAt) : '2024年1月'}
-                </span>
-              </div>
-            </div>
-
-            {/* Action Button */}
-            <div className="flex space-x-3">
-              <Link
-                href="/settings"
-                className="inline-flex items-center px-4 py-2 bg-primary-600 text-white font-medium rounded-lg hover:bg-primary-700 transition-colors duration-200"
-              >
-                <Settings className="h-4 w-4 mr-2" />
-                编辑资料
-              </Link>
-            </div>
-          </div>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-neutral-900 dark:text-white mb-2">{t('profileTitle')}</h1>
+          <p className="text-neutral-600 dark:text-neutral-400">{t('profileSubtitle')}</p>
         </div>
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white dark:bg-neutral-800 rounded-xl shadow-lg border border-neutral-200 dark:border-neutral-700 p-6 text-center">
-            <div className="w-12 h-12 bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl flex items-center justify-center mx-auto mb-4">
-              <Image className="h-6 w-6 text-white" />
-            </div>
-            <div className="text-2xl font-bold text-neutral-900 dark:text-white mb-1">
-              {stats?.generatedWallpapers || 0}
-            </div>
-            <div className="text-neutral-600 dark:text-neutral-400 text-sm">
-              生成壁纸
-            </div>
-          </div>
-
-          <div className="bg-white dark:bg-neutral-800 rounded-xl shadow-lg border border-neutral-200 dark:border-neutral-700 p-6 text-center">
-            <div className="w-12 h-12 bg-gradient-to-br from-secondary-500 to-secondary-600 rounded-xl flex items-center justify-center mx-auto mb-4">
-              <Download className="h-6 w-6 text-white" />
-            </div>
-            <div className="text-2xl font-bold text-neutral-900 dark:text-white mb-1">
-              {stats?.downloads || 0}
-            </div>
-            <div className="text-neutral-600 dark:text-neutral-400 text-sm">
-              下载次数
-            </div>
-          </div>
-
-          <div className="bg-white dark:bg-neutral-800 rounded-xl shadow-lg border border-neutral-200 dark:border-neutral-700 p-6 text-center">
-            <div className="w-12 h-12 bg-gradient-to-br from-accent-500 to-accent-600 rounded-xl flex items-center justify-center mx-auto mb-4">
-              <Image className="h-6 w-6 text-white" />
-            </div>
-            <div className="text-2xl font-bold text-neutral-900 dark:text-white mb-1">
-              {stats?.compressedImages || 0}
-            </div>
-            <div className="text-neutral-600 dark:text-neutral-400 text-sm">
-              压缩图片
-            </div>
-          </div>
-
-          <div className="bg-white dark:bg-neutral-800 rounded-xl shadow-lg border border-neutral-200 dark:border-neutral-700 p-6 text-center">
-            <div className="w-12 h-12 bg-gradient-to-br from-success-500 to-success-600 rounded-xl flex items-center justify-center mx-auto mb-4">
-              <Calendar className="h-6 w-6 text-white" />
-            </div>
-            <div className="text-2xl font-bold text-neutral-900 dark:text-white mb-1">
-              {stats?.daysActive || 0}
-            </div>
-            <div className="text-neutral-600 dark:text-neutral-400 text-sm">
-              使用天数
-            </div>
-          </div>
-        </div>
-
-        {/* Content Tabs */}
-        <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-lg border border-neutral-200 dark:border-neutral-700">
-          {/* Tab Headers */}
-          <div className="border-b border-neutral-200 dark:border-neutral-700">
-            <nav className="flex space-x-8 px-8 pt-6">
-              <button
-                onClick={() => setActiveTab('works')}
-                className={`pb-4 border-b-2 font-medium transition-colors ${
-                  activeTab === 'works'
-                    ? 'border-primary-500 text-primary-600 dark:text-primary-400'
-                    : 'border-transparent text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100'
-                }`}
-              >
-                我的作品
-              </button>
-              <button
-                onClick={() => setActiveTab('favorites')}
-                className={`pb-4 border-b-2 font-medium transition-colors ${
-                  activeTab === 'favorites'
-                    ? 'border-primary-500 text-primary-600 dark:text-primary-400'
-                    : 'border-transparent text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100'
-                }`}
-              >
-                收藏夹
-              </button>
-              <button
-                onClick={() => setActiveTab('activities')}
-                className={`pb-4 border-b-2 font-medium transition-colors ${
-                  activeTab === 'activities'
-                    ? 'border-primary-500 text-primary-600 dark:text-primary-400'
-                    : 'border-transparent text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-100'
-                }`}
-              >
-                使用记录
-              </button>
-            </nav>
-          </div>
-
-          {/* Tab Content */}
-          <div className="p-8">
-            {/* My Works Tab */}
-            {activeTab === 'works' && (
-              <div>
-                {userWallpapers.length > 0 ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                    {userWallpapers.map((wallpaper) => (
-                      <div key={wallpaper.id} className="group relative bg-neutral-100 dark:bg-neutral-700 rounded-xl overflow-hidden aspect-square hover:shadow-lg transition-all duration-200">
-                        <img
-                          src={wallpaper.thumbnailUrl}
-                          alt={wallpaper.title}
-                          className="w-full h-full object-cover"
-                        />
-                        
-                        {/* Overlay */}
-                        <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all duration-200 flex items-center justify-center opacity-0 group-hover:opacity-100">
-                          <div className="flex space-x-2">
-                            <button
-                              onClick={() => setPreviewImage(wallpaper.imageUrl)}
-                              className="p-2 bg-white rounded-lg text-neutral-900 hover:bg-neutral-100 transition-colors duration-200"
-                            >
-                              <Eye className="h-4 w-4" />
-                            </button>
-                            <button
-                              onClick={() => handleDownload(wallpaper)}
-                              className="p-2 bg-white rounded-lg text-neutral-900 hover:bg-neutral-100 transition-colors duration-200"
-                            >
-                              <Download className="h-4 w-4" />
-                            </button>
-                          </div>
-                        </div>
-                        
-                        {/* Info */}
-                        <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/60 to-transparent">
-                          <div className="text-white text-sm font-medium truncate">
-                            {wallpaper.title}
-                          </div>
-                          <div className="text-white/80 text-xs">
-                            {formatDate(wallpaper.createdAt)}
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="text-center py-12">
-                    <Image className="h-16 w-16 mx-auto text-neutral-400 mb-4" />
-                    <h3 className="text-lg font-medium text-neutral-900 dark:text-white mb-2">
-                      还没有作品
-                    </h3>
-                    <p className="text-neutral-600 dark:text-neutral-400 mb-4">
-                      去生成一些精美的壁纸吧！
-                    </p>
-                    <Link
-                      href="/generate"
-                      className="inline-flex items-center px-4 py-2 bg-primary-600 text-white font-medium rounded-lg hover:bg-primary-700 transition-colors duration-200"
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+          {/* Sidebar Navigation */}
+          <div className="lg:col-span-1">
+            <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-lg border border-neutral-200 dark:border-neutral-700 p-6">
+              <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-6">{t('functionNav')}</h3>
+              <nav className="space-y-2">
+                {[
+                  { id: 'overview', label: t('overview'), icon: BarChart3, desc: t('overviewDesc') },
+                  { id: 'stats', label: t('stats'), icon: Activity, desc: t('statsDesc') },
+                  { id: 'invite', label: t('invite'), icon: Users, desc: t('inviteDesc') },
+                  { id: 'achievements', label: t('achievementsNav'), icon: Trophy, desc: t('achievementsDesc') },
+                  { id: 'settings', label: t('accountSettings'), icon: Settings, desc: t('accountSettingsDesc') },
+                  { id: 'billing', label: t('billingNav'), icon: DollarSign, desc: t('billingDesc') }
+                ].map(tab => {
+                  const Icon = tab.icon;
+                  return (
+                    <button
+                      key={tab.id}
+                      onClick={() => setActiveTab(tab.id as TabType)}
+                      className={`w-full flex items-center p-4 rounded-xl transition-all duration-200 text-left ${
+                        activeTab === tab.id
+                          ? 'bg-primary-100 dark:bg-primary-900/20 text-primary-700 dark:text-primary-300 shadow-md border border-primary-200 dark:border-primary-800'
+                          : 'text-neutral-600 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-neutral-700 hover:text-neutral-900 dark:hover:text-neutral-200'
+                      }`}
                     >
-                      开始创作
-                    </Link>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* Favorites Tab */}
-            {activeTab === 'favorites' && (
-              <div>
-                {favoriteWallpapers.length > 0 ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                    {favoriteWallpapers.map((wallpaper) => (
-                      <div key={wallpaper.id} className="group relative bg-neutral-100 dark:bg-neutral-700 rounded-xl overflow-hidden aspect-square hover:shadow-lg transition-all duration-200">
-                        <img
-                          src={wallpaper.thumbnailUrl}
-                          alt={wallpaper.title}
-                          className="w-full h-full object-cover"
-                        />
-                        
-                        {/* Overlay */}
-                        <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all duration-200 flex items-center justify-center opacity-0 group-hover:opacity-100">
-                          <div className="flex space-x-2">
-                            <button
-                              onClick={() => setPreviewImage(wallpaper.imageUrl)}
-                              className="p-2 bg-white rounded-lg text-neutral-900 hover:bg-neutral-100 transition-colors duration-200"
-                            >
-                              <Eye className="h-4 w-4" />
-                            </button>
-                            <button
-                              onClick={() => handleDownload(wallpaper)}
-                              className="p-2 bg-white rounded-lg text-neutral-900 hover:bg-neutral-100 transition-colors duration-200"
-                            >
-                              <Download className="h-4 w-4" />
-                            </button>
-                            <button
-                              onClick={() => handleToggleFavorite(wallpaper.id)}
-                              className="p-2 bg-white rounded-lg text-red-600 hover:bg-red-50 transition-colors duration-200"
-                            >
-                              <Heart className="h-4 w-4 fill-current" />
-                            </button>
-                          </div>
-                        </div>
-                        
-                        {/* Info */}
-                        <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/60 to-transparent">
-                          <div className="text-white text-sm font-medium truncate">
-                            {wallpaper.title}
-                          </div>
-                          <div className="text-white/80 text-xs">
-                            {formatDate(wallpaper.createdAt)}
-                          </div>
-                        </div>
+                      <Icon className="h-5 w-5 mr-3 flex-shrink-0" />
+                      <div>
+                        <div className="font-medium">{tab.label}</div>
+                        <div className="text-xs opacity-70">{tab.desc}</div>
                       </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="text-center py-12">
-                    <Heart className="h-16 w-16 mx-auto text-neutral-400 mb-4" />
-                    <h3 className="text-lg font-medium text-neutral-900 dark:text-white mb-2">
-                      还没有收藏
-                    </h3>
-                    <p className="text-neutral-600 dark:text-neutral-400">
-                      收藏一些喜欢的壁纸吧！
-                    </p>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* Activities Tab */}
-            {activeTab === 'activities' && (
-              <div>
-                {activities.length > 0 ? (
-                  <div className="space-y-4">
-                    {activities.map((activity) => (
-                      <div key={activity.id} className="flex items-center space-x-4 p-4 bg-neutral-50 dark:bg-neutral-700 rounded-lg">
-                        <div className="flex-shrink-0 w-10 h-10 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-lg flex items-center justify-center text-white">
-                          {getActivityIcon(activity.type)}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="text-sm font-medium text-neutral-900 dark:text-white">
-                            {getActivityText(activity.type)}
-                          </div>
-                          <div className="text-sm text-neutral-600 dark:text-neutral-400 truncate">
-                            {activity.title}
-                          </div>
-                        </div>
-                        <div className="flex-shrink-0 text-xs text-neutral-500 dark:text-neutral-400">
-                          {formatDate(activity.timestamp)}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="text-center py-12">
-                    <Activity className="h-16 w-16 mx-auto text-neutral-400 mb-4" />
-                    <h3 className="text-lg font-medium text-neutral-900 dark:text-white mb-2">
-                      还没有活动记录
-                    </h3>
-                    <p className="text-neutral-600 dark:text-neutral-400">
-                      开始使用应用来生成活动记录吧！
-                    </p>
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Preview Modal */}
-        {previewImage && (
-          <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
-            <div className="relative max-w-4xl max-h-full">
-              <button
-                onClick={() => setPreviewImage(null)}
-                className="absolute top-4 right-4 p-2 bg-white rounded-lg text-neutral-900 hover:bg-neutral-100 transition-colors duration-200 z-10"
-              >
-                <X className="h-4 w-4" />
-              </button>
-              <img
-                src={previewImage}
-                alt="预览"
-                className="max-w-full max-h-full object-contain rounded-lg"
-              />
+                    </button>
+                  );
+                })}
+              </nav>
             </div>
           </div>
-        )}
+
+          {/* Main Content Area */}
+          <div className="lg:col-span-3">
+            <div className="bg-white dark:bg-neutral-800 rounded-2xl shadow-lg border border-neutral-200 dark:border-neutral-700 p-6">
+              
+              {/* Tab Content */}
+              {activeTab === 'overview' && <OverviewTab />}
+              {activeTab === 'invite' && <InviteTab />}
+              {activeTab === 'stats' && <StatsTab />}
+              {activeTab === 'achievements' && <AchievementsTab />}
+              {activeTab === 'billing' && <BillingTab />}
+              {activeTab === 'settings' && <SettingsTab />}
+
+
+            </div>
+          </div>
+        </div>
       </div>
     </Layout>
   );

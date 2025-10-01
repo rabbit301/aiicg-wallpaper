@@ -1,0 +1,155 @@
+'use client';
+
+import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { api } from '@/lib/api-client';
+
+interface User {
+  id: string;
+  username: string;
+  email?: string;
+  avatar: string;
+  joinedAt: string;
+  isVip: boolean;
+  role?: string;
+}
+
+interface AuthContextType {
+  user: User | null;
+  sessionId: string | null;
+  isLoading: boolean;
+  login: (user: User, token?: string) => void;
+  logout: () => void;
+  isLoggedIn: boolean;
+  refreshToken: () => Promise<void>;
+}
+
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+export function AuthProvider({ children }: { children: ReactNode }) {
+  const [user, setUser] = useState<User | null>(null);
+  const [sessionId, setSessionId] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Initialize auth on page load
+    initializeAuth();
+  }, []);
+
+  const initializeAuth = async () => {
+    try {
+      // Check stored user info and token
+      const storedUser = localStorage.getItem('user');
+      const storedToken = localStorage.getItem('authToken');
+      const storedSessionId = localStorage.getItem('guestSessionId');
+
+      if (storedUser && storedToken) {
+        try {
+          const userData = JSON.parse(storedUser);
+          setUser(userData);
+          
+          // Try to refresh token to verify validity
+          try {
+            await refreshToken();
+          } catch (error) {
+            console.error('Token verification failed, clearing login state:', error);
+            logout();
+          }
+        } catch (error) {
+          console.error('Failed to parse user data:', error);
+          localStorage.removeItem('user');
+          localStorage.removeItem('authToken');
+        }
+      } else if (storedSessionId) {
+        setSessionId(storedSessionId);
+      } else {
+        // Create new guest session
+        await createGuestSession();
+      }
+    } catch (error) {
+      console.error('Failed to initialize auth:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const createGuestSession = async () => {
+    try {
+      // Use Next.js API route to create guest session (keep original logic for now)
+      const response = await fetch('/api/auth/guest-session', {
+        method: 'POST'
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success) {
+          setSessionId(data.sessionId);
+          localStorage.setItem('guestSessionId', data.sessionId);
+        }
+      }
+    } catch (error) {
+      console.error('Failed to create guest session:', error);
+    }
+  };
+
+  const login = (userData: User, token?: string) => {
+    setUser(userData);
+    setSessionId(null);
+    localStorage.setItem('user', JSON.stringify(userData));
+    localStorage.removeItem('guestSessionId');
+    
+    if (token) {
+      localStorage.setItem('authToken', token);
+    }
+  };
+
+  const logout = () => {
+    setUser(null);
+    localStorage.removeItem('user');
+    localStorage.removeItem('authToken');
+
+    // Create new guest session
+    createGuestSession();
+  };
+
+  const refreshToken = async () => {
+    try {
+      const response = await api.auth.refresh();
+      if (response.access_token) {
+        localStorage.setItem('authToken', response.access_token);
+      }
+      if (response.user) {
+        setUser(response.user);
+        localStorage.setItem('user', JSON.stringify(response.user));
+      }
+    } catch (error) {
+      console.error('Failed to refresh token:', error);
+      throw error;
+    }
+  };
+
+  const isLoggedIn = !!user;
+
+  return (
+    <AuthContext.Provider
+      value={{
+        user,
+        sessionId,
+        isLoading,
+        login,
+        logout,
+        isLoggedIn,
+        refreshToken,
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
+}
+
+export function useAuth() {
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
+}

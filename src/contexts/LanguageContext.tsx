@@ -18,19 +18,653 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
 // 翻译数据
 const translations = {
   'zh-CN': {
-    // 导航栏 - 使用下划线避免与对象键冲突
-    'home_nav': '首页',
+    pages: {
+      admin: {
+        dashboard: {
+          title: '🛠️ 管理仪表板',
+          welcome: '欢迎回来',
+          systemStatus: '系统运行状态',
+          statusHealthy: '正常',
+          statusWarning: '警告',
+          statusError: '异常',
+          stats: {
+            totalUsers: '总用户数',
+            totalWallpapers: '壁纸总数',
+            todayGenerations: '今日生成',
+            storageUsed: '存储使用率',
+            previousMonth: '较上月',
+            previousWeek: '较上周',
+            previousDay: '较昨日'
+          },
+          charts: {
+            generationTrend: '生成趋势',
+            generationTrendSubtitle: '最近7天的壁纸生成数量',
+            categoryDistribution: '分类分布',
+            categoryDistributionSubtitle: '壁纸分类统计',
+            days7: '7天',
+            days30: '30天',
+            days90: '90天'
+          },
+          access: {
+            restrictedTitle: '访问受限',
+            restrictedMessage: '需要超级管理员权限才能访问此页面',
+            backToHome: '返回首页'
+          },
+          categories: {
+            technology: '科技',
+            others: '其他'
+          }
+        },
+        users: {
+          title: '用户管理',
+          empty: '暂无用户',
+          columns: {
+            username: '用户名',
+            email: '邮箱',
+            role: '角色',
+            createdAt: '创建时间',
+            actions: '操作'
+          },
+          searchPlaceholder: '搜索用户（用户名/邮箱）...',
+          roles: {
+            all: '全部',
+            user: '用户',
+            admin: '管理员',
+            superAdmin: '超级管理员'
+          },
+          actions: {
+            apply: '应用筛选',
+            batchRoleChange: '批量修改角色',
+            batchDelete: '批量删除',
+            setToUser: '设为普通用户',
+            setToAdmin: '设为管理员',
+            setToSuperAdmin: '设为超级管理员',
+            selectedCount: '已选择 {count} 个用户',
+            confirmBatchDelete: '确定要删除 {count} 个用户吗？此操作不可恢复。',
+            confirmBatchRoleChange: '确定要将 {count} 个用户的角色修改为 {role} 吗？',
+            batchDeleteFailed: '批量删除失败',
+            batchRoleChangeFailed: '批量修改角色失败'
+          }
+        },
+        wallpapers: {
+          title: '壁纸管理',
+          actions: {
+            upload: '上传',
+            importUrl: '导入链接',
+            edit: '编辑',
+            publish: '上架',
+            unpublish: '下架'
+          },
+          filters: {
+            visibility: '可见性',
+            all: '全部',
+            public: '公开',
+            private: '私有'
+          },
+          fields: {
+            title: '标题',
+            category: '分类',
+            tags: '标签(逗号分隔)',
+            imageUrl: '图片链接'
+          }
+        },
+        settings: {
+          title: '系统配置',
+          provider: '生图提供者',
+          rateLimit: '速率限制',
+          saved: '已保存'
+        },
+        audit: {
+          title: '审计与日志',
+          empty: '暂无日志'
+        },
+        notifications: {
+          title: '通知管理',
+          listTitle: '已发布通知',
+          empty: '暂无通知',
+          actions: {
+            create: '发布通知',
+            submitting: '发布中...'
+          },
+          fields: {
+            type: '类型',
+            priority: '优先级',
+            title: '标题',
+            content: '内容',
+            summary: '摘要',
+            icon: '图标',
+            image: '图片',
+            actionURL: '动作链接',
+            actionText: '动作文字',
+            expiresAt: '过期时间',
+            metadata: '元数据(JSON)'
+          },
+          placeholders: {
+            title: '请输入标题',
+            content: '请输入内容'
+          },
+          priority: {
+            low: '低',
+            normal: '普通',
+            high: '高',
+            urgent: '紧急'
+          },
+          type: {
+            system: '系统',
+            announcement: '公告',
+            update: '更新',
+            achievement: '成就',
+            message: '消息',
+            warning: '警告',
+            promotion: '促销'
+          },
+          pagination: {
+            prev: '上一页',
+            next: '下一页',
+            page: '第'
+          },
+          errors: {
+            invalidMetadata: '元数据必须为合法JSON',
+            unauthorized: '未登录或登录已过期',
+            forbidden: '无权限执行该操作',
+            createFailed: '发布失败'
+          }
+        }
+      }
+    },
+    // 导航栏
+    'homeNav': '首页',
     'generate': 'AI生成',
-    'compress': '格式转换',
     'profile': '个人中心',
-    'settings': '设置',
     'login': '登录',
     'logout': '退出登录',
     'loginRegister': '登录',
     'optional': '可选',
+
+    // 侧边栏导航
+    'explore': '探索',
+    nav: {
+      admin: {
+        dashboard: '控制台',
+        notifications: '通知管理'
+      }
+    },
+    'create': '创造',
+    'material': '素材',
+    'compress': '重布',
+    'notifications': '通知',
+    'user': '用户',
+    'settings': '设置',
+
+    // 设置菜单
+    'menuResources': '资源',
+    'menuLanguage': '语言',
+    'termsOfService': '服务条款',
+    'privacyPolicy': '隐私政策',
+    'communityGuidelines': '社群公约',
+    'userSafetyGuide': '使用者安全指南',
+    'cookiePolicy': 'Cookie政策',
+
+    // 通用状态
+    'common.loading': '加载中...',
+    'common.submit': '提交',
+    'common.cancel': '取消',
+    'common.close': '关闭',
+    'common.download': '下载',
+    'common.view': '查看',
+    'common.share': '分享',
+    'common.delete': '删除',
+    'common.edit': '编辑',
+    'common.save': '保存',
+    'common.back': '返回',
+
+    // 错误和状态信息
+    'errors.loadFailed': '加载失败',
+    'errors.notFound': '内容不存在',
+    'errors.networkError': '网络错误',
+    'status.uploading': '上传中...',
+    'status.processing': '处理中...',
+    'status.completed': '已完成',
+
+    // 分类页面
+    'categories.wallpaper.name': '壁纸',
+    'categories.wallpaper.description': '精美壁纸合集，包含AI生成、动画效果和头像素材',
+    'categories.avatar.name': '头像',
+    'categories.avatar.description': '个性化头像和肖像素材，打造独特形象',
+    'categories.animation.name': '动画',
+    'categories.animation.description': '动态图片和GIF动画效果素材',
+
+    // 子分类
+    'subcategories.ai-generated': 'AI壁纸',
+    'subcategories.avatar': '头像素材',
+    'subcategories.animation': '动画效果',
+    'subcategories.nature': '自然风光',
+    'subcategories.abstract': '抽象艺术',
+    'subcategories.minimal': '简约风格',
+    'subcategories.cartoon': '卡通头像',
+    'subcategories.realistic': '写实头像',
+    'subcategories.anime': '动漫风格',
+
+    // 筛选器
+    'filters.resolution': '分辨率',
+    'filters.orientation': '方向',
+    'filters.style': '风格',
+    'filters.color': '颜色',
+    'filters.mood': '氛围',
+    'filters.type': '类型',
+
+    // 筛选选项
+    'filterOptions.horizontal': '横向',
+    'filterOptions.vertical': '竖向',
+    'filterOptions.square': '方形',
+    'filterOptions.modern': '现代',
+    'filterOptions.vintage': '复古',
+    'filterOptions.artistic': '艺术',
+    'filterOptions.cute': '可爱',
+    'filterOptions.cool': '酷炫',
+    'filterOptions.elegant': '优雅',
+    'filterOptions.bright': '明亮',
+    'filterOptions.dark': '深色',
+    'filterOptions.colorful': '多彩',
+    'filterOptions.monochrome': '单色',
+
+    // 视图和操作
+    'views.grid': '网格视图',
+    'views.waterfall': '瀑布流',
+    'actions.filter': '筛选',
+    'actions.sort': '排序',
+    'actions.viewDetails': '查看详情',
+    'actions.zoomIn': '放大',
+    'actions.zoomOut': '缩小',
+
+    // 排序选项
+    'sort.latest': '最新上传',
+    'sort.popular': '最受欢迎',
+    'sort.downloads': '下载最多',
+    'sort.rating': '评分最高',
+
+    // 状态信息
+    'status.downloading': '下载中...',
+
+    // 壁纸详情页
+    'wallpaper.details': '作品详情',
+    'wallpaper.notFound': '壁纸不存在',
+    'wallpaper.loadFailed': '加载失败',
+    'wallpaper.relatedFailed': '获取相关壁纸失败',
+    'wallpaper.generateSimilar': '生成同款壁纸',
+    'wallpaper.similarStyle': '类似风格的精美壁纸',
+    'wallpaper.shareText': '查看这张精美的AI生成壁纸',
+    'wallpaper.techInfo': '技术信息',
+    'wallpaper.relatedRecommend': '相关推荐',
+    'wallpaper.backToHome': '返回首页',
+    'wallpaper.author': '作者',
+    'wallpaper.uploadTime': '上传时间',
+    'wallpaper.views': '浏览量',
+    'wallpaper.downloads': '下载量',
+    'wallpaper.resolution': '分辨率',
+    'wallpaper.size': '文件大小',
+    'wallpaper.format': '格式',
+    'wallpaper.tags': '标签',
+
+    // 操作按钮
+    'actions.like': '点赞',
+    'actions.follow': '关注',
+    'actions.following': '已关注',
+
+    // 个人中心页面
+    'profileTitle': '个人中心',
+    'profileSubtitle': '管理您的账户、查看数据统计、邀请好友赚取收益',
+    'loadingCenter': '加载个人中心中...',
+    'loadFailed': '加载失败',
+    'loadUserDataFailed': '加载用户数据失败',
+    'retry': '重试',
+    'functionNav': '功能导航',
+    'overview': '概览',
+    'overviewDesc': '账户概览',
+    'stats': '数据统计',
+    'statsDesc': '使用数据分析',
+    'invite': '邀请推广',
+    'inviteDesc': '邀请好友赚钱',
+    'achievementsNav': '成就系统',
+    'achievementsDesc': '解锁成就奖励',
+    'accountSettings': '账户设置',
+    'accountSettingsDesc': '个人信息设置',
+    'billingNav': '账单管理',
+    'billingDesc': '消费记录管理',
+    'formatMinutes': '分钟',
+    'formatHours': '小时',
     
+    // 概览页面
+    'overviewTitle': '账户概览',
+    'overviewDescription': '查看您的使用统计和成就',
+    'achievementsCount': '个成就',
+    'todayGenerated': '今日生成',
+    'aiImages': 'AI图片',
+    'todayDownloads': '今日下载',
+    'imageDownloads': '图片下载',
+    'usageTime': '使用时长',
+    'todayUsage': '今日使用',
+    'totalSpent': '总消费',
+    'cumulativeSpent': '累计消费',
+    'weeklyTrend': '本周使用趋势',
+    'categoryPreferences': '分类偏好',
+    'landscape': '风景',
+    'portrait': '人像',
+    'abstract': '抽象',
+    'anime': '动漫',
+    'realistic': '写实',
+    'images': '张',
+    'timeDistribution': '使用时间分布',
+    'morning': '上午 (6-12点)',
+    'afternoon': '下午 (12-18点)',
+    'evening': '晚上 (18-24点)',
+    'night': '深夜 (0-6点)',
+    'achievementSystem': '成就系统',
+    'progress': '进度',
+    'reward': '奖励',
+    'loadOverviewFailed': '加载概览数据失败',
+    'monday': '周一',
+    'tuesday': '周二',
+    'wednesday': '周三',
+    'thursday': '周四',
+    'friday': '周五',
+    'saturday': '周六',
+    'sunday': '周日',
+    
+    // 统计页面
+    'statsTitle': '数据统计',
+    'statsDescription': '深入了解您的使用情况和趋势',
+    'loadingStats': '加载统计数据中...',
+    'noStatsData': '暂无数据',
+    'noStatsDescription': '开始使用AI生成壁纸来查看统计数据',
+    'loadStatsFailed': '加载统计数据失败',
+    'generatedCount': '生成数量',
+    'downloadsCount': '下载数量',
+    'viewsCount': '浏览数量',
+    'totalGenerated': '总生成数',
+    'totalDownloads': '总下载数',
+    'totalViews': '总浏览数',
+    'totalLikes': '总点赞数',
+    'totalShares': '总分享数',
+    'totalTime': '总时长',
+    'trendAnalysis': '趋势分析',
+    'last7Days': '最近7天',
+    'last30Days': '最近30天',
+    'last90Days': '最近90天',
+    'lastYear': '最近一年',
+    'categoryStats': '分类统计',
+    'popularPrompts': '热门提示词',
+    'usagePattern': '使用模式',
+    'hourlyUsage': '每小时使用量',
+    'dailyUsage': '每日使用量',
+    'monthlyUsage': '每月使用量',
+    'uses': '次使用',
+    'minimalist': '极简',
+    
+    // InviteTab 邀请页面
+    'inviteTitle': '邀请推广',
+    'inviteDescription': '邀请好友注册，赚取丰厚奖励',
+    'inviteLoading': '加载邀请数据中...',
+    'inviteCode': '邀请码',
+    'inviteCopyCode': '复制邀请码',
+    'inviteCopied': '已复制',
+    'inviteShare': '分享邀请',
+    'inviteTotalInvites': '总邀请数',
+    'inviteSuccessfulInvites': '成功邀请',
+    'inviteTotalEarnings': '总收益',
+    'inviteMonthlyEarnings': '本月收益',
+    'inviteRate': '成功率',
+    'inviteRecords': '邀请记录',
+    'inviteStatusActive': '活跃用户',
+    'inviteStatusRegistered': '已注册',
+    'inviteStatusPending': '待激活',
+    'inviteStatusUnknown': '未知',
+    'inviteFilterAll': '全部',
+    'inviteTime': '邀请时间',
+    'inviteNoData': '暂无邀请记录',
+    'inviteInviteLink': '邀请链接',
+    'inviteShareTitle': '加入AIICG',
+    'inviteShareText': '使用我的邀请码注册，获得专属福利！',
+    'inviteFilterPending': '待激活',
+    'inviteFilterRegistered': '已注册',
+    'inviteFilterActive': '活跃',
+    'inviteCommissionEarnings': '佣金收益',
+    'inviteRegistrationTime': '注册时间',
+    'inviteNoInviteRecords': '暂无邀请记录',
+    'inviteMonthlyTrend': '月度邀请趋势',
+    
+    // AchievementsTab 成就页面 - 重构为层级结构
+    achievements: {
+      title: '成就系统',
+      description: '解锁成就，获得奖励和荣誉',
+      loading: '加载成就数据中...',
+      noAchievements: '暂无成就',
+      noAchievementsDesc: '开始使用AI生成壁纸来解锁成就',
+      level: '等级',
+      continueUnlock: '继续解锁成就提升等级',
+      totalXP: '总经验值',
+      nextLevelNeed: '距离下一级还需',
+      experiencePoints: '经验值',
+      category: '分类',
+      rarity: '稀有度',
+      filterAll: '全部',
+      filterGeneration: '生成',
+      filterSocial: '社交',
+      filterExploration: '探索',
+      filterMastery: '精通',
+      filterSpecial: '特殊',
+      rarityCommon: '普通',
+      rarityRare: '稀有',
+      rarityEpic: '史诗',
+      rarityLegendary: '传说',
+      completion: '完成',
+      recentUnlocks: '最近解锁',
+      progress: '进度',
+      unlockedAt: '解锁时间',
+      
+      // 成就数据
+      data: {
+        firstGeneration: {
+          title: '初次创作',
+          description: '生成第一张AI壁纸'
+        },
+        generationMaster: {
+          title: '生成大师',
+          description: '生成100张AI壁纸'
+        },
+        speedDemon: {
+          title: '速度恶魔',
+          description: '在1小时内生成10张壁纸'
+        },
+        creativeGenius: {
+          title: '创意天才',
+          description: '生成1000张AI壁纸'
+        },
+        firstLike: {
+          title: '初次点赞',
+          description: '获得第一个点赞'
+        },
+        popularCreator: {
+          title: '人气创作者',
+          description: '获得100个点赞'
+        },
+        viralSensation: {
+          title: '病毒传播',
+          description: '单张壁纸获得1000次分享'
+        },
+        communityLeader: {
+          title: '社区领袖',
+          description: '邀请50个好友注册'
+        },
+        styleExplorer: {
+          title: '风格探索者',
+          description: '尝试所有预设风格'
+        }
+      }
+    },
+    
+    // SettingsTab 设置页面 - 重构为层级结构
+    profileSettings: {
+      title: '账户设置',
+      description: '管理您的个人信息和偏好设置',
+      saving: '保存中...',
+      saveSettings: '保存设置',
+      profileInfo: '个人信息',
+      username: '用户名',
+      email: '邮箱地址',
+      timezone: '时区',
+      timezoneChina: '中国标准时间 (UTC+8)',
+      timezoneNewYork: '美国东部时间 (UTC-5)',
+      timezoneLondon: '格林威治时间 (UTC+0)',
+      timezoneTokyo: '日本标准时间 (UTC+9)',
+      notifications: '通知设置',
+      emailNotifications: '邮件通知',
+      emailNotificationsDesc: '接收重要更新和活动通知',
+      pushNotifications: '推送通知',
+      pushNotificationsDesc: '接收实时推送通知',
+      marketingEmails: '营销邮件',
+      marketingEmailsDesc: '接收产品更新和优惠信息',
+      privacySettings: '隐私设置',
+      profileVisibility: '个人资料可见性',
+      public: '公开',
+      private: '私密',
+      showEmail: '显示邮箱地址',
+      showEmailDesc: '允许其他用户查看您的邮箱',
+      showStats: '显示使用统计',
+      showStatsDesc: '允许其他用户查看您的使用数据',
+      appearanceSettings: '外观设置',
+      themeMode: '主题模式',
+      themeModeDesc: '选择您喜欢的主题外观',
+      languageSettings: '语言设置',
+      languageSettingsDesc: '选择您的首选语言',
+      dangerZone: '危险操作',
+      exportData: '导出数据',
+      exportDataDesc: '下载您的所有数据备份',
+      export: '导出',
+      deleteAccount: '删除账户',
+      deleteAccountDesc: '永久删除您的账户和所有数据',
+      deleteAccountButton: '删除账户'
+    },
+    
+    // NotificationPanel 通知中心 - 国际化
+    notificationPanel: {
+      title: '通知中心',
+      totalCount: '条通知',
+      unreadCount: '条未读',
+      markAllRead: '全部已读',
+      filters: {
+        all: '全部',
+        unread: '未读',
+        starred: '收藏'
+      },
+      empty: {
+        noNotifications: '暂无通知',
+        noNotificationsDesc: '新的通知会在这里显示',
+        noSearchResults: '没有找到相关通知',
+        noSearchResultsDesc: '尝试调整搜索条件'
+      },
+      actions: {
+        markRead: '标记已读',
+        star: '收藏',
+        unstar: '取消收藏',
+        delete: '删除通知',
+        viewDetails: '查看详情'
+      },
+      priority: {
+        high: '高优先级',
+        urgent: '紧急'
+      },
+      types: {
+        system: '系统通知',
+        announcement: '公告',
+        update: '更新通知',
+        achievement: '成就通知',
+        message: '消息',
+        warning: '警告',
+        promotion: '推广'
+      }
+    },
+
+    // BillingTab 账单页面 - 重构为层级结构
+    billing: {
+      title: '账单管理',
+      description: '管理您的订阅和支付信息',
+      balance: '余额',
+      loading: '加载账单信息中...',
+      noBillingInfo: '暂无账单信息',
+      noBillingInfoDesc: '开始使用付费功能来查看账单',
+      currentPlan: '当前计划',
+      currentPlanDesc: '您当前使用的订阅计划',
+      currentPlanLabel: '当前计划',
+      nextBilling: '下次账单',
+      upgradeToPro: '升级到专业版',
+      usage: '使用情况',
+      used: '已使用',
+      remaining: '剩余',
+      monthlyLimit: '月度限额',
+      usageProgress: '使用进度',
+      availablePlans: '可用计划',
+      mostPopular: '最受欢迎',
+      month: '月',
+      year: '年',
+      selectPlan: '选择计划',
+      transactionHistory: '交易记录',
+      completed: '已完成',
+      pending: '处理中',
+      failed: '失败',
+      refunded: '已退款',
+      upgradeTo: '升级到',
+      upgradeDesc: '您即将升级到新的订阅计划。升级后您将立即获得所有新功能。',
+      cancel: '取消',
+      confirmUpgrade: '确认升级'
+    },
+
+    // 登录注册页面
+    'backToHome': '返回首页',
+    'appName': 'AIICG壁纸站',
+    'loginToAccount': '登录您的账户',
+    'createAccount': '创建您的账户',
+    'usernameOrEmail': '用户名或邮箱',
+    'enterUsernameOrEmail': '请输入用户名或邮箱',
+    'username': '用户名',
+    'enterUsername': '请输入用户名',
+    'email': '邮箱地址',
+    'enterEmail': '请输入邮箱地址',
+    'password': '密码',
+    'enterPassword': '请输入密码',
+    'confirmPassword': '确认密码',
+    'enterConfirmPassword': '请再次输入密码',
+    'captcha': '验证码',
+    'remainingAttempts': '剩余尝试次数',
+    'enterAnswer': '请输入答案',
+    'loggingIn': '登录中...',
+    'registering': '注册中...',
+    'or': '或',
+    'createNewAccount': '创建新账户',
+    'loginExistingAccount': '登录现有账户',
+    'emailVerificationCode': '邮箱验证码',
+    'enterVerificationCode': '请输入6位验证码',
+    'sendCode': '发送',
+    'register': '注册账户',
+
+    // 404页面
+    'notFound': {
+      'title': '在壁纸的海洋中迷路了？',
+      'description': '看起来您要寻找的页面在我们的壁纸画廊中走丢了。不过别担心，让我们帮您找到正确的方向！',
+      'exploreHome': '探索首页',
+      'exploreHomeDesc': '发现最新的AI壁纸作品',
+      'browseWallpapers': '浏览壁纸',
+      'browseWallpapersDesc': '查看精美的壁纸收藏',
+      'generateWallpaper': 'AI生成',
+      'generateWallpaperDesc': '创造您的专属壁纸',
+      'searchTip': '提示：您也可以使用导航栏的搜索功能快速找到想要的内容',
+      'brandSlogan': '让每一面墙都有故事'
+    },
+
     // 主题
     theme: {
+      title: '主题',
+      current: '当前',
       light: '浅色模式',
       dark: '深色模式',
       system: '跟随系统',
@@ -496,22 +1130,727 @@ const translations = {
       privacyPolicy: '隐私政策',
       termsOfService: '服务条款',
       copyright: '保留所有权利.'
+    },
+
+    // 分类页面
+    categories: {
+      wallpaper: {
+        name: '壁纸',
+        description: '精选高质量壁纸，为您的设备增添美感'
+      },
+      avatar: {
+        name: '头像',
+        description: '个性化头像，展现独特魅力'
+      },
+      animation: {
+        name: '动画',
+        description: '动态壁纸，让您的设备更加生动'
+      }
+    },
+    subcategories: {
+      'ai-generated': 'AI生成',
+      'avatar': '头像',
+      'animation': '动画',
+      'nature': '自然',
+      'abstract': '抽象',
+      'minimal': '极简',
+      'cartoon': '卡通',
+      'realistic': '写实',
+      'anime': '动漫'
+    },
+    filters: {
+      resolution: '分辨率',
+      orientation: '方向',
+      style: '风格',
+      color: '颜色',
+      mood: '情绪',
+      type: '类型'
+    },
+    filterOptions: {
+      horizontal: '横向',
+      vertical: '纵向',
+      square: '方形',
+      modern: '现代',
+      vintage: '复古',
+      artistic: '艺术',
+      cute: '可爱',
+      cool: '酷炫',
+      elegant: '优雅',
+      bright: '明亮',
+      dark: '暗色',
+      colorful: '彩色',
+      monochrome: '单色'
+    },
+    sort: {
+      latest: '最新',
+      popular: '热门',
+      downloads: '下载量',
+      rating: '评分'
+    },
+    categoryPage: {
+      subcategories: '子分类',
+      all: '全部',
+      filters: '筛选',
+      sortBy: '排序方式',
+      viewMode: '视图模式',
+      results: '项结果',
+      totalResults: '共 {count} 项结果',
+      noContent: '暂无内容',
+      noContentDesc: '尝试调整筛选条件',
+      retry: '重试',
+      previousPage: '上一页',
+      nextPage: '下一页',
+      pageInfo: '第 {page} 页',
+      download: '下载',
+      close: '关闭',
+      imageInfo: '精美壁纸',
+      resolution: '{width} × {height}',
+      beautifulContent: '精美内容',
+      pages: '页面',
+      freeDownload: '免费下载',
+      categoryNotFound: '分类未找到',
+      searchPlaceholder: '搜索壁纸...',
+      clearAll: '清除全部'
     }
   },
   'en': {
-    // 导航栏 - 使用下划线避免与对象键冲突
-    'home_nav': 'Home',
+    pages: {
+      admin: {
+        dashboard: {
+          title: '🛠️ Admin Dashboard',
+          welcome: 'Welcome back',
+          systemStatus: 'System Status',
+          statusHealthy: 'Healthy',
+          statusWarning: 'Warning',
+          statusError: 'Error',
+          stats: {
+            totalUsers: 'Total Users',
+            totalWallpapers: 'Total Wallpapers',
+            todayGenerations: 'Today Generated',
+            storageUsed: 'Storage Used',
+            previousMonth: 'vs last month',
+            previousWeek: 'vs last week',
+            previousDay: 'vs yesterday'
+          },
+          charts: {
+            generationTrend: 'Generation Trend',
+            generationTrendSubtitle: 'Wallpaper generation in the last 7 days',
+            categoryDistribution: 'Category Distribution',
+            categoryDistributionSubtitle: 'Wallpaper category statistics',
+            days7: '7 Days',
+            days30: '30 Days',
+            days90: '90 Days'
+          },
+          access: {
+            restrictedTitle: 'Access Restricted',
+            restrictedMessage: 'Super admin privileges required to access this page',
+            backToHome: 'Back to Home'
+          },
+          categories: {
+            technology: 'Technology',
+            others: 'Others'
+          }
+        },
+        users: {
+          title: 'Users',
+          empty: 'No users',
+          columns: {
+            username: 'Username',
+            email: 'Email',
+            role: 'Role',
+            createdAt: 'Created At',
+            actions: 'Actions'
+          },
+          searchPlaceholder: 'Search users (username/email)...',
+          roles: {
+            all: 'All',
+            user: 'User',
+            admin: 'Admin',
+            superAdmin: 'Super Admin'
+          },
+          actions: {
+            apply: 'Apply Filters',
+            batchRoleChange: 'Batch Role Change',
+            batchDelete: 'Batch Delete',
+            setToUser: 'Set as User',
+            setToAdmin: 'Set as Admin',
+            setToSuperAdmin: 'Set as Super Admin',
+            selectedCount: '{count} users selected',
+            confirmBatchDelete: 'Are you sure you want to delete {count} users? This action cannot be undone.',
+            confirmBatchRoleChange: 'Are you sure you want to change the role of {count} users to {role}?',
+            batchDeleteFailed: 'Batch deletion failed',
+            batchRoleChangeFailed: 'Batch role change failed'
+          }
+        },
+        wallpapers: {
+          title: 'Wallpapers',
+          actions: {
+            upload: 'Upload',
+            importUrl: 'Import URL',
+            edit: 'Edit',
+            publish: 'Publish',
+            unpublish: 'Unpublish'
+          },
+          filters: {
+            visibility: 'Visibility',
+            all: 'All',
+            public: 'Public',
+            private: 'Private'
+          },
+          fields: {
+            title: 'Title',
+            category: 'Category',
+            tags: 'Tags (comma separated)',
+            imageUrl: 'Image URL'
+          }
+        },
+        settings: {
+          title: 'Settings',
+          provider: 'Image Provider',
+          rateLimit: 'Rate Limit',
+          saved: 'Saved'
+        },
+        audit: {
+          title: 'Audit & Logs',
+          empty: 'No logs'
+        },
+        notifications: {
+          title: 'Notification Management',
+          listTitle: 'Published Notifications',
+          empty: 'No notifications',
+          actions: {
+            create: 'Publish',
+            submitting: 'Publishing...'
+          },
+          fields: {
+            type: 'Type',
+            priority: 'Priority',
+            title: 'Title',
+            content: 'Content',
+            summary: 'Summary',
+            icon: 'Icon',
+            image: 'Image',
+            actionURL: 'Action URL',
+            actionText: 'Action Text',
+            expiresAt: 'Expires At',
+            metadata: 'Metadata (JSON)'
+          },
+          placeholders: {
+            title: 'Enter title',
+            content: 'Enter content'
+          },
+          priority: {
+            low: 'Low',
+            normal: 'Normal',
+            high: 'High',
+            urgent: 'Urgent'
+          },
+          type: {
+            system: 'System',
+            announcement: 'Announcement',
+            update: 'Update',
+            achievement: 'Achievement',
+            message: 'Message',
+            warning: 'Warning',
+            promotion: 'Promotion'
+          },
+          pagination: {
+            prev: 'Prev',
+            next: 'Next',
+            page: 'Page'
+          },
+          errors: {
+            invalidMetadata: 'Metadata must be valid JSON',
+            unauthorized: 'Unauthorized',
+            forbidden: 'Forbidden',
+            createFailed: 'Failed to publish'
+          }
+        }
+      }
+    },
+    // 导航栏
+    'homeNav': 'Home',
     'generate': 'AI Generate',
-    'compress': 'Format Convert',
     'profile': 'Profile',
-    'settings': 'Settings',
     'login': 'Sign In',
     'logout': 'Logout',
     'loginRegister': 'Sign In',
     'optional': 'optional',
+
+    // 侧边栏导航
+    'explore': 'Explore',
+    nav: {
+      admin: {
+        dashboard: 'Console',
+        notifications: 'Notifications'
+      }
+    },
+    'create': 'Create',
+    'material': 'Material',
+    'compress': 'Compress',
+    'notifications': 'Notifications',
+    'user': 'User',
+    'settings': 'Settings',
+
+    // 设置菜单
+    'menuResources': 'Resources',
+    'menuLanguage': 'Language',
+    'termsOfService': 'Terms of Service',
+    'privacyPolicy': 'Privacy Policy',
+    'communityGuidelines': 'Community Guidelines',
+    'userSafetyGuide': 'User Safety Guide',
+    'cookiePolicy': 'Cookie Policy',
+
+    // 通用状态
+    'common.loading': 'Loading...',
+    'common.submit': 'Submit',
+    'common.cancel': 'Cancel',
+    'common.close': 'Close',
+    'common.download': 'Download',
+    'common.view': 'View',
+    'common.share': 'Share',
+    'common.delete': 'Delete',
+    'common.edit': 'Edit',
+    'common.save': 'Save',
+    'common.back': 'Back',
+
+    // 错误和状态信息
+    'errors.loadFailed': 'Load Failed',
+    'errors.notFound': 'Content Not Found',
+    'errors.networkError': 'Network Error',
+    'status.uploading': 'Uploading...',
+    'status.processing': 'Processing...',
+    'status.completed': 'Completed',
+
+    // 分类页面
+    'categories.wallpaper.name': 'Wallpaper',
+    'categories.wallpaper.description': 'Beautiful wallpaper collection, including AI-generated, animation effects, and avatar materials',
+    'categories.avatar.name': 'Avatar',
+    'categories.avatar.description': 'Personalized avatars and character images, creating unique identities',
+    'categories.animation.name': 'Animation',
+    'categories.animation.description': 'Dynamic images and GIF animation effect materials',
+
+    // 子分类
+    'subcategories.ai-generated': 'AI Wallpapers',
+    'subcategories.avatar': 'Avatar Materials',
+    'subcategories.animation': 'Animation Effects',
+    'subcategories.nature': 'Nature',
+    'subcategories.abstract': 'Abstract Art',
+    'subcategories.minimal': 'Minimalist Style',
+    'subcategories.cartoon': 'Cartoon Avatars',
+    'subcategories.realistic': 'Realistic Avatars',
+    'subcategories.anime': 'Anime Style',
+
+    // 筛选器
+    'filters.resolution': 'Resolution',
+    'filters.orientation': 'Orientation',
+    'filters.style': 'Style',
+    'filters.color': 'Color',
+    'filters.mood': 'Mood',
+    'filters.type': 'Type',
+
+    // 筛选选项
+    'filterOptions.horizontal': 'Horizontal',
+    'filterOptions.vertical': 'Vertical',
+    'filterOptions.square': 'Square',
+    'filterOptions.modern': 'Modern',
+    'filterOptions.vintage': 'Vintage',
+    'filterOptions.artistic': 'Artistic',
+    'filterOptions.cute': 'Cute',
+    'filterOptions.cool': 'Cool',
+    'filterOptions.elegant': 'Elegant',
+    'filterOptions.bright': 'Bright',
+    'filterOptions.dark': 'Dark',
+    'filterOptions.colorful': 'Colorful',
+    'filterOptions.monochrome': 'Monochrome',
+
+    // 视图和操作
+    'views.grid': 'Grid View',
+    'views.waterfall': 'Waterfall View',
+    'actions.filter': 'Filter',
+    'actions.sort': 'Sort',
+    'actions.viewDetails': 'View Details',
+    'actions.zoomIn': 'Zoom In',
+    'actions.zoomOut': 'Zoom Out',
+
+    // 排序选项
+    'sort.latest': 'Latest Uploads',
+    'sort.popular': 'Most Popular',
+    'sort.downloads': 'Most Downloads',
+    'sort.rating': 'Highest Rating',
+
+    // 状态信息
+    'status.downloading': 'Downloading...',
+
+    // 壁纸详情页
+    'wallpaper.details': 'Wallpaper Details',
+    'wallpaper.notFound': 'Wallpaper Not Found',
+    'wallpaper.loadFailed': 'Load Failed',
+    'wallpaper.relatedFailed': 'Failed to get related wallpapers',
+    'wallpaper.generateSimilar': 'Generate Similar Wallpaper',
+    'wallpaper.similarStyle': 'Beautiful wallpapers with similar styles',
+    'wallpaper.shareText': 'View this beautiful AI-generated wallpaper',
+    'wallpaper.techInfo': 'Technical Information',
+    'wallpaper.relatedRecommend': 'Related Recommendations',
+    'wallpaper.backToHome': 'Back to Home',
+    'wallpaper.author': 'Author',
+    'wallpaper.uploadTime': 'Upload Time',
+    'wallpaper.views': 'Views',
+    'wallpaper.downloads': 'Downloads',
+    'wallpaper.resolution': 'Resolution',
+    'wallpaper.size': 'File Size',
+    'wallpaper.format': 'Format',
+    'wallpaper.tags': 'Tags',
+
+    // 操作按钮
+    'actions.like': 'Like',
+    'actions.follow': 'Follow',
+    'actions.following': 'Following',
+
+    // 个人中心页面
+    'profileTitle': 'Profile',
+    'profileSubtitle': 'Manage your account, view data statistics, invite friends to earn rewards',
+    'loadingCenter': 'Loading profile...',
+    'loadFailed': 'Load Failed',
+    'loadUserDataFailed': 'Failed to load user data',
+    'retry': 'Retry',
+    'functionNav': 'Function Navigation',
+    'overview': 'Overview',
+    'overviewDesc': 'Account Overview',
+    'stats': 'Data Statistics',
+    'statsDesc': 'Usage Data Analysis',
+    'invite': 'Invite Promotion',
+    'inviteDesc': 'Invite friends to earn money',
+    'achievementsNav': 'Achievement System',
+    'achievementsDesc': 'Unlock achievement rewards',
+    'accountSettings': 'Account Settings',
+    'accountSettingsDesc': 'Personal Information Settings',
+    'billingNav': 'Billing Management',
+    'billingDesc': 'Consumption Record Management',
+    'formatMinutes': 'Minutes',
+    'formatHours': 'Hours',
     
+    // 概览页面
+    'overviewTitle': 'Account Overview',
+    'overviewDescription': 'View your usage statistics and achievements',
+    'achievementsCount': 'achievements',
+    'todayGenerated': 'Today Generated',
+    'aiImages': 'AI Images',
+    'todayDownloads': 'Today Downloads',
+    'imageDownloads': 'Image Downloads',
+    'usageTime': 'Usage Time',
+    'todayUsage': 'Today Usage',
+    'totalSpent': 'Total Spent',
+    'cumulativeSpent': 'Cumulative Spent',
+    'weeklyTrend': 'Weekly Usage Trend',
+    'categoryPreferences': 'Category Preferences',
+    'landscape': 'Landscape',
+    'portrait': 'Portrait',
+    'abstract': 'Abstract',
+    'anime': 'Anime',
+    'realistic': 'Realistic',
+    'images': 'images',
+    'timeDistribution': 'Time Distribution',
+    'morning': 'Morning (6-12)',
+    'afternoon': 'Afternoon (12-18)',
+    'evening': 'Evening (18-24)',
+    'night': 'Night (0-6)',
+    'achievementSystem': 'Achievement System',
+    'progress': 'Progress',
+    'reward': 'Reward',
+    'loadOverviewFailed': 'Failed to load overview data',
+    'monday': 'Mon',
+    'tuesday': 'Tue',
+    'wednesday': 'Wed',
+    'thursday': 'Thu',
+    'friday': 'Fri',
+    'saturday': 'Sat',
+    'sunday': 'Sun',
+    
+    // 统计页面
+    'statsTitle': 'Statistics',
+    'statsDescription': 'Deep insights into your usage patterns and trends',
+    'loadingStats': 'Loading statistics...',
+    'noStatsData': 'No Data',
+    'noStatsDescription': 'Start using AI wallpaper generation to view statistics',
+    'loadStatsFailed': 'Failed to load statistics',
+    'generatedCount': 'Generated',
+    'downloadsCount': 'Downloads',
+    'viewsCount': 'Views',
+    'totalGenerated': 'Total Generated',
+    'totalDownloads': 'Total Downloads',
+    'totalViews': 'Total Views',
+    'totalLikes': 'Total Likes',
+    'totalShares': 'Total Shares',
+    'totalTime': 'Total Time',
+    'trendAnalysis': 'Trend Analysis',
+    'last7Days': 'Last 7 Days',
+    'last30Days': 'Last 30 Days',
+    'last90Days': 'Last 90 Days',
+    'lastYear': 'Last Year',
+    'categoryStats': 'Category Statistics',
+    'popularPrompts': 'Popular Prompts',
+    'usagePattern': 'Usage Pattern',
+    'hourlyUsage': 'Hourly Usage',
+    'dailyUsage': 'Daily Usage',
+    'monthlyUsage': 'Monthly Usage',
+    'uses': 'uses',
+    'minimalist': 'Minimalist',
+    
+    // InviteTab 邀请页面
+    'invite.title': 'Invite & Earn',
+    'invite.description': 'Invite friends to register and earn generous rewards',
+    'invite.loading': 'Loading invite data...',
+    'invite.code': 'Invite Code',
+    'invite.copyCode': 'Copy Invite Code',
+    'invite.copied': 'Copied',
+    'invite.share': 'Share Invite',
+    'invite.totalInvites': 'Total Invites',
+    'invite.successfulInvites': 'Successful Invites',
+    'invite.totalEarnings': 'Total Earnings',
+    'invite.monthlyEarnings': 'Monthly Earnings',
+    'invite.rate': 'Success Rate',
+    'invite.records': 'Invite Records',
+    'invite.statusActive': 'Active User',
+    'invite.statusRegistered': 'Registered',
+    'invite.statusPending': 'Pending',
+    'invite.statusUnknown': 'Unknown',
+    'invite.filterAll': 'All',
+    'invite.time': 'Invite Time',
+    'invite.noData': 'No invite records',
+
+    // AchievementsTab 成就页面 - 重构为层级结构
+    achievements: {
+      title: 'Achievement System',
+      description: 'Unlock achievements and earn rewards',
+      loading: 'Loading achievement data...',
+      noAchievements: 'No achievements',
+      noAchievementsDesc: 'Start using AI wallpaper generation to unlock achievements',
+      level: 'Level',
+      continueUnlock: 'Continue unlocking achievements to level up',
+      totalXP: 'Total XP',
+      nextLevelNeed: 'XP needed for next level',
+      experiencePoints: 'Experience Points',
+      category: 'Category',
+      rarity: 'Rarity',
+      filterAll: 'All',
+      filterGeneration: 'Generation',
+      filterSocial: 'Social',
+      filterExploration: 'Exploration',
+      filterMastery: 'Mastery',
+      filterSpecial: 'Special',
+      rarityCommon: 'Common',
+      rarityRare: 'Rare',
+      rarityEpic: 'Epic',
+      rarityLegendary: 'Legendary',
+      completion: 'Completion',
+      recentUnlocks: 'Recent Unlocks',
+      progress: 'Progress',
+      unlockedAt: 'Unlocked At',
+      
+      // 成就数据
+      data: {
+        firstGeneration: {
+          title: 'First Creation',
+          description: 'Generate your first AI wallpaper'
+        },
+        generationMaster: {
+          title: 'Generation Master',
+          description: 'Generate 100 AI wallpapers'
+        },
+        speedDemon: {
+          title: 'Speed Demon',
+          description: 'Generate 10 wallpapers within 1 hour'
+        },
+        creativeGenius: {
+          title: 'Creative Genius',
+          description: 'Generate 1000 AI wallpapers'
+        },
+        firstLike: {
+          title: 'First Like',
+          description: 'Receive your first like'
+        },
+        popularCreator: {
+          title: 'Popular Creator',
+          description: 'Receive 100 likes'
+        },
+        viralSensation: {
+          title: 'Viral Sensation',
+          description: 'Single wallpaper gets 1000 shares'
+        },
+        communityLeader: {
+          title: 'Community Leader',
+          description: 'Invite 50 friends to register'
+        },
+        styleExplorer: {
+          title: 'Style Explorer',
+          description: 'Try all preset styles'
+        }
+      }
+    },
+
+    // SettingsTab 设置页面 - 重构为层级结构
+    profileSettings: {
+      title: 'Account Settings',
+      description: 'Manage your personal information and preferences',
+      saving: 'Saving...',
+      saveSettings: 'Save Settings',
+      profileInfo: 'Profile Information',
+      username: 'Username',
+      email: 'Email Address',
+      timezone: 'Timezone',
+      timezoneChina: 'China Standard Time (UTC+8)',
+      timezoneNewYork: 'Eastern Time (UTC-5)',
+      timezoneLondon: 'Greenwich Time (UTC+0)',
+      timezoneTokyo: 'Japan Standard Time (UTC+9)',
+      notifications: 'Notification Settings',
+      emailNotifications: 'Email Notifications',
+      emailNotificationsDesc: 'Receive important updates and activity notifications',
+      pushNotifications: 'Push Notifications',
+      pushNotificationsDesc: 'Receive real-time push notifications',
+      marketingEmails: 'Marketing Emails',
+      marketingEmailsDesc: 'Receive product updates and promotional information',
+      privacySettings: 'Privacy Settings',
+      profileVisibility: 'Profile Visibility',
+      public: 'Public',
+      private: 'Private',
+      showEmail: 'Show Email Address',
+      showEmailDesc: 'Allow other users to view your email',
+      showStats: 'Show Usage Statistics',
+      showStatsDesc: 'Allow other users to view your usage data',
+      appearanceSettings: 'Appearance Settings',
+      themeMode: 'Theme Mode',
+      themeModeDesc: 'Choose your preferred theme appearance',
+      languageSettings: 'Language Settings',
+      languageSettingsDesc: 'Choose your preferred language',
+      dangerZone: 'Danger Zone',
+      exportData: 'Export Data',
+      exportDataDesc: 'Download all your data backup',
+      export: 'Export',
+      deleteAccount: 'Delete Account',
+      deleteAccountDesc: 'Permanently delete your account and all data',
+      deleteAccountButton: 'Delete Account'
+    },
+
+    // NotificationPanel 通知中心 - 国际化
+    notificationPanel: {
+      title: 'Notification Center',
+      totalCount: 'notifications',
+      unreadCount: 'unread',
+      markAllRead: 'Mark All Read',
+      filters: {
+        all: 'All',
+        unread: 'Unread',
+        starred: 'Starred'
+      },
+      empty: {
+        noNotifications: 'No notifications',
+        noNotificationsDesc: 'New notifications will appear here',
+        noSearchResults: 'No matching notifications found',
+        noSearchResultsDesc: 'Try adjusting your search criteria'
+      },
+      actions: {
+        markRead: 'Mark as read',
+        star: 'Star',
+        unstar: 'Unstar',
+        delete: 'Delete notification',
+        viewDetails: 'View details'
+      },
+      priority: {
+        high: 'High Priority',
+        urgent: 'Urgent'
+      },
+      types: {
+        system: 'System Notification',
+        announcement: 'Announcement',
+        update: 'Update Notification',
+        achievement: 'Achievement Notification',
+        message: 'Message',
+        warning: 'Warning',
+        promotion: 'Promotion'
+      }
+    },
+
+    // BillingTab 账单页面 - 重构为层级结构
+    billing: {
+      title: 'Billing Management',
+      description: 'Manage your subscriptions and payment information',
+      balance: 'Balance',
+      loading: 'Loading billing information...',
+      noBillingInfo: 'No billing information',
+      noBillingInfoDesc: 'Start using paid features to view billing',
+      currentPlan: 'Current Plan',
+      currentPlanDesc: 'Your current subscription plan',
+      currentPlanLabel: 'Current Plan',
+      nextBilling: 'Next Billing',
+      upgradeToPro: 'Upgrade to Pro',
+      usage: 'Usage',
+      used: 'Used',
+      remaining: 'Remaining',
+      monthlyLimit: 'Monthly Limit',
+      usageProgress: 'Usage Progress',
+      availablePlans: 'Available Plans',
+      mostPopular: 'Most Popular',
+      month: 'month',
+      year: 'year',
+      selectPlan: 'Select Plan',
+      transactionHistory: 'Transaction History',
+      completed: 'Completed',
+      pending: 'Pending',
+      failed: 'Failed',
+      refunded: 'Refunded',
+      upgradeTo: 'Upgrade to',
+      upgradeDesc: 'You are about to upgrade to a new subscription plan. After upgrade, you will immediately get all new features.',
+      cancel: 'Cancel',
+      confirmUpgrade: 'Confirm Upgrade'
+    },
+
+    // 登录注册页面
+    'backToHome': 'Back to Home',
+    'appName': 'AIICG Wallpaper',
+    'loginToAccount': 'Sign in to your account',
+    'createAccount': 'Create your account',
+    'usernameOrEmail': 'Username or Email',
+    'enterUsernameOrEmail': 'Enter username or email',
+    'username': 'Username',
+    'enterUsername': 'Enter username',
+    'email': 'Email Address',
+    'enterEmail': 'Enter email address',
+    'password': 'Password',
+    'enterPassword': 'Enter password',
+    'confirmPassword': 'Confirm Password',
+    'enterConfirmPassword': 'Enter password again',
+    'captcha': 'Captcha',
+    'remainingAttempts': 'Remaining attempts',
+    'enterAnswer': 'Enter answer',
+    'loggingIn': 'Signing in...',
+    'registering': 'Registering...',
+    'or': 'or',
+    'createNewAccount': 'Create new account',
+    'loginExistingAccount': 'Sign in to existing account',
+    'emailVerificationCode': 'Email Verification Code',
+    'enterVerificationCode': 'Enter 6-digit code',
+    'sendCode': 'Send',
+    'register': 'Register',
+
+    // 404页面
+    'notFound': {
+      'title': 'Lost in the Ocean of Wallpapers?',
+      'description': 'It seems the page you\'re looking for got lost in our wallpaper gallery. Don\'t worry, let us help you find the right direction!',
+      'exploreHome': 'Explore Home',
+      'exploreHomeDesc': 'Discover the latest AI wallpaper works',
+      'browseWallpapers': 'Browse Wallpapers',
+      'browseWallpapersDesc': 'View beautiful wallpaper collections',
+      'generateWallpaper': 'AI Generate',
+      'generateWallpaperDesc': 'Create your exclusive wallpaper',
+      'searchTip': 'Tip: You can also use the search function in the navigation bar to quickly find the content you want',
+      'brandSlogan': 'Every wall has a story'
+    },
+
     // 主题
     theme: {
+      title: 'Theme',
+      current: 'Current',
       light: 'Light Mode',
       dark: 'Dark Mode',
       system: 'Follow System',
@@ -928,7 +2267,7 @@ const translations = {
         available: 'Available 24/7',
         timezone: 'Beijing Time 00:00-24:00',
         language: 'Multi-language Support',
-        languages: '中文, English',
+        languages: 'Chinese, English',
         startChat: 'Start Chat',
         botHandle: 'Bot Account'
       },
@@ -977,6 +2316,87 @@ const translations = {
       privacyPolicy: 'Privacy Policy',
       termsOfService: 'Terms of Service',
       copyright: 'All rights reserved.'
+    },
+
+    // 分类页面
+    categories: {
+      wallpaper: {
+        name: 'Wallpapers',
+        description: 'Curated high-quality wallpapers to enhance your device aesthetics'
+      },
+      avatar: {
+        name: 'Avatars',
+        description: 'Personalized avatars to showcase unique charm'
+      },
+      animation: {
+        name: 'Animations',
+        description: 'Dynamic wallpapers to make your device more vibrant'
+      }
+    },
+    subcategories: {
+      'ai-generated': 'AI Generated',
+      'avatar': 'Avatar',
+      'animation': 'Animation',
+      'nature': 'Nature',
+      'abstract': 'Abstract',
+      'minimal': 'Minimal',
+      'cartoon': 'Cartoon',
+      'realistic': 'Realistic',
+      'anime': 'Anime'
+    },
+    filters: {
+      resolution: 'Resolution',
+      orientation: 'Orientation',
+      style: 'Style',
+      color: 'Color',
+      mood: 'Mood',
+      type: 'Type'
+    },
+    filterOptions: {
+      horizontal: 'Horizontal',
+      vertical: 'Vertical',
+      square: 'Square',
+      modern: 'Modern',
+      vintage: 'Vintage',
+      artistic: 'Artistic',
+      cute: 'Cute',
+      cool: 'Cool',
+      elegant: 'Elegant',
+      bright: 'Bright',
+      dark: 'Dark',
+      colorful: 'Colorful',
+      monochrome: 'Monochrome'
+    },
+    sort: {
+      latest: 'Latest',
+      popular: 'Popular',
+      downloads: 'Downloads',
+      rating: 'Rating'
+    },
+    categoryPage: {
+      subcategories: 'Subcategories',
+      all: 'All',
+      filters: 'Filters',
+      sortBy: 'Sort By',
+      viewMode: 'View Mode',
+      results: 'results',
+      totalResults: '{count} total results',
+      noContent: 'No content',
+      noContentDesc: 'Try adjusting your filters',
+      retry: 'Retry',
+      previousPage: 'Previous',
+      nextPage: 'Next',
+      pageInfo: 'Page {page}',
+      download: 'Download',
+      close: 'Close',
+      imageInfo: 'Beautiful Wallpaper',
+      resolution: '{width} × {height}',
+      beautifulContent: 'Beautiful Content',
+      pages: 'Pages',
+      freeDownload: 'Free Download',
+      categoryNotFound: 'Category not found',
+      searchPlaceholder: 'Search wallpapers...',
+      clearAll: 'Clear All'
     }
   }
 } as const;

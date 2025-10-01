@@ -22,5 +22,36 @@
       "compressCount": 0,
       "downloadCount": 0
     }
+  },
+  {
+    "id": "l6QwF3k6ij2g6qoGk_P6Q",
+    "username": "testUser",
+    "email": "lopeva1220@dosonex.com",
+    "password": "123456",
+    "avatar": "/avatars/presets/avatar-3.svg",
+    "joinedAt": "2025-07-23T08:02:52.359Z",
+    "isVip": false,
+    "language": "zh-CN",
+    "timezone": "Asia/Shanghai",
+    "privacySettings": {
+      "saveGeneratedImages": true,
+      "saveCompressedImages": false,
+      "showInHomepage": true,
+      "maxHomepageImages": 6,
+      "allowPublicView": true
+    },
+    "favorites": [],
+    "usageStats": {
+      "generateCount": 0,
+      "compressCount": 0,
+      "downloadCount": 0,
+      "optimizeCount": 0
+    },
+    "optimizationSettings": {
+      "dailyOptimizeLimit": 3,
+      "totalOptimizeCount": 0,
+      "lastOptimizeDate": "2025-07-23",
+      "purchasedOptimizations": 0
+    }
   }
 ]
