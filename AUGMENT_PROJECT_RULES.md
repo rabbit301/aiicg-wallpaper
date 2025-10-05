@@ -1,5 +1,118 @@
 # Augment 项目开发规范
 
+## 🤖 AI助手工作流规范 (AI Assistant Workflow)
+
+### 项目上下文加载规则 (强制执行)
+
+> **核心原则**: 在执行任何项目相关任务前，必须先读取项目信息文档建立完整上下文，避免重复分析和低效沟通。
+
+#### 📋 强制执行规则
+
+1. **任务启动检查点** (每次对话开始时)
+   ```
+   ✅ 第一步: 读取 projectInfo.md
+   ✅ 第二步: 理解项目架构和技术栈
+   ✅ 第三步: 执行具体任务
+   ```
+
+2. **适用场景** (必须读取projectInfo的情况)
+   - 新对话会话开始时
+   - 用户询问项目架构相关问题时
+   - 需要修改/新增功能时
+   - 进行代码审查时
+   - 排查技术问题时
+   - 编写文档时
+
+3. **读取内容要点**
+   ```typescript
+   // AI助手必须关注的关键信息
+   interface ProjectContext {
+     技术栈: {
+       前端: "Next.js 15 + React 19 + TypeScript + TailwindCSS",
+       后端: "Go + Gin + PostgreSQL + Redis",
+       AI服务: "fal.ai + FastGPT",
+       部署: "Cloudflare Pages + VPS + Docker"
+     },
+     目录结构: "src/, backend/, public/, data/",
+     核心模块: "AI生成, 壁纸聚合, 压缩, 用户系统, VIP, 管理后台",
+     API路由: "146+ TypeScript文件, 30+ API端点",
+     数据库: "PostgreSQL核心表, Redis缓存策略",
+     部署方式: "VPS一键脚本, Docker Compose, CF Pages"
+   }
+   ```
+
+4. **禁止行为**
+   - ❌ 未读取projectInfo就开始分析项目结构
+   - ❌ 重复询问已在projectInfo中记录的信息
+   - ❌ 忽略projectInfo中的技术栈限制
+   - ❌ 提出与现有架构冲突的建议
+
+5. **高效沟通模式**
+   ```
+   用户: "帮我优化壁纸加载性能"
+
+   ❌ 低效方式:
+   AI: "请问你们用的什么框架? 数据库是什么? 图片存储在哪?"
+
+   ✅ 高效方式:
+   AI: (读取projectInfo.md)
+       "浮浮酱看到项目使用Next.js + Cloudinary + 兰空图床喵~
+        建议从以下3个方向优化:
+        1. Next.js Image组件优化 (已配置但可增强)
+        2. Redis缓存壁纸列表 (当前TTL 5分钟可调整)
+        3. CDN预热策略 (Cloudinary自动格式转换)
+        主人想从哪个方向开始呢? (*^▽^*)"
+   ```
+
+#### 🎯 执行标准
+
+**标准操作流程 (SOP)**:
+```bash
+# 伪代码示例
+function handleUserRequest(request: string) {
+  // Step 1: 检查是否需要项目上下文
+  if (isProjectRelatedTask(request)) {
+    // Step 2: 读取项目信息
+    const projectInfo = await readFile('projectInfo.md');
+
+    // Step 3: 解析关键信息
+    const context = parseProjectContext(projectInfo);
+
+    // Step 4: 基于上下文执行任务
+    return executeTaskWithContext(request, context);
+  }
+
+  // Step 5: 非项目任务直接执行
+  return executeTask(request);
+}
+```
+
+**质量检查清单**:
+- [ ] 是否读取了最新的projectInfo.md?
+- [ ] 是否理解了当前技术栈限制?
+- [ ] 提出的方案是否与现有架构兼容?
+- [ ] 是否避免了重复询问已记录的信息?
+- [ ] 是否提供了具体可执行的方案?
+
+#### 📌 特殊说明
+
+**projectInfo.md维护规则**:
+- 📅 **更新频率**: 重大功能变更后手动更新
+- 📝 **内容范围**: 架构、技术栈、API、数据库、部署
+- 🔄 **版本控制**: 文档顶部标注最后更新时间
+- 🚫 **不包含内容**: 临时数据、敏感配置、业务逻辑细节
+
+**文档优先级**:
+```
+1. projectInfo.md      ← 项目全局信息 (必读)
+2. PRD.md              ← 产品需求文档
+3. backend/README.md   ← 后端技术文档
+4. VPS_DEPLOYMENT.md   ← 部署操作手册
+5. 具体代码文件        ← 实现细节
+```
+
+---
+
 ## 🌍 国际化要求 (Internationalization)
 
 ### 必须实现完整的多语言支持
