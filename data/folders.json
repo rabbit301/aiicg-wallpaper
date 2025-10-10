@@ -1,0 +1,20 @@
+[
+  {
+    "id": "default",
+    "name": "默认文件夹",
+    "count": 0,
+    "createdAt": "2025-10-10T14:19:57.985Z"
+  },
+  {
+    "id": "folder_1760109834840_awlw6zw3s",
+    "name": "NSFW",
+    "count": 1,
+    "createdAt": "2025-10-10T15:23:54.840Z"
+  },
+  {
+    "id": "folder_1760110951738_q830hno4v",
+    "name": "优秀作品",
+    "count": 7,
+    "createdAt": "2025-10-10T15:42:31.738Z"
+  }
+]

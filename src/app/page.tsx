@@ -102,7 +102,11 @@ export default function Home() {
               
               {/* 显示最新的36张壁纸 - 即梦AI风格，铺满一屏 */}
               <div className="max-w-7xl mx-auto">
-                <MasonryWallpaperGallery showPopular={false} limit={36} />
+                <MasonryWallpaperGallery
+                  showPopular={false}
+                  limit={36}
+                  showFolderFilter={false}
+                />
               </div>
 
               {/* 生成按钮 */}

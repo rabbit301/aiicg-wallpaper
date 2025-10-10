@@ -5,14 +5,16 @@ const nextConfig: NextConfig = {
   serverExternalPackages: ['sharp'],
 
   // API代理配置 - 解决跨域问题
+  // 注意：本地 API 路由优先，只有当本地没有匹配的路由时才代理到 Go backend
   async rewrites() {
     const backendUrl = process.env.NEXT_PUBLIC_GO_BACKEND_URL || 'http://localhost:8080';
-    return [
-      {
-        source: '/api/v1/:path*',
-        destination: `${backendUrl}/api/v1/:path*`,
-      },
-    ];
+
+    // 如果不使用 Go backend，则不配置代理
+    if (process.env.NEXT_PUBLIC_USE_GO_BACKEND === 'false') {
+      return [];
+    }
+
+    return [];  // 暂时禁用代理，让 Next.js API 路由优先工作
   },
 
   // 图片优化配置

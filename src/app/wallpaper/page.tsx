@@ -1,9 +1,17 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { Search, Grid3X3, List, Filter, Download, X, ChevronDown, ChevronRight } from 'lucide-react';
+import { Search, Grid3X3, List, Filter, Download, X, ChevronDown, Folder } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import Layout from '@/components/Layout';
+import { api } from '@/lib/api-client';
+
+interface WallpaperFolder {
+  id: string;
+  name: string;
+  count: number;
+  icon?: string;
+}
 
 interface UnifiedWallpaperImage {
   id: string;
@@ -19,6 +27,8 @@ interface UnifiedWallpaperImage {
   author?: string;
   downloadUrl: string;
   type: 'gif' | 'photo' | 'video';
+  folderId?: string;
+  is_public?: boolean;
 }
 
 // 防抖 hook
@@ -41,12 +51,14 @@ function useDebounce<T>(value: T, delay: number): T {
 export default function WallpaperPage() {
   const { t } = useLanguage();
   const [images, setImages] = useState<UnifiedWallpaperImage[]>([]);
-  const [allImages, setAllImages] = useState<UnifiedWallpaperImage[]>([]); // 存储所有图片用于本地筛选
+  const [allImages, setAllImages] = useState<UnifiedWallpaperImage[]>([]);
+  const [folders, setFolders] = useState<WallpaperFolder[]>([]);
   const [loading, setLoading] = useState(true);
   const [filterLoading, setFilterLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [selectedFolder, setSelectedFolder] = useState<string>('all');
   const [selectedFilters, setSelectedFilters] = useState<Record<string, string>>({});
   const [sortBy, setSortBy] = useState('latest');
   const [currentPage, setCurrentPage] = useState(1);
@@ -54,6 +66,7 @@ export default function WallpaperPage() {
   const [selectedImage, setSelectedImage] = useState<UnifiedWallpaperImage | null>(null);
   const [showFilters, setShowFilters] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [showNSFW, setShowNSFW] = useState(false);
 
   // 防抖处理
   const debouncedSearchQuery = useDebounce(searchQuery, 500);
@@ -86,8 +99,23 @@ export default function WallpaperPage() {
     style: [t('filterOptions.modern'), t('filterOptions.vintage'), t('filterOptions.artistic')]
   };
 
+  // 加载文件夹列表
+  const fetchFolders = async () => {
+    try {
+      const res: any = await api.wallpapers.getFolders();
+      const folderData = res?.data?.folders || res?.folders || [];
+      setFolders([
+        { id: 'all', name: t('categoryPage.all'), count: 0, icon: '📂' },
+        ...folderData
+      ]);
+    } catch (err) {
+      console.error('加载文件夹失败:', err);
+    }
+  };
+
   // 初始数据加载
   useEffect(() => {
+    fetchFolders();
     fetchInitialImages();
   }, []);
 
@@ -96,7 +124,7 @@ export default function WallpaperPage() {
     if (allImages.length > 0) {
       handleFilterAndSearch();
     }
-  }, [debouncedSearchQuery, debouncedFilters, selectedCategory, sortBy]);
+  }, [debouncedSearchQuery, debouncedFilters, selectedCategory, selectedFolder, sortBy, showNSFW]);
 
   // 点击外部关闭筛选面板
   useEffect(() => {
@@ -117,7 +145,24 @@ export default function WallpaperPage() {
     try {
       setLoading(true);
       setError(null);
-      
+
+      // 尝试从新的文件夹系统 API 获取
+      try {
+        const response: any = await api.wallpapers.getPublic({
+          limit: 100,
+          nsfw: showNSFW
+        });
+        if (response?.data?.wallpapers || response?.wallpapers) {
+          const imageData = response?.data?.wallpapers || response?.wallpapers || [];
+          setAllImages(imageData);
+          setImages(imageData.slice(0, itemsPerPage));
+          return;
+        }
+      } catch (apiErr) {
+        console.log('新API暂未实现，使用备用数据源');
+      }
+
+      // 备用：使用原有的 giphy 数据源
       const response = await fetch('/api/giphy-content?category=wallpaper&limit=100');
       if (!response.ok) {
         throw new Error('获取图片失败');
@@ -140,23 +185,36 @@ export default function WallpaperPage() {
 
   const handleFilterAndSearch = useCallback(() => {
     setFilterLoading(true);
-    
-    // 使用 setTimeout 来模拟异步处理，避免阻塞 UI
+
     setTimeout(() => {
       let filteredImages = [...allImages];
+
+      // NSFW 过滤
+      if (!showNSFW) {
+        filteredImages = filteredImages.filter(image =>
+          !image.tags.includes('nsfw')
+        );
+      }
 
       // 搜索筛选
       if (debouncedSearchQuery) {
         const query = debouncedSearchQuery.toLowerCase();
-        filteredImages = filteredImages.filter(image => 
+        filteredImages = filteredImages.filter(image =>
           image.title.toLowerCase().includes(query) ||
           image.tags.some(tag => tag.toLowerCase().includes(query))
         );
       }
 
+      // 文件夹筛选
+      if (selectedFolder !== 'all') {
+        filteredImages = filteredImages.filter(image =>
+          image.folderId === selectedFolder
+        );
+      }
+
       // 分类筛选
       if (selectedCategory !== 'all') {
-        filteredImages = filteredImages.filter(image => 
+        filteredImages = filteredImages.filter(image =>
           image.tags.includes(selectedCategory) ||
           image.category === selectedCategory
         );
@@ -167,7 +225,6 @@ export default function WallpaperPage() {
         if (value) {
           switch (filterId) {
             case 'resolution':
-              // 根据分辨率筛选（这里简化处理）
               break;
             case 'orientation':
               filteredImages = filteredImages.filter(image => {
@@ -179,7 +236,6 @@ export default function WallpaperPage() {
               });
               break;
             case 'style':
-              // 根据风格筛选（这里简化处理）
               break;
           }
         }
@@ -191,13 +247,10 @@ export default function WallpaperPage() {
           filteredImages.sort((a, b) => new Date(b.id).getTime() - new Date(a.id).getTime());
           break;
         case 'popular':
-          // 这里可以根据实际数据排序
           break;
         case 'downloads':
-          // 这里可以根据实际数据排序
           break;
         case 'rating':
-          // 这里可以根据实际数据排序
           break;
       }
 
@@ -205,7 +258,7 @@ export default function WallpaperPage() {
       setCurrentPage(1);
       setFilterLoading(false);
     }, 100);
-  }, [allImages, debouncedSearchQuery, debouncedFilters, selectedCategory, sortBy, itemsPerPage, t]);
+  }, [allImages, debouncedSearchQuery, debouncedFilters, selectedCategory, selectedFolder, sortBy, itemsPerPage, showNSFW, t]);
 
   const handleFilterChange = (filterId: string, value: string) => {
     setSelectedFilters(prev => ({
@@ -223,7 +276,7 @@ export default function WallpaperPage() {
     try {
       const response = await fetch(`/api/download-proxy?url=${encodeURIComponent(image.url)}`);
       if (!response.ok) throw new Error('下载失败');
-      
+
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -242,10 +295,14 @@ export default function WallpaperPage() {
     setSelectedFilters({});
     setSearchQuery('');
     setSelectedCategory('all');
+    setSelectedFolder('all');
     setSortBy('latest');
   };
 
-  const activeFiltersCount = Object.values(selectedFilters).filter(v => v).length + (searchQuery ? 1 : 0) + (selectedCategory !== 'all' ? 1 : 0);
+  const activeFiltersCount = Object.values(selectedFilters).filter(v => v).length +
+    (searchQuery ? 1 : 0) +
+    (selectedCategory !== 'all' ? 1 : 0) +
+    (selectedFolder !== 'all' ? 1 : 0);
 
   return (
     <Layout>
@@ -311,6 +368,17 @@ export default function WallpaperPage() {
                     <List className="h-4 w-4" />
                   </button>
                 </div>
+
+                {/* NSFW 开关 */}
+                <label className="flex items-center space-x-2 px-3 py-2 rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 cursor-pointer hover:border-primary-300 dark:hover:border-primary-600 transition-colors">
+                  <input
+                    type="checkbox"
+                    checked={showNSFW}
+                    onChange={(e) => setShowNSFW(e.target.checked)}
+                    className="w-4 h-4 rounded border-neutral-300 text-primary-600 focus:ring-primary-500"
+                  />
+                  <span className="text-sm font-medium">18+</span>
+                </label>
 
                 {/* 筛选按钮 */}
                 <div className="relative">
@@ -400,23 +468,54 @@ export default function WallpaperPage() {
               </div>
             </div>
 
-            {/* 分类标签栏 */}
-            <div className="py-6">
-              <div className="flex items-center space-x-3 overflow-x-auto scrollbar-hide pb-2">
-                {categories.map((category) => (
-                  <button
-                    key={category.id}
-                    onClick={() => setSelectedCategory(category.id)}
-                    className={`flex items-center space-x-2 px-5 py-3 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-200 shadow-sm hover:shadow-md ${
-                      selectedCategory === category.id
-                        ? 'bg-gradient-to-r from-primary-500 to-secondary-500 text-white shadow-lg transform scale-105'
-                        : 'bg-white dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-700 border border-neutral-200 dark:border-neutral-700 hover:border-primary-300 dark:hover:border-primary-600'
-                    }`}
-                  >
-                    <span className="text-lg">{category.icon}</span>
-                    <span>{category.name}</span>
-                  </button>
-                ))}
+            {/* 分类和文件夹标签栏 */}
+            <div className="py-6 space-y-3">
+              {/* 文件夹筛选 */}
+              {folders.length > 1 && (
+                <div>
+                  <h4 className="text-xs font-semibold text-neutral-500 dark:text-neutral-400 mb-2 flex items-center gap-2">
+                    <Folder className="h-3 w-3" />
+                    文件夹
+                  </h4>
+                  <div className="flex items-center space-x-2 overflow-x-auto scrollbar-hide pb-2">
+                    {folders.map((folder) => (
+                      <button
+                        key={folder.id}
+                        onClick={() => setSelectedFolder(folder.id)}
+                        className={`flex items-center space-x-2 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-200 shadow-sm hover:shadow-md ${
+                          selectedFolder === folder.id
+                            ? 'bg-gradient-to-r from-primary-500 to-secondary-500 text-white shadow-lg transform scale-105'
+                            : 'bg-white dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-700 border border-neutral-200 dark:border-neutral-700 hover:border-primary-300 dark:hover:border-primary-600'
+                        }`}
+                      >
+                        <span>{folder.icon || '📁'}</span>
+                        <span>{folder.name}</span>
+                        {folder.count > 0 && <span className="opacity-70">({folder.count})</span>}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* 分类标签 */}
+              <div>
+                <h4 className="text-xs font-semibold text-neutral-500 dark:text-neutral-400 mb-2">分类</h4>
+                <div className="flex items-center space-x-2 overflow-x-auto scrollbar-hide pb-2">
+                  {categories.map((category) => (
+                    <button
+                      key={category.id}
+                      onClick={() => setSelectedCategory(category.id)}
+                      className={`flex items-center space-x-2 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-200 shadow-sm hover:shadow-md ${
+                        selectedCategory === category.id
+                          ? 'bg-gradient-to-r from-primary-500 to-secondary-500 text-white shadow-lg transform scale-105'
+                          : 'bg-white dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-700 border border-neutral-200 dark:border-neutral-700 hover:border-primary-300 dark:hover:border-primary-600'
+                      }`}
+                    >
+                      <span className="text-base">{category.icon}</span>
+                      <span>{category.name}</span>
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
@@ -478,8 +577,8 @@ export default function WallpaperPage() {
                       <div className="relative overflow-hidden">
                         <img
                           src={
-                            image.type === 'gif' || image.url.includes('.gif') 
-                              ? image.url 
+                            image.type === 'gif' || image.url.includes('.gif')
+                              ? image.url
                               : image.thumbnail || image.url
                           }
                           alt={image.title}
@@ -494,10 +593,10 @@ export default function WallpaperPage() {
                           }}
                           loading="lazy"
                         />
-                        
+
                         {/* 悬停遮罩 */}
                         <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                        
+
                         {/* 底部信息 */}
                         <div className="absolute bottom-0 left-0 right-0 p-4 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                           <h3 className="text-sm font-medium truncate">{image.title}</h3>
@@ -550,8 +649,8 @@ export default function WallpaperPage() {
 
         {/* 图片预览模态框 */}
         {selectedImage && (
-          <div 
-            className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4" 
+          <div
+            className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4"
             onClick={() => setSelectedImage(null)}
           >
             <div className="relative w-full h-full flex items-center justify-center" onClick={(e) => e.stopPropagation()}>
@@ -561,7 +660,7 @@ export default function WallpaperPage() {
                 className="max-w-full max-h-full object-contain"
                 onError={handleImageError}
               />
-              
+
               {/* 顶部工具栏 */}
               <div className="absolute top-4 right-4 flex items-center space-x-2">
                 <button
@@ -578,7 +677,7 @@ export default function WallpaperPage() {
                   <X className="h-5 w-5" />
                 </button>
               </div>
-              
+
               {/* 底部信息条 */}
               <div className="absolute bottom-4 left-4 right-4 bg-black/60 text-white px-4 py-3 rounded-lg text-sm backdrop-blur-sm">
                 <div className="flex items-center justify-between">
@@ -586,6 +685,12 @@ export default function WallpaperPage() {
                     <span className="font-medium">{selectedImage.title || t('categoryPage.imageInfo')}</span>
                     <span className="mx-2 text-white/60">•</span>
                     <span className="text-white/80">{selectedImage.width} × {selectedImage.height}</span>
+                    {selectedImage.tags && selectedImage.tags.length > 0 && (
+                      <>
+                        <span className="mx-2 text-white/60">•</span>
+                        <span className="text-white/80">{selectedImage.tags.join(', ')}</span>
+                      </>
+                    )}
                   </div>
                   <button
                     onClick={() => handleDownload(selectedImage)}
@@ -599,9 +704,7 @@ export default function WallpaperPage() {
             </div>
           </div>
         )}
-
-
       </div>
     </Layout>
   );
-} 
+}

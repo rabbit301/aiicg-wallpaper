@@ -43,6 +43,13 @@ const ROUTE_MAPPING: Record<string, string> = {
   '/api/admin/wallpapers': '/api/v1/admin/wallpapers',
   '/api/admin/users': '/api/v1/admin/users',
   '/api/admin/dashboard': '/api/v1/admin/dashboard',
+  '/api/admin/folders': '/api/v1/admin/folders',
+  '/api/admin/audit-logs': '/api/v1/admin/audit-logs',
+  '/api/admin/settings': '/api/v1/admin/settings',
+  '/api/admin/upload': '/api/v1/admin/upload',
+  '/api/wallpapers/public': '/api/v1/wallpapers/public',
+  '/api/wallpapers/folders': '/api/v1/wallpapers/folders',
+  '/api/notifications': '/api/v1/notifications',
 };
 
 // Unified API Client
@@ -75,8 +82,16 @@ class ApiClient {
     // 支持带查询字符串的路径进行正确映射
     const hasQuery = path.includes('?');
     const [pathname, query] = hasQuery ? path.split('?') : [path, ''];
-    const goBackendPath = ROUTE_MAPPING[pathname];
+
+    // 如果路径已经是 Go backend 格式（/api/v1/），直接使用
+    const isGoBackendPath = pathname.startsWith('/api/v1/');
+
+    // 从映射表查找对应的 Go backend 路径
+    const goBackendPath = isGoBackendPath ? pathname : ROUTE_MAPPING[pathname];
+
+    // 判断是否应该使用 Go backend
     const shouldUseGoBackend = API_CONFIG.USE_GO_BACKEND ||
+                              isGoBackendPath ||
                               (goBackendPath && GO_BACKEND_ROUTES.has(goBackendPath));
 
     if (shouldUseGoBackend && goBackendPath) {
@@ -94,7 +109,17 @@ class ApiClient {
 
   async request<T = any>(path: string, options: RequestInit = {}): Promise<T> {
     const url = this.getApiUrl(path);
-    const headers = this.getHeaders(options.headers as Record<string, string>);
+
+    // 检测是否是 FormData，如果是则不设置 Content-Type（让浏览器自动设置）
+    const isFormData = options.body instanceof FormData;
+    const headers = isFormData
+      ? this.getHeaders({ 'Content-Type': '' }) // 清空 Content-Type
+      : this.getHeaders(options.headers as Record<string, string>);
+
+    // 如果是 FormData，移除 Content-Type header 让浏览器自动设置
+    if (isFormData) {
+      delete headers['Content-Type'];
+    }
 
     const config: RequestInit = {
       ...options,
@@ -165,16 +190,22 @@ class ApiClient {
   }
 
   async post<T = any>(path: string, data?: any): Promise<T> {
+    // 检测是否是 FormData，如果是就直接传递，不要 JSON.stringify
+    const body = data instanceof FormData ? data : (data ? JSON.stringify(data) : undefined);
+
     return this.request<T>(path, {
       method: 'POST',
-      body: data ? JSON.stringify(data) : undefined,
+      body,
     });
   }
 
   async put<T = any>(path: string, data?: any): Promise<T> {
+    // 同样处理 PUT 方法
+    const body = data instanceof FormData ? data : (data ? JSON.stringify(data) : undefined);
+
     return this.request<T>(path, {
       method: 'PUT',
-      body: data ? JSON.stringify(data) : undefined,
+      body,
     });
   }
 
@@ -229,6 +260,11 @@ export const api = {
     delete: (id: string) => apiClient.delete(`/api/wallpapers/${id}`),
     addToFavorites: (id: string) => apiClient.post(`/api/wallpapers/${id}/favorite`),
     removeFromFavorites: (id: string) => apiClient.delete(`/api/wallpapers/${id}/favorite`),
+
+    // 公开壁纸接口（从文件夹系统获取）
+    getPublic: (params?: { folder?: string; tags?: string[]; page?: number; limit?: number; nsfw?: boolean }) =>
+      apiClient.get('/api/v1/wallpapers/public', params),
+    getFolders: () => apiClient.get('/api/v1/wallpapers/folders'),
   },
   
   admin: {
@@ -245,6 +281,21 @@ export const api = {
     },
     deleteWallpaper: (id: string) => apiClient.delete(`/api/v1/admin/wallpapers/${id}`),
     uploadFromUrl: (payload: { url: string; filename?: string }) => apiClient.post('/api/admin/upload', payload),
+    getAuditLogs: (params?: any) => apiClient.get('/api/v1/admin/audit-logs', params),
+    getSettings: () => apiClient.get('/api/v1/admin/settings'),
+    updateSettings: (data: any) => apiClient.put('/api/v1/admin/settings', data),
+
+    // 文件夹管理
+    getFolders: () => apiClient.get('/api/v1/admin/folders'),
+    createFolder: (data: { name: string }) => apiClient.post('/api/v1/admin/folders', data),
+    updateFolder: (id: string, data: { name: string }) => apiClient.put(`/api/v1/admin/folders/${id}`, data),
+    deleteFolder: (id: string) => apiClient.delete(`/api/v1/admin/folders/${id}`),
+    getWallpapersByFolder: (folderId: string, params?: any) => apiClient.get(`/api/v1/admin/folders/${folderId}/wallpapers`, params),
+
+    // 壁纸上传和管理
+    uploadWallpaper: (formData: FormData) => apiClient.post('/api/v1/admin/wallpapers/upload', formData),
+    moveWallpapers: (wallpaperIds: string[], targetFolderId: string) =>
+      apiClient.post('/api/v1/admin/wallpapers/move', { wallpaperIds, targetFolderId }),
   },
 
   notifications: {

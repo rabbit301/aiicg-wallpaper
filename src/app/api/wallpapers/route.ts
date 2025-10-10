@@ -22,6 +22,10 @@ export async function GET(request: NextRequest) {
       wallpapers = await dataStore.getAllWallpapers();
     }
 
+    // 只显示"优秀作品"文件夹的壁纸
+    const EXCELLENT_FOLDER_ID = 'folder_1760110951738_q830hno4v';
+    wallpapers = wallpapers.filter((w: any) => w.folderId === EXCELLENT_FOLDER_ID);
+
     // 应用limit限制（如果设置了）
     if (limit && !popular) {
       wallpapers = wallpapers.slice(0, limit);
