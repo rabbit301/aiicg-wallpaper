@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import Link from 'next/link';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { api } from '@/lib/api-client';
@@ -19,22 +20,22 @@ interface DashboardStats {
   systemStatus: 'healthy' | 'warning' | 'error';
 }
 
+// 模拟统计数据（移到组件外避免重复创建）
+const mockStats: DashboardStats = {
+  totalUsers: 1247,
+  totalWallpapers: 8934,
+  todayGenerations: 156,
+  storageUsed: 75.6,
+  onlineUsers: 23,
+  apiCalls: 2847,
+  systemStatus: 'healthy'
+};
+
 export default function AdminPage() {
   const { t } = useLanguage();
   const { user } = useAuth();
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [loading, setLoading] = useState(true);
-
-  // 模拟统计数据
-  const mockStats: DashboardStats = {
-    totalUsers: 1247,
-    totalWallpapers: 8934,
-    todayGenerations: 156,
-    storageUsed: 75.6,
-    onlineUsers: 23,
-    apiCalls: 2847,
-    systemStatus: 'healthy'
-  };
 
   // 模拟图表数据
   const generationTrendData = {
@@ -57,7 +58,7 @@ export default function AdminPage() {
   };
 
   // 加载仪表板数据
-  const loadDashboardData = async () => {
+  const loadDashboardData = useCallback(async () => {
     setLoading(true);
     try {
       // 调用真实的API获取仪表板数据
@@ -71,11 +72,11 @@ export default function AdminPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     loadDashboardData();
-  }, []);
+  }, [loadDashboardData]);
 
   // 检查用户权限
   if (!user || user.role !== 'super_admin') {
@@ -89,12 +90,12 @@ export default function AdminPage() {
           <p className="text-gray-600 dark:text-gray-300 mb-6">
             {t('pages.admin.dashboard.access.restrictedMessage')}
           </p>
-          <a
+          <Link
             href="/"
             className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors"
           >
             {t('pages.admin.dashboard.access.backToHome')}
-          </a>
+          </Link>
         </div>
       </div>
     );

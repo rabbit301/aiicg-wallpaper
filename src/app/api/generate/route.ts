@@ -4,12 +4,11 @@ import { DataStore } from '@/lib/data-store';
 import { userStore } from '@/lib/user-store';
 import { Wallpaper } from '@/types';
 import { nanoid } from 'nanoid';
-import { translatePrompt, enhanceEnglishPrompt } from '@/lib/prompt-translator';
 import { storeWallpaper } from '@/lib/image-storage';
 import { promptCacheManager } from '@/lib/prompt-cache';
 
 // 使用通用的图像生成类型
-import { GeneratedImage, ImageGenerationResponse } from '@/lib/image-generation/types';
+import { ImageGenerationResponse } from '@/lib/image-generation/types';
 
 export async function POST(request: NextRequest) {
   try {
@@ -134,7 +133,7 @@ export async function POST(request: NextRequest) {
       thumbnailUrl: thumbnailUrl,
       width: storageResult.metadata?.width || imageData.images?.[0]?.width || screenConfig.width,
       height: storageResult.metadata?.height || imageData.images?.[0]?.height || screenConfig.height,
-      format: storageResult.metadata?.format || 'webp',
+      format: (storageResult.metadata?.format || 'webp') as 'png' | 'jpg' | 'webp' | 'gif',
       createdAt: new Date().toISOString(),
       downloads: 0,
       tags: ['AI生成', preset],

@@ -256,6 +256,7 @@ export default function MasonryWallpaperGallery({
                   height={getRandomHeight(index)}
                   className="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-105"
                   style={{ aspectRatio: 'auto' }}
+                  priority={index < 6}
                 />
               ) : (
                 <div className="w-full h-64 bg-neutral-200 dark:bg-neutral-700 flex items-center justify-center">

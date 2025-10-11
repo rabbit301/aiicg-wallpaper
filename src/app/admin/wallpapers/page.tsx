@@ -1,8 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import React from 'react';
-import { useLanguage } from '@/contexts/LanguageContext';
 import { api } from '@/lib/api-client';
 import {
   Folder,
@@ -16,8 +15,7 @@ import {
   Move,
   Image as ImageIcon,
   AlertCircle,
-  X,
-  Check
+  X
 } from 'lucide-react';
 
 interface Folder {
@@ -41,8 +39,6 @@ interface Wallpaper {
 }
 
 export default function AdminWallpapersPage() {
-  const { t } = useLanguage();
-
   // 文件夹相关
   const [folders, setFolders] = useState<Folder[]>([]);
   const [selectedFolder, setSelectedFolder] = useState<string | null>(null);
@@ -72,18 +68,8 @@ export default function AdminWallpapersPage() {
 
   const availableTags = ['nsfw', 'sfw', 'anime', 'realistic', 'abstract', 'landscape', 'portrait', 'nature'];
 
-  useEffect(() => {
-    loadFolders();
-  }, []);
-
-  useEffect(() => {
-    if (selectedFolder) {
-      loadWallpapers();
-    }
-  }, [selectedFolder]);
-
   // 加载文件夹列表
-  const loadFolders = async () => {
+  const loadFolders = useCallback(async () => {
     try {
       const res: any = await api.admin.getFolders();
       const folderData = res?.data?.folders || res?.folders || [];
@@ -95,10 +81,10 @@ export default function AdminWallpapersPage() {
       console.error('加载文件夹失败:', e);
       setError(e.message || '加载文件夹失败');
     }
-  };
+  }, [selectedFolder]);
 
   // 加载壁纸列表
-  const loadWallpapers = async () => {
+  const loadWallpapers = useCallback(async () => {
     if (!selectedFolder) return;
     setLoading(true);
     setError('');
@@ -113,7 +99,17 @@ export default function AdminWallpapersPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [selectedFolder]);
+
+  useEffect(() => {
+    loadFolders();
+  }, [loadFolders]);
+
+  useEffect(() => {
+    if (selectedFolder) {
+      loadWallpapers();
+    }
+  }, [selectedFolder, loadWallpapers]);
 
   // 创建文件夹
   const handleCreateFolder = async () => {

@@ -244,7 +244,6 @@ export function getDesignSystemCSS(): string {
   /* 圆角系统 */
   ${Object.entries(radiusSystem).map(([key, value]) => `--radius-${key}: ${value};`).join('\n  ')}
 }`;
-}`;
 }
 
 export default PROJECT_RULES;

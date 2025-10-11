@@ -42,17 +42,10 @@ export async function POST(request: NextRequest) {
 
     // 处理购买结果
     let success = false;
-    
+
     if (packageType === 'unlimited') {
-      // 升级为VIP
-      const users = await authStore.getAllUsers();
-      const userIndex = users.findIndex(u => u.id === userId);
-      
-      if (userIndex !== -1) {
-        users[userIndex].isVip = true;
-        await authStore.saveUsers(users);
-        success = true;
-      }
+      // 升级为VIP - 使用updateUser公开方法
+      success = await authStore.updateUser(userId, { isVip: true });
     } else {
       // 购买优化次数
       success = await authStore.purchaseOptimizations(userId, package_.count);
@@ -102,8 +95,7 @@ export async function GET(request: NextRequest) {
 
     let userInfo = null;
     if (userId) {
-      const users = await authStore.getAllUsers();
-      const user = users.find(u => u.id === userId);
+      const user = await authStore.getUserById(userId);
       if (user) {
         userInfo = {
           isVip: user.isVip,

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { api } from '@/lib/api-client';
 
@@ -67,11 +67,11 @@ export default function AdminAuditPage() {
   // 详情弹窗状态
   const [selectedLog, setSelectedLog] = useState<AuditLog | null>(null);
 
-  // 防抖搜索
-  const [typingTimer, setTypingTimer] = useState<any>(null);
+  // 防抖搜索（使用 useRef 而不是 state）
+  const typingTimer = useRef<NodeJS.Timeout | null>(null);
 
   // 加载审计日志
-  const fetchAuditLogs = async () => {
+  const fetchAuditLogs = useCallback(async () => {
     setLoading(true);
     setError('');
     try {
@@ -103,24 +103,28 @@ export default function AdminAuditPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [filters, t]);
 
   // 初始加载
   useEffect(() => {
     fetchAuditLogs();
-  }, []);
+  }, [fetchAuditLogs]);
 
   // 当筛选条件变化时，带防抖刷新
   useEffect(() => {
-    if (typingTimer) {
-      clearTimeout(typingTimer);
+    if (typingTimer.current) {
+      clearTimeout(typingTimer.current);
     }
     const timer = setTimeout(() => {
       fetchAuditLogs();
     }, 300);
-    setTypingTimer(timer);
-    return () => clearTimeout(timer);
-  }, [filters.page, filters.pageSize, filters.action, filters.resourceType, filters.userId, filters.query, filters.startDate, filters.endDate, filters.sortBy, filters.sortOrder]);
+    typingTimer.current = timer;
+    return () => {
+      if (typingTimer.current) {
+        clearTimeout(typingTimer.current);
+      }
+    };
+  }, [filters.page, filters.pageSize, filters.action, filters.resourceType, filters.userId, filters.query, filters.startDate, filters.endDate, filters.sortBy, filters.sortOrder, fetchAuditLogs]);
 
   // 重置筛选
   const resetFilters = () => {

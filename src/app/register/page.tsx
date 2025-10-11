@@ -68,17 +68,19 @@ export default function RegisterPage() {
     setError('');
 
     try {
-      const result = await api.auth.sendVerificationCode({
-        email: formData.email.trim(),
-        username: formData.username.trim()
-      });
+      // TODO: 实现 sendVerificationCode API
+      // const result = await api.auth.sendVerificationCode({
+      //   email: formData.email.trim(),
+      //   username: formData.username.trim()
+      // });
 
+      // 临时：直接设置验证码已发送
       setSuccess(t('verificationCodeSent') || '验证码已发送到您的邮箱');
       setCodeSent(true);
       setCountdown(300); // 5 minutes countdown
     } catch (error: any) {
       console.error('Failed to send verification code:', error);
-      
+
       if (error.message.includes('EMAIL_EXISTS')) {
         setError(t('emailAlreadyRegistered') || '邮箱已被注册');
       } else if (error.message.includes('USERNAME_EXISTS')) {

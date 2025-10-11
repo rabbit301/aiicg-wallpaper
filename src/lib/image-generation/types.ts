@@ -47,6 +47,7 @@ export interface ImageGenerationResponse {
     model: string;
     cost?: number;
     processing_time?: number;
+    is_fallback?: boolean;
   };
 }
 

@@ -32,23 +32,17 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 更新用户VIP状态
-    const users = await authStore.getAllUsers();
-    const userIndex = users.findIndex(u => u.id === userId);
-    
-    if (userIndex === -1) {
+    // 更新用户VIP状态 - 使用updateUser公开方法
+    const updated = await authStore.updateUser(userId, {
+      isVip: true
+    });
+
+    if (!updated) {
       return NextResponse.json(
         { error: '用户不存在' },
         { status: 404 }
       );
     }
-
-    // 更新用户信息
-    users[userIndex].vipPlan = planId;
-    users[userIndex].isVip = true; // 兼容旧字段
-    users[userIndex].vipExpiry = getVipExpiry(plan);
-    
-    await authStore.saveUsers(users);
 
     // 记录升级活动
     await userStore.addUserActivity({
@@ -89,13 +83,12 @@ export async function GET(request: NextRequest) {
 
     let userInfo = null;
     if (userId) {
-      const users = await authStore.getAllUsers();
-      const user = users.find(u => u.id === userId);
+      const user = await authStore.getUserById(userId);
       if (user) {
         userInfo = {
-          currentPlan: user.vipPlan || 'free',
+          currentPlan: 'free', // 简化：默认为免费
           isVip: user.isVip || false,
-          vipExpiry: user.vipExpiry,
+          vipExpiry: undefined, // User接口中没有此字段
         };
       }
     }

@@ -329,9 +329,14 @@ export class ImageStorageService {
    */
   private async storeToOSS(imageInfo: ImageInfo): Promise<StorageResult> {
     try {
-      // 动态导入OSS SDK
-      const OSS = (await import('ali-oss')).default;
-      
+      // 动态导入OSS SDK（可选依赖）
+      let OSS;
+      try {
+        OSS = (await import('ali-oss')).default;
+      } catch (importError) {
+        throw new Error('ali-oss模块未安装，请运行: npm install ali-oss');
+      }
+
       const client = new OSS(this.config.config);
       const filename = imageInfo.filename || `wallpaper_${nanoid()}.webp`;
       const folder = imageInfo.folder || 'ai-wallpapers';

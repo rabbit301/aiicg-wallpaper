@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, useCallback } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { api } from '@/lib/api-client';
 
@@ -58,7 +58,6 @@ export default function AdminNotificationsPage() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string>('');
   const [list, setList] = useState<any[]>([]);
-  const [total, setTotal] = useState(0);
   const [permissionError, setPermissionError] = useState<string>('');
 
   const typeOptions: Array<{ value: NotificationType; label: string }> = useMemo(() => ([
@@ -78,7 +77,7 @@ export default function AdminNotificationsPage() {
     { value: 'urgent', label: t('pages.admin.notifications.priority.urgent') },
   ]), [t]);
 
-  const fetchList = async () => {
+  const fetchList = useCallback(async () => {
     setLoading(true);
     setError('');
     try {
@@ -93,24 +92,21 @@ export default function AdminNotificationsPage() {
       const res: any = await api.notifications.getList(params);
       if (res && res.items) {
         setList(res.items);
-        setTotal(res.meta?.total || res.items.length);
       } else if (res && res.data && res.data.items) {
         setList(res.data.items);
-        setTotal(res.data.meta?.total || res.data.items.length);
       } else {
         setList([]);
-        setTotal(0);
       }
     } catch (e: any) {
       setError(e?.message || '');
     } finally {
       setLoading(false);
     }
-  };
+  }, [filters]);
 
   useEffect(() => {
     fetchList();
-  }, [filters.page, filters.page_size]);
+  }, [fetchList]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
